@@ -1,0 +1,6 @@
+rootProject.name = 'quoridor'
+
+include 'quoridor-gui'
+
+include 'quoridor-core'
+
