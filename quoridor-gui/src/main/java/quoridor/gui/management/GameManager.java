@@ -2,6 +2,7 @@ package quoridor.gui.management;
 
 import quoridor.core.GameState;
 import quoridor.gui.component.MainWindow;
+import quoridor.gui.component.NewGameDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,8 +24,14 @@ public class GameManager implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == mainWindow.getNewGameMenuItem()) {
+        NewGameDialog newGameDialog = mainWindow.getNewGameDialog();
+        if (e.getSource() == newGameDialog.getOkButton()) {
+            newGameDialog.setVisible(false);
             newGame();
+
+            // TODO
+            newGameDialog.getTopPlayerType();
+            newGameDialog.getBottomPlayerType();
         }
     }
 
@@ -33,7 +40,7 @@ public class GameManager implements ActionListener {
     }
 
     private void setUpCallbacks() {
-        mainWindow.getNewGameMenuItem().addActionListener(this);
+        mainWindow.getNewGameDialog().getOkButton().addActionListener(this);
     }
 
     private void newGame() {

@@ -1,4 +1,4 @@
-package quoridor.gui.component;
+package quoridor.gui.component.board;
 
 import java.awt.Color;
 import java.awt.Container;
