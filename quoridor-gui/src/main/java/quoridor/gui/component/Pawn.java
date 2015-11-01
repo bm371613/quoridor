@@ -1,7 +1,6 @@
 package quoridor.gui.component;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
@@ -12,15 +11,6 @@ public class Pawn extends JPanel {
     public Pawn(Color color) {
         setOpaque(false);
         this.color = color;
-    }
-
-    public void lift() {
-        Container parent = getParent();
-        if (parent != null) {
-            parent.remove(this);
-            parent.repaint();
-            parent.revalidate();
-        }
     }
 
     @Override

@@ -74,7 +74,10 @@ public class Board extends JPanel implements ComponentListener {
     }
 
     private void loadPlayerState(PlayerState state, Pawn pawn, JLabel label) {
-        pawn.lift();
+        Place currentPawnPlace = (Place) pawn.getParent();
+        if (currentPawnPlace != null) {
+            currentPawnPlace.liftPawn();
+        }
         places[state.getPosX()][state.getPosY()].putPawn(pawn);
         label.setText("Walls left: " + state.getWallsLeft());
     }

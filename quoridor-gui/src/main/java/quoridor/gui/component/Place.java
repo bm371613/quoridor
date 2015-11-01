@@ -1,6 +1,8 @@
 package quoridor.gui.component;
 
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.GridBagLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.swing.BorderFactory;
@@ -11,7 +13,7 @@ public class Place extends JPanel implements ComponentListener {
     private Pawn pawn;
 
     public Place() {
-        setLayout(null);
+        setLayout(new GridBagLayout());
         addComponentListener(this);
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
@@ -22,6 +24,20 @@ public class Place extends JPanel implements ComponentListener {
         }
         this.pawn = pawn;
         add(pawn);
+        revalidate();
+        repaint();
+    }
+
+    public Pawn liftPawn() {
+        Pawn pawn = this.pawn;
+        if (pawn == null) {
+            throw new RuntimeException("Cannot lift pawn from empty place");
+        }
+        this.pawn = null;
+        remove(pawn);
+        revalidate();
+        repaint();
+        return pawn;
     }
 
     // ComponentListener
