@@ -1,6 +1,8 @@
 package quoridor.gui.component;
 
 import quoridor.gui.component.board.Board;
+import quoridor.gui.event.EventListener;
+import quoridor.gui.event.NewGameEvent;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -14,7 +16,8 @@ import javax.swing.WindowConstants;
 
 public class MainWindow extends JFrame implements ActionListener {
 
-    Board board = new Board();
+    EventListener eventListener;
+    Board board;
     JMenuItem newGameMenuItem = new JMenuItem("New Game");
     NewGameDialog newGameDialog = new NewGameDialog(this);
 
@@ -32,23 +35,34 @@ public class MainWindow extends JFrame implements ActionListener {
         newGameMenuItem.addActionListener(this);
         gameMenu.add(newGameMenuItem);
 
+        newGameDialog.getOkButton().addActionListener(this);
+
+        board = new Board();
         setLayout(new GridBagLayout());
         add(board);
         pack();
+    }
+
+    public void setEventListener(EventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     public Board getBoard() {
         return board;
     }
 
-    public NewGameDialog getNewGameDialog() {
-        return newGameDialog;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newGameMenuItem) {
             newGameDialog.setVisible(true);
+        } else if (e.getSource() == newGameDialog.getOkButton()) {
+            if (eventListener != null) {
+                newGameDialog.setVisible(false);
+                eventListener.notifyAboutEvent(new NewGameEvent(
+                        newGameDialog.getTopPlayerType(),
+                        newGameDialog.getBottomPlayerType()
+                ));
+            }
         }
     }
 }

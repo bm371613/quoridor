@@ -107,11 +107,11 @@ public class GameRules {
             return true;
         }
         if (move.getWallOrientation() == WallOrientation.HORIZONTAL) {
-            return gs.getWallsState().get(x - 1, y) == null
-                    && gs.getWallsState().get(x + 1, y) == null;
+            return gs.getWallsState().get(x - 1, y) != null
+                    || gs.getWallsState().get(x + 1, y) != null;
         } else {
-            return gs.getWallsState().get(x, y - 1) == null
-                    && gs.getWallsState().get(x, y + 1) == null;
+            return gs.getWallsState().get(x, y - 1) != null
+                    || gs.getWallsState().get(x, y + 1) != null;
         }
     }
 

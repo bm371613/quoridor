@@ -8,16 +8,17 @@ public class WallsState {
                 GameState.WALL_PLACES * GameState.WALL_PLACES];
     }
 
+    private static boolean inBounds(int x, int y) {
+        return 0 <= x && x < GameState.WALL_PLACES && 0 <= y
+                && y < GameState.WALL_PLACES;
+    }
+
     private static int ix(int x, int y) {
-        if (x < 0 || x >= GameState.WALL_PLACES || y < 0
-                || y >=GameState. WALL_PLACES) {
-            throw new RuntimeException("Coordinates out of bounds");
-        }
         return GameState.WALL_PLACES * x + y;
     }
 
     public WallOrientation get(int x, int y) {
-        return walls[ix(x, y)];
+        return inBounds(x, y) ? walls[ix(x, y)] : null;
     }
 
     public static Builder builder() {
@@ -38,6 +39,9 @@ public class WallsState {
         }
 
         public Builder set(int x, int y, WallOrientation wall) {
+            if (!inBounds(x, y)) {
+                throw new RuntimeException("Coordinates out of bounds");
+            }
             result.walls[ix(x, y)] = wall;
             return this;
         }
