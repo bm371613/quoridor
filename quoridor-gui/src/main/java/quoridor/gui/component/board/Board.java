@@ -8,14 +8,14 @@ import java.awt.event.ComponentListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import quoridor.core.GameState;
-import quoridor.core.GrooveCrossState;
-import quoridor.core.PlayerState;
+import quoridor.core.state.GameState;
+import quoridor.core.state.WallOrientation;
+import quoridor.core.state.PlayerState;
 
 public class Board extends JPanel implements ComponentListener {
 
-    private static final int PLACES_SIZE = GameState.BOARD_SIZE;
-    private static final int WALLS_SIZE = GameState.BOARD_SIZE - 1;
+    private static final int PLACES_SIZE = GameState.PLACES;
+    private static final int WALLS_SIZE = GameState.WALL_PLACES;
 
     private Place[][] places = new Place[PLACES_SIZE][PLACES_SIZE];
     private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
@@ -56,19 +56,17 @@ public class Board extends JPanel implements ComponentListener {
         add(bottomWallsLabel);
     }
 
-    public void loadGameState(GameState gameState) {
-        loadPlayerState(gameState.getTopPlayerState(),
+    public void loadGameState(GameState gs) {
+        loadPlayerState(gs.getTopPlayersState(),
                 topPlayersPawn, topWallsLabel);
-        loadPlayerState(gameState.getBottomPlayerState(),
+        loadPlayerState(gs.getBottomPlayersState(),
                 bottomPlayersPawn, bottomWallsLabel);
 
-        GrooveCrossState[][] gcss = gameState.getGrooveCrossStates();
-        for (int x = 0; x < PLACES_SIZE - 1; ++x) {
-            for (int y = 0; y < PLACES_SIZE - 1; ++y) {
-                horizontalWalls[x][y].setBuilt(
-                        GrooveCrossState.HORIZONTAL_WALL.equals(gcss[x][y]));
-                verticalWalls[x][y].setBuilt(
-                        GrooveCrossState.VERTICAL_WALL.equals(gcss[x][y]));
+        for (int x = 0; x < WALLS_SIZE; ++x) {
+            for (int y = 0; y < WALLS_SIZE; ++y) {
+                WallOrientation w = gs.getWallsState().get(x, y);
+                horizontalWalls[x][y].setBuilt(w == WallOrientation.HORIZONTAL);
+                verticalWalls[x][y].setBuilt(w == WallOrientation.VERTICAL);
             }
         }
     }
@@ -78,7 +76,7 @@ public class Board extends JPanel implements ComponentListener {
         if (currentPawnPlace != null) {
             currentPawnPlace.liftPawn();
         }
-        places[state.getPosX()][state.getPosY()].putPawn(pawn);
+        places[state.getX()][state.getY()].putPawn(pawn);
         label.setText("Walls left: " + state.getWallsLeft());
     }
 

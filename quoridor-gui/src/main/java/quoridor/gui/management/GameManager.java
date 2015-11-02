@@ -1,6 +1,7 @@
 package quoridor.gui.management;
 
-import quoridor.core.GameState;
+import quoridor.core.GameRules;
+import quoridor.core.state.GameState;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.component.NewGameDialog;
 
@@ -44,7 +45,7 @@ public class GameManager implements ActionListener {
     }
 
     private void newGame() {
-        gameState = new GameState();
+        gameState = GameRules.makeInitialState(false);
         updateBoard();
     }
 }
