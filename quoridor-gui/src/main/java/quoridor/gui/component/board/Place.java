@@ -1,30 +1,36 @@
 package quoridor.gui.component.board;
 
+import quoridor.gui.event.EventListener;
 import quoridor.gui.event.PawnMoveConsiderationEvent;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-public class Place extends JPanel implements ComponentListener {
+public class Place extends JPanel implements ComponentListener, MouseListener {
 
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
+
+    private EventListener eventListener;
 
     private Pawn pawn;
     private PawnMoveConsiderationEvent pawnMoveConsiderationEvent;
 
     public Place() {
+        addMouseListener(this);
         setOpaque(false);
         setLayout(null);
         addComponentListener(this);
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
     }
 
-    public PawnMoveConsiderationEvent getPawnMoveConsiderationEvent() {
-        return pawnMoveConsiderationEvent;
+    public void setEventListener(EventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     public void setPawnMoveConsiderationEvent(
@@ -97,5 +103,27 @@ public class Place extends JPanel implements ComponentListener {
 
     @Override
     public void componentHidden(ComponentEvent e) {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        eventListener.notifyAboutEvent(this, pawnMoveConsiderationEvent);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        setHighlighted(false);
     }
 }

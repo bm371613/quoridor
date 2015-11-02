@@ -1,16 +1,12 @@
 package quoridor.gui.event;
 
-import quoridor.gui.component.board.Place;
-
 public class PawnMoveConsiderationEvent {
     int x;
     int y;
-    Place place;
 
-    public PawnMoveConsiderationEvent(int x, int y, Place place) {
+    public PawnMoveConsiderationEvent(int x, int y) {
         this.x = x;
         this.y = y;
-        this.place = place;
     }
 
     public int getX() {
@@ -19,9 +15,5 @@ public class PawnMoveConsiderationEvent {
 
     public int getY() {
         return y;
-    }
-
-    public Place getPlace() {
-        return place;
     }
 }

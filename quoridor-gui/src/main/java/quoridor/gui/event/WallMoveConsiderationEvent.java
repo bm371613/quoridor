@@ -4,18 +4,15 @@ import quoridor.core.state.WallOrientation;
 import quoridor.gui.component.board.Wall;
 
 public class WallMoveConsiderationEvent {
-
     int x;
     int y;
     WallOrientation wallOrientation;
-    Wall wall;
 
     public WallMoveConsiderationEvent(int x, int y,
-                WallOrientation wallOrientation, Wall wall) {
+                WallOrientation wallOrientation) {
         this.x = x;
         this.y = y;
         this.wallOrientation = wallOrientation;
-        this.wall = wall;
     }
 
     public int getX() {
@@ -28,9 +25,5 @@ public class WallMoveConsiderationEvent {
 
     public WallOrientation getWallOrientation() {
         return wallOrientation;
-    }
-
-    public Wall getWall() {
-        return wall;
     }
 }

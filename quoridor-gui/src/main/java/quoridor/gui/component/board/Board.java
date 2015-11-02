@@ -5,24 +5,20 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.function.Function;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import quoridor.core.state.GameState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.PlayerState;
-import quoridor.gui.event.EventListener;
 import quoridor.gui.event.PawnMoveConsiderationEvent;
 import quoridor.gui.event.WallMoveConsiderationEvent;
 
-public class Board extends JPanel implements ComponentListener, MouseListener {
+public class Board extends JPanel implements ComponentListener {
 
     private static final int PLACES_SIZE = GameState.PLACES;
     private static final int WALLS_SIZE = GameState.WALL_PLACES;
-
-    private EventListener eventListener;
 
     private Place[][] places = new Place[PLACES_SIZE][PLACES_SIZE];
     private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
@@ -42,31 +38,28 @@ public class Board extends JPanel implements ComponentListener, MouseListener {
         for (int x = 0; x < PLACES_SIZE; ++x) {
             for (int y = 0; y < PLACES_SIZE; ++y) {
                 Place place = new Place();
-                place.addMouseListener(this);
                 place.setPawnMoveConsiderationEvent(
-                        new PawnMoveConsiderationEvent(x, y, place)
+                        new PawnMoveConsiderationEvent(x, y)
                 );
                 add(place);
                 places[x][y] = place;
             }
         }
 
-        for (int x = 0; x < PLACES_SIZE - 1; ++x) {
-            for (int y = 0; y < PLACES_SIZE - 1; ++y) {
+        for (int x = 0; x < WALLS_SIZE; ++x) {
+            for (int y = 0; y < WALLS_SIZE; ++y) {
                 Wall horizontalWall = new Wall();
-                horizontalWall.addMouseListener(this);
                 horizontalWall.setWallMoveConsiderationEvent(
                         new WallMoveConsiderationEvent(x, y,
-                                WallOrientation.HORIZONTAL, horizontalWall)
+                                WallOrientation.HORIZONTAL)
                 );
                 add(horizontalWall);
                 horizontalWalls[x][y] = horizontalWall;
 
                 Wall verticalWall = new Wall();
-                verticalWall.addMouseListener(this);
                 verticalWall.setWallMoveConsiderationEvent(
                         new WallMoveConsiderationEvent(x, y,
-                                WallOrientation.VERTICAL, verticalWall)
+                                WallOrientation.VERTICAL)
                 );
                 add(verticalWall);
                 verticalWalls[x][y] = verticalWall;
@@ -75,10 +68,6 @@ public class Board extends JPanel implements ComponentListener, MouseListener {
 
         add(topWallsLabel);
         add(bottomWallsLabel);
-    }
-
-    public void setEventListener(EventListener eventListener) {
-        this.eventListener = eventListener;
     }
 
     public void loadGameState(GameState gs) {
@@ -118,6 +107,23 @@ public class Board extends JPanel implements ComponentListener, MouseListener {
         int h = (int) d.getHeight();
         int s = (w < h ? w : h);
         return new Dimension(s, s);
+    }
+
+    public void forEachPlace(Function<Place, ?> function) {
+        for (int x = 0; x < PLACES_SIZE; ++x) {
+            for (int y = 0; y < PLACES_SIZE; ++y) {
+                function.apply(places[x][y]);
+            }
+        }
+    }
+
+    public void forEachWall(Function<Wall, ?> function) {
+        for (int x = 0; x < WALLS_SIZE; ++x) {
+            for (int y = 0; y < WALLS_SIZE; ++y) {
+                function.apply(horizontalWalls[x][y]);
+                function.apply(verticalWalls[x][y]);
+            }
+        }
     }
 
     // ComponentListener
@@ -175,47 +181,5 @@ public class Board extends JPanel implements ComponentListener, MouseListener {
 
     @Override
     public void componentHidden(ComponentEvent e) {
-    }
-
-    // MouseListener
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        if (e.getSource() instanceof Wall) {
-            Wall wall = (Wall) e.getSource();
-            eventListener.notifyAboutEvent(
-                    wall.getWallMoveConsiderationEvent());
-        } else if (e.getSource() instanceof Place) {
-            Place place = (Place) e.getSource();
-            eventListener.notifyAboutEvent(
-                    place.getPawnMoveConsiderationEvent()
-            );
-        }
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        if (e.getSource() instanceof Wall) {
-            Wall wall = (Wall) e.getSource();
-            wall.setHighlighted(false);
-        } else if (e.getSource() instanceof Place) {
-            Place place = (Place) e.getSource();
-            place.setHighlighted(false);
-        }
     }
 }

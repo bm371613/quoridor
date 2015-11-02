@@ -58,7 +58,7 @@ public class MainWindow extends JFrame implements ActionListener {
         } else if (e.getSource() == newGameDialog.getOkButton()) {
             if (eventListener != null) {
                 newGameDialog.setVisible(false);
-                eventListener.notifyAboutEvent(new NewGameEvent(
+                eventListener.notifyAboutEvent(null, new NewGameEvent(
                         newGameDialog.getTopPlayerType(),
                         newGameDialog.getBottomPlayerType()
                 ));
