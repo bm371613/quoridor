@@ -25,11 +25,19 @@ public class Board extends JPanel implements ComponentListener {
     private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
     private Wall[][] verticalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
 
-    private Pawn topPlayersPawn = new Pawn(Color.BLACK);
-    private Pawn bottomPlayersPawn = new Pawn(Color.WHITE);
+    private Pawn[] pawns = {
+            new Pawn(Color.WHITE),
+            new Pawn(Color.BLACK),
+            new Pawn(Color.BLUE),
+            new Pawn(Color.RED)
+    };
 
-    private JLabel topWallsLabel = new JLabel();
-    private JLabel bottomWallsLabel = new JLabel();
+    private JLabel[] wallLabels = {
+            new JLabel(),
+            new JLabel(),
+            new JLabel(),
+            new JLabel()
+    };
 
     public Board() {
         setLayout(null);
@@ -67,19 +75,22 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        add(topWallsLabel);
-        add(bottomWallsLabel);
+        for (JLabel wallLabel : wallLabels) {
+            add(wallLabel);
+        }
     }
 
     public void loadGameState(GameState gs) {
-        gs.getPlayerStates().forEach((player) -> {
-            if (player.getGoal() == Goal.BOTTOM) {
-                loadPlayerState(player, topPlayersPawn, topWallsLabel);
-            } else if (player.getGoal() == Goal.TOP) {
-                loadPlayerState(player, bottomPlayersPawn, bottomWallsLabel);
-            } else {
-                throw new RuntimeException("Unsupported game state");
+        forEachPlace((p) -> {
+            if (p.hasPawn()) {
+                p.liftPawn();
             }
+            return null;
+        });
+
+        gs.getPlayerStates().forEach((player) -> {
+            int ix = player.getGoal().ordinal();
+            loadPlayerState(player, pawns[ix], wallLabels[ix]);
         });
 
         for (int x = 0; x < WALLS_SIZE; ++x) {
@@ -171,8 +182,9 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        topWallsLabel.setBounds(0, 0, boardSide, margin);
-        bottomWallsLabel.setBounds(0, boardSide - margin, boardSide, margin);
+        wallLabels[Goal.TOP.ordinal()].setBounds(0, 0, boardSide, margin);
+        wallLabels[Goal.BOTTOM.ordinal()].setBounds(0, boardSide - margin,
+                boardSide, margin);
     }
 
 

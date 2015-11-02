@@ -4,5 +4,5 @@ public enum Goal {
     TOP,
     BOTTOM,
     LEFT,
-    RIGHT;
+    RIGHT
 }

@@ -38,6 +38,10 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
         this.pawnMoveConsiderationEvent = pawnMoveConsiderationEvent;
     }
 
+    public boolean hasPawn() {
+        return pawn != null;
+    }
+
     public void putPawn(Pawn pawn) {
         if (this.pawn != null) {
             throw new RuntimeException("Cannot put pawn on non-empty place");
