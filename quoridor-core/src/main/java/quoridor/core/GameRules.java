@@ -1,28 +1,37 @@
 package quoridor.core;
 
+import com.google.common.collect.ImmutableList;
 import quoridor.core.state.GameState;
+import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.WallsState;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class GameRules {
 
     private GameRules() {
     }
 
-    public static GameState makeInitialState(boolean topPlayersTurn) {
+    public static GameState makeInitialStateForTwo(Goal firstGoal) {
         int top = GameState.PLACES - 1;
         int bottom = 0;
         int middle = GameState.PLACES / 2;
-        int initWalls = GameState.WALLS_NUMBER / 2;
+        int initWalls = 10;
+        List<PlayerState> playerStates = (firstGoal == Goal.TOP)
+                ? ImmutableList.of(
+                    new PlayerState(Goal.TOP, middle, bottom, initWalls),
+                    new PlayerState(Goal.BOTTOM, middle, top, initWalls))
+                : ImmutableList.of(
+                    new PlayerState(Goal.BOTTOM, middle, top, initWalls),
+                    new PlayerState(Goal.TOP, middle, bottom, initWalls));
         return GameState.builder()
                 .setWallsState(WallsState.builder().build())
-                .setTopPlayersState(new PlayerState(middle, top, initWalls))
-                .setBottomPlayersState(new PlayerState(middle, bottom, initWalls))
-                .setTopPlayersTurn(topPlayersTurn)
+                .setPlayersStates(playerStates)
+                .setTurn(0)
                 .build();
     }
 
@@ -63,41 +72,37 @@ public class GameRules {
     }
 
     public static boolean isLegalMove(GameState gs, Move move) {
-        int x = move.getX();
-        int y = move.getY();
         if (move.isWallMove()) {
             return gs.getCurrentPlayersState().getWallsLeft() > 0
                     && !wallMoveCausesCollision(gs, move)
                     && !wallMoveCausesBlocking(gs, move);
         } else {
             PlayerState player = gs.getCurrentPlayersState();
-            PlayerState opponent = gs.getCurrentPlayersOpponentsState();
             if (player.isBy(move)) {
-                // regular pawn move (no jump)
-                return !gs.isWallBetween(player, move) && !opponent.isAt(move);
-            } else if (player.isBy(opponent) && opponent.isBy(move)
-                    && !move.isAt(player)) {
-                // jump
-                return !(gs.isWallBetween(player, opponent)
-                            || gs.isWallBetween(opponent, move))
-                        && (player.getX() == move.getX() || player.getY() == y
-                            || gs.isWallBehind(player, opponent));
+                return !gs.isWallBetween(player, move) && !gs.isOccupied(move);
+            } else {
+                return gs.getPlayerStates().stream().anyMatch((opponent) ->
+                        opponent != player && isLegalJump(gs, move, opponent));
             }
         }
-        return false;
     }
 
     public static boolean isFinal(GameState gameState) {
-        return isWonByTopPlayer(gameState) || isWonByBottomPlayer(gameState);
+        return gameState.getPlayerStates().stream().anyMatch(GameRules::isWon);
     }
 
-    public static boolean isWonByTopPlayer(GameState gameState) {
-        return gameState.getTopPlayersState().getY() == 0;
-    }
-
-    public static boolean isWonByBottomPlayer(GameState gameState) {
-        return gameState.getBottomPlayersState().getY()
-                == GameState.PLACES - 1;
+    public static boolean isWon(PlayerState playerState) {
+        switch (playerState.getGoal()) {
+            case TOP:
+                return playerState.getY() == GameState.PLACES - 1;
+            case BOTTOM:
+                return playerState.getY() == 0;
+            case LEFT:
+                return playerState.getX() == 0;
+            case RIGHT:
+                return playerState.getX() == GameState.PLACES - 1;
+        }
+        return false;
     }
 
     private static boolean wallMoveCausesCollision(GameState gs, Move move) {
@@ -117,5 +122,21 @@ public class GameRules {
 
     private static boolean wallMoveCausesBlocking(GameState gs, Move move) {
         return false; // TODO
+    }
+
+    private static boolean isLegalJump(GameState gs, Move move,
+        PlayerState opponent) {
+        PlayerState player = gs.getCurrentPlayersState();
+        boolean isJump = player.isBy(opponent) && opponent.isBy(move)
+                && !move.isAt(player);
+        if (!isJump) {
+            return false;
+        }
+        if (gs.isWallBetween(player, opponent)
+                || gs.isWallBetween(opponent, move)) {
+            return false;
+        }
+        return player.getX() == move.getX()|| player.getY() == move.getY()
+                || gs.isWallBehind(player, opponent);
     }
 }

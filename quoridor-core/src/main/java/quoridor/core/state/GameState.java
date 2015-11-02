@@ -1,17 +1,18 @@
 package quoridor.core.state;
 
+import com.google.common.collect.ImmutableList;
 import quoridor.core.Move;
 import quoridor.core.util.Positioned;
+
+import java.util.List;
 
 public class GameState {
     public static int PLACES = 9; // number of places along each side
     public static int WALL_PLACES = PLACES - 1 ;
-    public static int WALLS_NUMBER = 20;
 
     private WallsState wallsState;
-    private PlayerState topPlayersState; // player starting at y = PLACES - 1
-    private PlayerState bottomPlayersState; // player starting at y = 0
-    private boolean topPlayersTurn;
+    private ImmutableList<PlayerState> playerStates;
+    private int turn;
 
     private GameState() {
     }
@@ -20,57 +21,45 @@ public class GameState {
         return wallsState;
     }
 
-    public PlayerState getTopPlayersState() {
-        return topPlayersState;
+    public ImmutableList<PlayerState> getPlayerStates() {
+        return playerStates;
     }
 
-    public PlayerState getBottomPlayersState() {
-        return bottomPlayersState;
-    }
-
-    public boolean isTopPlayersTurn() {
-        return topPlayersTurn;
+    public int currentPlayerIx() {
+        return turn % playerStates.size();
     }
 
     public GameState apply(Move move) {
         Builder builder = builder().copyFrom(this);
+
         if (move.isPawnMove()) {
-            if (isTopPlayersTurn()) {
-                builder.setTopPlayersState(new PlayerState(move.getX(),
-                        move.getY(), getTopPlayersState().getWallsLeft()));
-                builder.setTopPlayersTurn(false);
-            } else {
-                builder.setBottomPlayersState(new PlayerState(move.getX(),
-                        move.getY(), getBottomPlayersState().getWallsLeft()));
-                builder.setTopPlayersTurn(true);
-            }
+            PlayerState playerState = getCurrentPlayersState()
+                    .movedTo(move.getX(), move.getY());
+            builder.setPlayerState(currentPlayerIx(), playerState);
         } else {
-            builder.setWallsState(WallsState.builder()
+            WallsState wallsState = WallsState.builder()
                     .copyFrom(getWallsState())
                     .set(move.getX(), move.getY(), move.getWallOrientation())
-                    .build());
-            PlayerState playerState = getCurrentPlayersState();
-            PlayerState newPlayerState = new PlayerState(playerState.getX(),
-                    playerState.getY(), playerState.getWallsLeft() - 1);
-            if (isTopPlayersTurn()) {
-                builder.setTopPlayersState(newPlayerState);
-                builder.setTopPlayersTurn(false);
-            } else {
-                builder.setBottomPlayersState(newPlayerState);
-                builder.setTopPlayersTurn(true);
-            }
+                    .build();
+            PlayerState playerState = getCurrentPlayersState()
+                    .withWallsLeft(getCurrentPlayersState().getWallsLeft() - 1);
+            builder.setWallsState(wallsState)
+                    .setPlayerState(currentPlayerIx(), playerState);
         }
+
+        builder.setTurn(turn + 1);
         return builder.build();
     }
 
     // helpers
 
     public PlayerState getCurrentPlayersState() {
-        return topPlayersTurn ? topPlayersState : bottomPlayersState;
+        return playerStates.get(currentPlayerIx());
     }
 
-    public PlayerState getCurrentPlayersOpponentsState() {
-        return topPlayersTurn ? bottomPlayersState : topPlayersState;
+    public boolean isOccupied(Positioned p) {
+        return playerStates.stream().anyMatch((player) ->
+                p.getX() == player.getX() && p.getY() == player.getY());
     }
 
     private boolean isWallAbove(int x, int y) {
@@ -117,12 +106,15 @@ public class GameState {
         }
     }
 
+    // builder
+
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
 
+        private List<PlayerState> playerStates;
         private GameState result;
 
         private Builder () {
@@ -131,10 +123,9 @@ public class GameState {
 
         public Builder copyFrom(GameState gs) {
             return this
-                    .setWallsState(gs.getWallsState())
-                    .setTopPlayersState(gs.getTopPlayersState())
-                    .setBottomPlayersState(gs.getBottomPlayersState())
-                    .setTopPlayersTurn(gs.isTopPlayersTurn());
+                    .setWallsState(gs.wallsState)
+                    .setPlayersStates(gs.playerStates)
+                    .setTurn(gs.turn);
         }
 
         public Builder setWallsState(WallsState wallsState) {
@@ -142,22 +133,23 @@ public class GameState {
             return this;
         }
 
-        public Builder setTopPlayersState(PlayerState topPlayersState) {
-            result.topPlayersState = topPlayersState;
+        public Builder setPlayersStates(List<PlayerState> playersStates) {
+            this.playerStates = playersStates;
             return this;
         }
 
-        public Builder setBottomPlayersState(PlayerState bottomPlayersState) {
-            result.bottomPlayersState = bottomPlayersState;
+        public Builder setPlayerState(int i, PlayerState playerState) {
+            this.playerStates.set(i, playerState);
             return this;
         }
 
-        public Builder setTopPlayersTurn(boolean topPlayersTurn) {
-            result.topPlayersTurn = topPlayersTurn;
+        public Builder setTurn(int turn) {
+            result.turn = turn;
             return this;
         }
 
         public GameState build() {
+            result.playerStates = ImmutableList.copyOf(this.playerStates);
             return result;
         }
 

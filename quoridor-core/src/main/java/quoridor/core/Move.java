@@ -31,7 +31,8 @@ public class Move implements Positioned {
         if (wallOrientation == null) {
             throw new RuntimeException("Wall move must define orientation");
         }
-        if (x < 0 || y < 0 || x >= GameState.WALLS_NUMBER || y >= GameState.WALLS_NUMBER) {
+        if (x < 0 || y < 0 || x >= GameState.WALL_PLACES
+                || y >= GameState.WALL_PLACES) {
             throw new RuntimeException("Move coordinates out of bounds");
         }
         return new Move(false, x, y, wallOrientation);

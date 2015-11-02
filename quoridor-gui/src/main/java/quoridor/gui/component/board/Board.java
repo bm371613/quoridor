@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import quoridor.core.state.GameState;
+import quoridor.core.state.Goal;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.PlayerState;
 import quoridor.gui.event.PawnMoveConsiderationEvent;
@@ -71,10 +72,15 @@ public class Board extends JPanel implements ComponentListener {
     }
 
     public void loadGameState(GameState gs) {
-        loadPlayerState(gs.getTopPlayersState(),
-                topPlayersPawn, topWallsLabel);
-        loadPlayerState(gs.getBottomPlayersState(),
-                bottomPlayersPawn, bottomWallsLabel);
+        gs.getPlayerStates().forEach((player) -> {
+            if (player.getGoal() == Goal.BOTTOM) {
+                loadPlayerState(player, topPlayersPawn, topWallsLabel);
+            } else if (player.getGoal() == Goal.TOP) {
+                loadPlayerState(player, bottomPlayersPawn, bottomWallsLabel);
+            } else {
+                throw new RuntimeException("Unsupported game state");
+            }
+        });
 
         for (int x = 0; x < WALLS_SIZE; ++x) {
             for (int y = 0; y < WALLS_SIZE; ++y) {

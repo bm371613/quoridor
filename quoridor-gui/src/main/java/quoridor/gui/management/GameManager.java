@@ -3,6 +3,7 @@ package quoridor.gui.management;
 import quoridor.core.GameRules;
 import quoridor.core.Move;
 import quoridor.core.state.GameState;
+import quoridor.core.state.Goal;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.component.board.Place;
 import quoridor.gui.component.board.Wall;
@@ -41,7 +42,7 @@ public class GameManager implements EventListener {
     }
 
     private void newGame() {
-        gameState = GameRules.makeInitialState(false);
+        gameState = GameRules.makeInitialStateForTwo(Goal.TOP);
         updateBoard();
     }
 
