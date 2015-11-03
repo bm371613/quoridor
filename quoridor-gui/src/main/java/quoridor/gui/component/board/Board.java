@@ -5,7 +5,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -16,6 +16,7 @@ import quoridor.core.state.WallOrientation;
 import quoridor.core.state.PlayerState;
 import quoridor.gui.event.PawnMoveConsiderationEvent;
 import quoridor.gui.event.WallMoveConsiderationEvent;
+import quoridor.gui.util.PerPlayer;
 
 public class Board extends JPanel implements ComponentListener {
 
@@ -26,12 +27,19 @@ public class Board extends JPanel implements ComponentListener {
     private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
     private Wall[][] verticalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
 
-    private Color[] playerColors = {
-            Color.BLACK, Color.GRAY, Color.BLUE, Color.RED
-    };
-
-    private Pawn[] pawns;
-    private JLabel[] wallLabels;
+    private PerPlayer<Color> playerColors = new PerPlayer<Color>()
+            .set(Goal.TOP, Color.BLACK)
+            .set(Goal.BOTTOM, Color.GRAY)
+            .set(Goal.LEFT, Color.BLUE)
+            .set(Goal.RIGHT, Color.RED);
+    private PerPlayer<Pawn> pawns = playerColors.map(Pawn::new);
+    private PerPlayer<JLabel> wallLabels = playerColors.map((c) -> {
+        JLabel result = new JLabel();
+        result.setForeground(c);
+        result.setVerticalAlignment(SwingConstants.CENTER);
+        result.setHorizontalAlignment(SwingConstants.CENTER);
+        return result;
+    });
 
     public Board() {
         setLayout(null);
@@ -69,17 +77,7 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        pawns = new Pawn[playerColors.length];
-        wallLabels = new JLabel[playerColors.length];
-        for (int i = 0; i < playerColors.length; ++i) {
-            pawns[i] = new Pawn(playerColors[i]);
-
-            wallLabels[i] = new JLabel();
-            wallLabels[i].setForeground(playerColors[i]);
-            wallLabels[i].setVerticalAlignment(SwingConstants.CENTER);
-            wallLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
-            add(wallLabels[i]);
-        }
+        wallLabels.forEach(this::add);
     }
 
     public void loadGameState(GameState gs) {
@@ -87,17 +85,11 @@ public class Board extends JPanel implements ComponentListener {
             if (p.hasPawn()) {
                 p.liftPawn();
             }
-            return null;
         });
 
-        for (JLabel wallLabel : wallLabels) {
-            wallLabel.setText("");
-        }
+        wallLabels.forEach((wallLabel) -> wallLabel.setText(""));
 
-        gs.getPlayerStates().forEach((player) -> {
-            int ix = player.getGoal().ordinal();
-            loadPlayerState(player, pawns[ix], wallLabels[ix]);
-        });
+        gs.getPlayerStates().forEach(this::loadPlayerState);
 
         for (int x = 0; x < WALLS_SIZE; ++x) {
             for (int y = 0; y < WALLS_SIZE; ++y) {
@@ -108,13 +100,9 @@ public class Board extends JPanel implements ComponentListener {
         }
     }
 
-    private void loadPlayerState(PlayerState state, Pawn pawn, JLabel label) {
-        Place currentPawnPlace = (Place) pawn.getParent();
-        if (currentPawnPlace != null) {
-            currentPawnPlace.liftPawn();
-        }
-        places[state.getX()][state.getY()].putPawn(pawn);
-        label.setText("" + state.getWallsLeft());
+    private void loadPlayerState(PlayerState state) {
+        places[state.getX()][state.getY()].putPawn(pawns.get(state));
+        wallLabels.get(state).setText("" + state.getWallsLeft());
     }
 
     @Override
@@ -132,19 +120,19 @@ public class Board extends JPanel implements ComponentListener {
         return new Dimension(s, s);
     }
 
-    public void forEachPlace(Function<Place, ?> function) {
+    public void forEachPlace(Consumer<Place> consumer) {
         for (int x = 0; x < PLACES_SIZE; ++x) {
             for (int y = 0; y < PLACES_SIZE; ++y) {
-                function.apply(places[x][y]);
+                consumer.accept(places[x][y]);
             }
         }
     }
 
-    public void forEachWall(Function<Wall, ?> function) {
+    public void forEachWall(Consumer<Wall> consumer) {
         for (int x = 0; x < WALLS_SIZE; ++x) {
             for (int y = 0; y < WALLS_SIZE; ++y) {
-                function.apply(horizontalWalls[x][y]);
-                function.apply(verticalWalls[x][y]);
+                consumer.accept(horizontalWalls[x][y]);
+                consumer.accept(verticalWalls[x][y]);
             }
         }
     }
@@ -157,8 +145,8 @@ public class Board extends JPanel implements ComponentListener {
         int placeSide = boardSide / 14;
         int spaceBetween = placeSide / 2;
         int sideWithSpace = placeSide + spaceBetween;
-        int margin =
-                (boardSide - PLACES_SIZE * sideWithSpace + spaceBetween) / 2;
+        int margin = (boardSide - PLACES_SIZE * sideWithSpace + spaceBetween)
+                / 2;
 
         for (int x = 0; x < PLACES_SIZE; ++x) {
             for (int y = 0; y < PLACES_SIZE; ++y) {
@@ -188,11 +176,11 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        wallLabels[Goal.TOP.ordinal()].setBounds(0, boardSide - margin,
-                boardSide, margin);
-        wallLabels[Goal.RIGHT.ordinal()].setBounds(0, 0, margin, boardSide);
-        wallLabels[Goal.BOTTOM.ordinal()].setBounds(0, 0, boardSide, margin);
-        wallLabels[Goal.LEFT.ordinal()].setBounds(boardSide - margin, 0, margin,
+        wallLabels.get(Goal.TOP).setBounds(0, boardSide - margin, boardSide,
+                margin);
+        wallLabels.get(Goal.RIGHT).setBounds(0, 0, margin, boardSide);
+        wallLabels.get(Goal.BOTTOM).setBounds(0, 0, boardSide, margin);
+        wallLabels.get(Goal.LEFT).setBounds(boardSide - margin, 0, margin,
                 boardSide);
     }
 

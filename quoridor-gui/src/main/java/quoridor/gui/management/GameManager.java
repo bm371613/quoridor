@@ -25,11 +25,9 @@ public class GameManager implements EventListener {
         this.mainWindow.getNewGameDialog().setEventListener(this);
         this.mainWindow.getBoard().forEachPlace((p) -> {
             p.setEventListener(this);
-            return null;
         });
         this.mainWindow.getBoard().forEachWall((w) -> {
             w.setEventListener(this);
-            return null;
         });
     }
 
