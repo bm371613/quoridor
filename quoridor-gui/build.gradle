@@ -2,4 +2,5 @@ version = "1.0"
 
 dependencies {
     compile project(':quoridor-core')
+    compile project(':quoridor-ai')
 }

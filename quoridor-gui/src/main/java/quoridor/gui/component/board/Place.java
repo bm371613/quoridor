@@ -1,7 +1,9 @@
 package quoridor.gui.component.board;
 
+import quoridor.core.Move;
 import quoridor.gui.event.EventListener;
-import quoridor.gui.event.PawnMoveConsiderationEvent;
+import quoridor.gui.event.MoveChoiceEvent;
+import quoridor.gui.event.MoveConsiderationEvent;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,9 +21,11 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
     private EventListener eventListener;
 
     private Pawn pawn;
-    private PawnMoveConsiderationEvent pawnMoveConsiderationEvent;
+    private Move move;
 
-    public Place() {
+    public Place(Move move) {
+        this.move = move;
+
         addMouseListener(this);
         setOpaque(false);
         setLayout(null);
@@ -31,11 +35,6 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
 
     public void setEventListener(EventListener eventListener) {
         this.eventListener = eventListener;
-    }
-
-    public void setPawnMoveConsiderationEvent(
-            PawnMoveConsiderationEvent pawnMoveConsiderationEvent) {
-        this.pawnMoveConsiderationEvent = pawnMoveConsiderationEvent;
     }
 
     public boolean hasPawn() {
@@ -111,6 +110,7 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
     }
 
     @Override
@@ -123,7 +123,7 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        eventListener.notifyAboutEvent(this, pawnMoveConsiderationEvent);
+        eventListener.notifyAboutEvent(this, new MoveConsiderationEvent(move));
     }
 
     @Override

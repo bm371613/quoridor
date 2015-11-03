@@ -1,6 +1,7 @@
 package quoridor.core.state;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import quoridor.core.Move;
 import quoridor.core.util.Positioned;
 
@@ -134,7 +135,7 @@ public class GameState {
         }
 
         public Builder setPlayersStates(List<PlayerState> playersStates) {
-            this.playerStates = playersStates;
+            this.playerStates = Lists.newArrayList(playersStates);
             return this;
         }
 

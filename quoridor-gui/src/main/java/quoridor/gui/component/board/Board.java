@@ -10,12 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import quoridor.core.Move;
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.PlayerState;
-import quoridor.gui.event.PawnMoveConsiderationEvent;
-import quoridor.gui.event.WallMoveConsiderationEvent;
 import quoridor.gui.util.PerPlayer;
 
 public class Board extends JPanel implements ComponentListener {
@@ -48,10 +47,7 @@ public class Board extends JPanel implements ComponentListener {
 
         for (int x = 0; x < PLACES_SIZE; ++x) {
             for (int y = 0; y < PLACES_SIZE; ++y) {
-                Place place = new Place();
-                place.setPawnMoveConsiderationEvent(
-                        new PawnMoveConsiderationEvent(x, y)
-                );
+                Place place = new Place(Move.makePawnMove(x, y));
                 add(place);
                 places[x][y] = place;
             }
@@ -59,19 +55,13 @@ public class Board extends JPanel implements ComponentListener {
 
         for (int x = 0; x < WALLS_SIZE; ++x) {
             for (int y = 0; y < WALLS_SIZE; ++y) {
-                Wall horizontalWall = new Wall();
-                horizontalWall.setWallMoveConsiderationEvent(
-                        new WallMoveConsiderationEvent(x, y,
-                                WallOrientation.HORIZONTAL)
-                );
+                Wall horizontalWall = new Wall(Move.makeWallMove(x, y,
+                        WallOrientation.HORIZONTAL));
                 add(horizontalWall);
                 horizontalWalls[x][y] = horizontalWall;
 
-                Wall verticalWall = new Wall();
-                verticalWall.setWallMoveConsiderationEvent(
-                        new WallMoveConsiderationEvent(x, y,
-                                WallOrientation.VERTICAL)
-                );
+                Wall verticalWall = new Wall(Move.makeWallMove(x, y,
+                        WallOrientation.VERTICAL));
                 add(verticalWall);
                 verticalWalls[x][y] = verticalWall;
             }

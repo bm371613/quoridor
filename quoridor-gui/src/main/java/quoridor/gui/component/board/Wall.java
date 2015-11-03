@@ -1,7 +1,9 @@
 package quoridor.gui.component.board;
 
+import quoridor.core.Move;
 import quoridor.gui.event.EventListener;
-import quoridor.gui.event.WallMoveConsiderationEvent;
+import quoridor.gui.event.MoveChoiceEvent;
+import quoridor.gui.event.MoveConsiderationEvent;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -15,11 +17,13 @@ public class Wall extends JPanel implements MouseListener {
 
     private EventListener eventListener;
 
-    private WallMoveConsiderationEvent wallMoveConsiderationEvent;
+    private Move move;
     private boolean built;
     private boolean highlighted;
 
-    public Wall() {
+    public Wall(Move move) {
+        this.move = move;
+
         addMouseListener(this);
         setOpaque(false);
         setBuilt(false);
@@ -27,10 +31,6 @@ public class Wall extends JPanel implements MouseListener {
 
     public void setEventListener(EventListener eventListener) {
         this.eventListener = eventListener;
-    }
-
-    public void setWallMoveConsiderationEvent(WallMoveConsiderationEvent e) {
-        wallMoveConsiderationEvent = e;
     }
 
     public void setBuilt(boolean built) {
@@ -63,6 +63,7 @@ public class Wall extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
     }
 
     @Override
@@ -75,7 +76,7 @@ public class Wall extends JPanel implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        eventListener.notifyAboutEvent(this, wallMoveConsiderationEvent);
+        eventListener.notifyAboutEvent(this, new MoveConsiderationEvent(move));
     }
 
     @Override
