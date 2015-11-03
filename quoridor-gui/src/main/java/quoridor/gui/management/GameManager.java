@@ -42,7 +42,7 @@ public class GameManager implements EventListener {
     }
 
     private void newGame() {
-        gameState = GameRules.makeInitialStateForTwo(Goal.TOP);
+        gameState = GameRules.makeInitialStateForFour();
         updateBoard();
     }
 

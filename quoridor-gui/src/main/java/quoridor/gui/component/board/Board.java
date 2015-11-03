@@ -8,6 +8,7 @@ import java.awt.event.ComponentListener;
 import java.util.function.Function;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
@@ -25,19 +26,12 @@ public class Board extends JPanel implements ComponentListener {
     private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
     private Wall[][] verticalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
 
-    private Pawn[] pawns = {
-            new Pawn(Color.WHITE),
-            new Pawn(Color.BLACK),
-            new Pawn(Color.BLUE),
-            new Pawn(Color.RED)
+    private Color[] playerColors = {
+            Color.BLACK, Color.GRAY, Color.BLUE, Color.RED
     };
 
-    private JLabel[] wallLabels = {
-            new JLabel(),
-            new JLabel(),
-            new JLabel(),
-            new JLabel()
-    };
+    private Pawn[] pawns;
+    private JLabel[] wallLabels;
 
     public Board() {
         setLayout(null);
@@ -75,8 +69,16 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        for (JLabel wallLabel : wallLabels) {
-            add(wallLabel);
+        pawns = new Pawn[playerColors.length];
+        wallLabels = new JLabel[playerColors.length];
+        for (int i = 0; i < playerColors.length; ++i) {
+            pawns[i] = new Pawn(playerColors[i]);
+
+            wallLabels[i] = new JLabel();
+            wallLabels[i].setForeground(playerColors[i]);
+            wallLabels[i].setVerticalAlignment(SwingConstants.CENTER);
+            wallLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+            add(wallLabels[i]);
         }
     }
 
@@ -87,6 +89,10 @@ public class Board extends JPanel implements ComponentListener {
             }
             return null;
         });
+
+        for (JLabel wallLabel : wallLabels) {
+            wallLabel.setText("");
+        }
 
         gs.getPlayerStates().forEach((player) -> {
             int ix = player.getGoal().ordinal();
@@ -108,7 +114,7 @@ public class Board extends JPanel implements ComponentListener {
             currentPawnPlace.liftPawn();
         }
         places[state.getX()][state.getY()].putPawn(pawn);
-        label.setText("Walls left: " + state.getWallsLeft());
+        label.setText("" + state.getWallsLeft());
     }
 
     @Override
@@ -182,9 +188,12 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        wallLabels[Goal.TOP.ordinal()].setBounds(0, 0, boardSide, margin);
-        wallLabels[Goal.BOTTOM.ordinal()].setBounds(0, boardSide - margin,
+        wallLabels[Goal.TOP.ordinal()].setBounds(0, boardSide - margin,
                 boardSide, margin);
+        wallLabels[Goal.RIGHT.ordinal()].setBounds(0, 0, margin, boardSide);
+        wallLabels[Goal.BOTTOM.ordinal()].setBounds(0, 0, boardSide, margin);
+        wallLabels[Goal.LEFT.ordinal()].setBounds(boardSide - margin, 0, margin,
+                boardSide);
     }
 
 

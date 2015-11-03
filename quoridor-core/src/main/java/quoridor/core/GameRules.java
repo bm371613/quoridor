@@ -16,18 +16,33 @@ public class GameRules {
     private GameRules() {
     }
 
-    public static GameState makeInitialStateForTwo(Goal firstGoal) {
+    public static GameState makeInitialStateForTwo() {
         int top = GameState.PLACES - 1;
         int bottom = 0;
         int middle = GameState.PLACES / 2;
         int initWalls = 10;
-        List<PlayerState> playerStates = (firstGoal == Goal.TOP)
-                ? ImmutableList.of(
+        List<PlayerState> playerStates = ImmutableList.of(
                     new PlayerState(Goal.TOP, middle, bottom, initWalls),
-                    new PlayerState(Goal.BOTTOM, middle, top, initWalls))
-                : ImmutableList.of(
-                    new PlayerState(Goal.BOTTOM, middle, top, initWalls),
-                    new PlayerState(Goal.TOP, middle, bottom, initWalls));
+                    new PlayerState(Goal.BOTTOM, middle, top, initWalls));
+        return GameState.builder()
+                .setWallsState(WallsState.builder().build())
+                .setPlayersStates(playerStates)
+                .setTurn(0)
+                .build();
+    }
+
+    public static GameState makeInitialStateForFour() {
+        int top = GameState.PLACES - 1;
+        int bottom = 0;
+        int left = 0;
+        int right = GameState.PLACES - 1;
+        int middle = GameState.PLACES / 2;
+        int initWalls = 5;
+        List<PlayerState> playerStates = ImmutableList.of(
+                new PlayerState(Goal.TOP, middle, bottom, initWalls),
+                new PlayerState(Goal.RIGHT, left, middle, initWalls),
+                new PlayerState(Goal.BOTTOM, middle, top, initWalls),
+                new PlayerState(Goal.LEFT, right, middle, initWalls));
         return GameState.builder()
                 .setWallsState(WallsState.builder().build())
                 .setPlayersStates(playerStates)

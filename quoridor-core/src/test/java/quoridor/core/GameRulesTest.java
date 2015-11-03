@@ -13,7 +13,7 @@ public class GameRulesTest {
     @Test
     public void shouldAllowLegalSimplePawnMove() {
         GameState gs = GameState.builder()
-                .copyFrom(GameRules.makeInitialStateForTwo(Goal.TOP))
+                .copyFrom(GameRules.makeInitialStateForTwo())
                 .setPlayerState(0, new PlayerState(Goal.TOP, 4, 6, 0))
                 .build();
 
@@ -26,7 +26,7 @@ public class GameRulesTest {
     @Test
     public void shouldNotAllowIllegalSimplePawnMove() {
         GameState gs = GameState.builder()
-                .copyFrom(GameRules.makeInitialStateForTwo(Goal.TOP))
+                .copyFrom(GameRules.makeInitialStateForTwo())
                 .setPlayerState(0, new PlayerState(Goal.TOP, 4, 6, 0))
                 .build();
 
@@ -55,7 +55,7 @@ public class GameRulesTest {
                 .set(4, 5, WallOrientation.VERTICAL)
                 .build();
         GameState gs = GameState.builder()
-                .copyFrom(GameRules.makeInitialStateForTwo(Goal.TOP))
+                .copyFrom(GameRules.makeInitialStateForTwo())
                 .setPlayerState(0, new PlayerState(Goal.TOP, 4, 6, 0))
                 .setWallsState(wallsState)
                 .build();
