@@ -22,7 +22,7 @@ public class GameManager implements EventListener {
     public GameManager(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
 
-        this.mainWindow.setEventListener(this);
+        this.mainWindow.getNewGameDialog().setEventListener(this);
         this.mainWindow.getBoard().forEachPlace((p) -> {
             p.setEventListener(this);
             return null;
@@ -41,15 +41,17 @@ public class GameManager implements EventListener {
         mainWindow.getBoard().loadGameState(gameState);
     }
 
-    private void newGame() {
-        gameState = GameRules.makeInitialStateForFour();
+    private void newGame(NewGameEvent newGameEvent) {
+        gameState = newGameEvent.getPlayerTypes().size() == 2
+                ? GameRules.makeInitialStateForTwo()
+                : GameRules.makeInitialStateForFour();
         updateBoard();
     }
 
     @Override
     public void notifyAboutEvent(Object source, Object event) {
         if (event instanceof NewGameEvent) {
-            newGame();
+            newGame((NewGameEvent) event);
         } else if (event instanceof WallMoveConsiderationEvent) {
             if (gameState == null) {
                 return;

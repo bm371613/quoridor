@@ -1,14 +1,26 @@
 package quoridor.gui.event;
 
+import com.google.common.collect.ImmutableList;
 import quoridor.gui.management.PlayerType;
 
 public class NewGameEvent {
 
-    private PlayerType topPlayerType;
-    private PlayerType bottomPlayerType;
+    private ImmutableList<PlayerType> playerTypes;
 
-    public NewGameEvent(PlayerType topPlayerType, PlayerType bottomPlayerType) {
-        this.topPlayerType = topPlayerType;
-        this.bottomPlayerType = bottomPlayerType;
+    private NewGameEvent(PlayerType... playerTypes) {
+        this.playerTypes = ImmutableList.copyOf(playerTypes);
+    }
+
+    public static NewGameEvent gameForTwo() {
+        return new NewGameEvent(PlayerType.HUMAN, PlayerType.HUMAN);
+    }
+
+    public static NewGameEvent gameForFour() {
+        return new NewGameEvent(PlayerType.HUMAN, PlayerType.HUMAN,
+                PlayerType.HUMAN, PlayerType.HUMAN);
+    }
+
+    public ImmutableList<PlayerType> getPlayerTypes() {
+        return playerTypes;
     }
 }
