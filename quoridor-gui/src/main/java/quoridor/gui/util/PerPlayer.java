@@ -1,6 +1,7 @@
 package quoridor.gui.util;
 
 import com.google.common.collect.Lists;
+import javafx.util.Pair;
 import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 
@@ -20,24 +21,43 @@ public class PerPlayer<V> {
         return this;
     }
 
+    public static <V> PerPlayer<V> of(Function <Goal, V> function) {
+        PerPlayer<V> result = new PerPlayer<>();
+        for (Goal goal : Goal.values()) {
+            result.set(goal, function.apply(goal));
+        }
+        return result;
+    }
+
     public V get(PlayerState playerState) {
         return values.get(playerState.getGoal().ordinal());
     }
 
-    public PerPlayer<V> set(PlayerState playerState, V value) {
-        values.set(playerState.getGoal().ordinal(), value);
-        return this;
-    }
-
-    public void forEach(Consumer<V> consumer) {
+    public void forEachValue(Consumer<V> consumer) {
         values.forEach(consumer::accept);
     }
 
-    public <R> PerPlayer<R> map(Function <V, R> function) {
-        PerPlayer<R> result = new PerPlayer<>();
+    public void forEachEntry(Consumer<Entry<V>> consumer) {
         for (Goal goal : Goal.values()) {
-            result.set(goal, function.apply(get(goal)));
+            consumer.accept(new Entry<>(goal, get(goal)));
         }
-        return result;
+    }
+
+    public static final class Entry<V> {
+        private final Goal goal;
+        private final V value;
+
+        private Entry(Goal goal, V value) {
+            this.goal = goal;
+            this.value = value;
+        }
+
+        public Goal getGoal() {
+            return goal;
+        }
+
+        public V getValue() {
+            return value;
+        }
     }
 }

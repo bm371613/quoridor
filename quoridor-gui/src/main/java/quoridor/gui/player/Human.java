@@ -2,9 +2,15 @@ package quoridor.gui.player;
 
 import quoridor.gui.event.EventListener;
 
-public final class Human implements Player {
+import java.awt.Color;
+
+public final class Human extends Player {
 
     private EventListener moveEventListener;
+
+    public Human(String name, Color color) {
+        super(name, color);
+    }
 
     @Override
     public void makeTurn(EventListener moveEventListener) {

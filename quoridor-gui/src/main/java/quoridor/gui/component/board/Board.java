@@ -26,15 +26,9 @@ public class Board extends JPanel implements ComponentListener {
     private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
     private Wall[][] verticalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
 
-    private PerPlayer<Color> playerColors = new PerPlayer<Color>()
-            .set(Goal.TOP, Color.BLACK)
-            .set(Goal.BOTTOM, Color.GRAY)
-            .set(Goal.LEFT, Color.BLUE)
-            .set(Goal.RIGHT, Color.RED);
-    private PerPlayer<Pawn> pawns = playerColors.map(Pawn::new);
-    private PerPlayer<JLabel> wallLabels = playerColors.map((c) -> {
+    private PerPlayer<Pawn> pawns = PerPlayer.of((g) -> new Pawn());
+    private PerPlayer<JLabel> wallLabels = PerPlayer.of((g) -> {
         JLabel result = new JLabel();
-        result.setForeground(c);
         result.setVerticalAlignment(SwingConstants.CENTER);
         result.setHorizontalAlignment(SwingConstants.CENTER);
         return result;
@@ -67,7 +61,12 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        wallLabels.forEach(this::add);
+        wallLabels.forEachValue(this::add);
+    }
+
+    public void setPlayerColor(Goal goal, Color color) {
+        pawns.get(goal).setColor(color);
+        wallLabels.get(goal).setForeground(color);
     }
 
     public void loadGameState(GameState gs) {
@@ -77,7 +76,7 @@ public class Board extends JPanel implements ComponentListener {
             }
         });
 
-        wallLabels.forEach((wallLabel) -> wallLabel.setText(""));
+        wallLabels.forEachValue((wallLabel) -> wallLabel.setText(""));
 
         gs.getPlayerStates().forEach(this::loadPlayerState);
 

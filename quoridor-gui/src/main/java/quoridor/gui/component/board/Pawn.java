@@ -8,8 +8,11 @@ public class Pawn extends JPanel {
 
     private Color color;
 
-    public Pawn(Color color) {
+    public Pawn() {
         setOpaque(false);
+    }
+
+    public void setColor(Color color) {
         this.color = color;
     }
 

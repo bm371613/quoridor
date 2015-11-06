@@ -40,6 +40,8 @@ public class GameManager implements EventListener {
     private void newGame(NewGameEvent newGameEvent) {
         gameState = newGameEvent.getGameState();
         players = newGameEvent.getPlayers();
+        players.forEachEntry((e) -> mainWindow.getBoard().setPlayerColor(
+                e.getGoal(), e.getValue().getColor()));
         updateBoard();
         performTurn();
     }

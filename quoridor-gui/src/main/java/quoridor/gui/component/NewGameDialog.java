@@ -2,6 +2,7 @@ package quoridor.gui.component;
 
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
+import quoridor.core.state.Goal;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.NewGameEvent;
 import quoridor.gui.player.Human;
@@ -14,6 +15,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
@@ -27,6 +29,12 @@ public class NewGameDialog extends JDialog {
     private JRadioButton fourPlayersRadioButton;
 
     private EventListener eventListener;
+
+    private PerPlayer<Color> colors = new PerPlayer<Color>()
+            .set(Goal.TOP, Color.BLACK)
+            .set(Goal.BOTTOM, Color.GRAY)
+            .set(Goal.LEFT, Color.BLUE)
+            .set(Goal.RIGHT, Color.RED);
 
 
     public NewGameDialog(JFrame owner) {
@@ -61,7 +69,9 @@ public class NewGameDialog extends JDialog {
         GameState gs = twoPlayersRadioButton.isSelected()
                 ? GameRules.makeInitialStateForTwo()
                 : GameRules.makeInitialStateForFour();
-        PerPlayer<Player> players = new PerPlayer<>().map((p) -> new Human());
+
+        PerPlayer<Player> players = PerPlayer.of(
+                (g) -> new Human(g.name(), colors.get(g)));
         eventListener.notifyAboutEvent(null, new NewGameEvent(gs, players));
         setVisible(false);
     }
