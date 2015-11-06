@@ -7,9 +7,9 @@ import quoridor.core.util.Positioned;
 
 import java.util.List;
 
-public class GameState {
-    public static int PLACES = 9; // number of places along each side
-    public static int WALL_PLACES = PLACES - 1 ;
+public final class GameState {
+    public static final int PLACES = 9; // number of places along each side
+    public static final int WALL_PLACES = PLACES - 1;
 
     private WallsState wallsState;
     private ImmutableList<PlayerState> playerStates;
@@ -38,14 +38,14 @@ public class GameState {
                     .movedTo(move.getX(), move.getY());
             builder.setPlayerState(currentPlayerIx(), playerState);
         } else {
-            WallsState wallsState = WallsState.builder()
+            WallsState newWallState = WallsState.builder()
                     .copyFrom(getWallsState())
                     .set(move.getX(), move.getY(), move.getWallOrientation())
                     .build();
-            PlayerState playerState = getCurrentPlayersState()
+            PlayerState newCurrentPlayersState = getCurrentPlayersState()
                     .withWallsLeft(getCurrentPlayersState().getWallsLeft() - 1);
-            builder.setWallsState(wallsState)
-                    .setPlayerState(currentPlayerIx(), playerState);
+            builder.setWallsState(newWallState)
+                    .setPlayerState(currentPlayerIx(), newCurrentPlayersState);
         }
 
         builder.setTurn(turn + 1);
@@ -113,12 +113,12 @@ public class GameState {
         return new Builder();
     }
 
-    public static class Builder {
+    public static final class Builder {
 
         private List<PlayerState> playerStates;
         private GameState result;
 
-        private Builder () {
+        private Builder() {
             result = new GameState();
         }
 

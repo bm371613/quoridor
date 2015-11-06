@@ -52,16 +52,14 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
         repaint();
     }
 
-    public Pawn liftPawn() {
-        Pawn pawn = this.pawn;
-        if (pawn == null) {
+    public void liftPawn() {
+        if (this.pawn == null) {
             throw new RuntimeException("Cannot lift pawn from empty place");
         }
+        remove(this.pawn);
         this.pawn = null;
-        remove(pawn);
         revalidate();
         repaint();
-        return pawn;
     }
 
     private void setPawnSize() {

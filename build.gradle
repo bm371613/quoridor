@@ -16,6 +16,9 @@ allprojects {
 
 subprojects {
     apply plugin: 'checkstyle'
+    checkstyle {
+        toolVersion = "5.9"
+    }
 
     checkstyle {
         configFile = new File(rootDir, "checkstyle.xml")

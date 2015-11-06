@@ -5,7 +5,10 @@ import quoridor.gui.management.GameManager;
 
 import javax.swing.SwingUtilities;
 
-public class Main {
+public final class Main {
+
+    private Main() {
+    }
 
     public static void main(String[] args) {
         GameManager gameManager = new GameManager(new MainWindow());

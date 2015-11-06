@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class GameRules {
+public final class GameRules {
 
     private GameRules() {
     }
@@ -116,8 +116,9 @@ public class GameRules {
                 return playerState.getX() == 0;
             case RIGHT:
                 return playerState.getX() == GameState.PLACES - 1;
+            default:
+                throw new RuntimeException("Incorrect player state.");
         }
-        return false;
     }
 
     private static boolean wallMoveCausesCollision(GameState gs, Move move) {
@@ -152,7 +153,7 @@ public class GameRules {
                 || gs.isWallBetween(opponent, move)) {
             return false;
         }
-        return player.getX() == move.getX()|| player.getY() == move.getY()
+        return player.getX() == move.getX() || player.getY() == move.getY()
                 || gs.isWallBehind(player, opponent);
     }
 }

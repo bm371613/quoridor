@@ -1,7 +1,6 @@
 package quoridor.gui.component;
 
 import quoridor.gui.component.board.Board;
-import quoridor.gui.event.EventListener;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -15,9 +14,9 @@ import javax.swing.WindowConstants;
 
 public class MainWindow extends JFrame implements ActionListener {
 
-    Board board;
-    JMenuItem newGameMenuItem = new JMenuItem("New Game");
-    NewGameDialog newGameDialog = new NewGameDialog(this);
+    private Board board;
+    private JMenuItem newGameMenuItem = new JMenuItem("New Game");
+    private NewGameDialog newGameDialog = new NewGameDialog(this);
 
     public MainWindow() {
         setTitle("Quoridor");

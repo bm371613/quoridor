@@ -4,7 +4,7 @@ import quoridor.core.state.GameState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.util.Positioned;
 
-public class Move implements Positioned {
+public final class Move implements Positioned {
 
     private int x;
     private int y;

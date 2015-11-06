@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PerPlayer<V> {
-    List<V> values = Lists.newArrayList(null, null, null, null);
+    private  List<V> values = Lists.newArrayList(null, null, null, null);
 
     public V get(Goal goal) {
         return values.get(goal.ordinal());

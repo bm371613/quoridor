@@ -1,6 +1,6 @@
 package quoridor.core.state;
 
-public class WallsState {
+public final class WallsState {
     private WallOrientation[] walls;
 
     private WallsState() {
@@ -25,7 +25,7 @@ public class WallsState {
         return new Builder();
     }
 
-    public static class Builder {
+    public static final class Builder {
         private WallsState result;
 
         private Builder() {
