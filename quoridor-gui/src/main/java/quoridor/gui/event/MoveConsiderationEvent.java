@@ -1,14 +1,14 @@
 package quoridor.gui.event;
 
 import quoridor.core.Move;
-import quoridor.gui.component.board.MoveComponent;
+import quoridor.gui.component.board.Highlightable;
 
 public class MoveConsiderationEvent {
 
     private Move move;
-    private MoveComponent moveComponent;
+    private Highlightable moveComponent;
 
-    public MoveConsiderationEvent(Move move, MoveComponent moveComponent) {
+    public MoveConsiderationEvent(Move move, Highlightable moveComponent) {
         this.move = move;
         this.moveComponent = moveComponent;
     }
@@ -17,7 +17,7 @@ public class MoveConsiderationEvent {
         return move;
     }
 
-    public MoveComponent getMoveComponent() {
+    public Highlightable getMoveComponent() {
         return moveComponent;
     }
 }

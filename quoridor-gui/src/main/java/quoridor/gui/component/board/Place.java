@@ -12,8 +12,9 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 
-public class Place extends MoveComponent implements ComponentListener,
+public class Place extends JPanel implements Highlightable, ComponentListener,
         MouseListener {
 
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);

@@ -1,6 +1,5 @@
 package quoridor.core;
 
-import quoridor.core.state.GameState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.util.Positioned;
 
@@ -20,9 +19,6 @@ public final class Move implements Positioned {
     }
 
     public static Move makePawnMove(int x, int y) {
-        if (x < 0 || y < 0 || x >= GameState.PLACES || y >= GameState.PLACES) {
-            throw new RuntimeException("Move coordinates out of bounds");
-        }
         return new Move(true, x, y, null);
     }
 
@@ -30,10 +26,6 @@ public final class Move implements Positioned {
             WallOrientation wallOrientation) {
         if (wallOrientation == null) {
             throw new RuntimeException("Wall move must define orientation");
-        }
-        if (x < 0 || y < 0 || x >= GameState.WALL_PLACES
-                || y >= GameState.WALL_PLACES) {
-            throw new RuntimeException("Move coordinates out of bounds");
         }
         return new Move(false, x, y, wallOrientation);
     }

@@ -5,12 +5,13 @@ import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;
 import quoridor.gui.event.MoveConsiderationEvent;
 
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Wall extends MoveComponent implements MouseListener {
+public class Wall extends JPanel implements Highlightable, MouseListener {
 
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 

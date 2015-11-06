@@ -8,10 +8,13 @@ import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;
 
 import java.awt.Color;
+import java.util.List;
+import java.util.Random;
 
 public class BotPlayer extends Player {
 
     Bot bot;
+    Random random = new Random(System.currentTimeMillis());
 
     public BotPlayer(String name, Color color, Bot bot) {
         super(name, color);
@@ -21,7 +24,8 @@ public class BotPlayer extends Player {
     @Override
     public void makeTurn(GameState gameState, EventListener moveEventListener) {
         // TODO
-        Move move = GameRules.getLegalMoves(gameState).iterator().next();
+        List<Move> moves = GameRules.getLegalMoves(gameState);
+        Move move = moves.get(random.nextInt(moves.size()));
         moveEventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
     }
 

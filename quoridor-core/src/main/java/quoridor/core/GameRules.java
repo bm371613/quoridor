@@ -8,7 +8,6 @@ import quoridor.core.state.WallOrientation;
 import quoridor.core.state.WallsState;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public final class GameRules {
@@ -50,8 +49,8 @@ public final class GameRules {
                 .build();
     }
 
-    public static Collection<Move> getLegalMoves(GameState gs) {
-        Collection<Move> result = new ArrayList<>();
+    public static List<Move> getLegalMoves(GameState gs) {
+        List<Move> result = new ArrayList<>();
         Move move;
 
         // pawn moves
@@ -88,10 +87,16 @@ public final class GameRules {
 
     public static boolean isLegalMove(GameState gs, Move move) {
         if (move.isWallMove()) {
-            return gs.getCurrentPlayersState().getWallsLeft() > 0
+            return 0 <= move.getX() && move.getX() < GameState.WALL_PLACES
+                    && 0 <= move.getY() && move.getY() < GameState.WALL_PLACES
+                    && gs.getCurrentPlayersState().getWallsLeft() > 0
                     && !wallMoveCausesCollision(gs, move)
                     && !wallMoveCausesBlocking(gs, move);
         } else {
+            if (!(0 <= move.getX() && move.getX() < GameState.PLACES
+                    && 0 <= move.getY() && move.getY() < GameState.PLACES)) {
+                return false;
+            }
             PlayerState player = gs.getCurrentPlayersState();
             if (player.isBy(move)) {
                 return !gs.isWallBetween(player, move) && !gs.isOccupied(move);
