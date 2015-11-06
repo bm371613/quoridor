@@ -1,5 +1,6 @@
 package quoridor.gui.player;
 
+import quoridor.core.state.GameState;
 import quoridor.gui.event.EventListener;
 
 import java.awt.Color;
@@ -22,6 +23,7 @@ public abstract class Player implements EventListener {
         return color;
     }
 
-    public abstract void makeTurn(EventListener moveEventListener);
+    public abstract void makeTurn(GameState gameState,
+                                  EventListener moveEventListener);
     public abstract void moveAccepted();
 }

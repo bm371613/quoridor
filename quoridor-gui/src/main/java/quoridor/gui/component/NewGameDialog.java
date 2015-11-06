@@ -5,6 +5,7 @@ import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.NewGameEvent;
+import quoridor.gui.player.BotPlayer;
 import quoridor.gui.player.Human;
 import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
@@ -71,7 +72,9 @@ public class NewGameDialog extends JDialog {
                 : GameRules.makeInitialStateForFour();
 
         PerPlayer<Player> players = PerPlayer.of(
-                (g) -> new Human(g.name(), colors.get(g)));
+                (g) -> g == Goal.TOP
+                        ? new Human(g.name(), colors.get(g))
+                        : new BotPlayer(g.name(), colors.get(g), null));
         eventListener.notifyAboutEvent(null, new NewGameEvent(gs, players));
         setVisible(false);
     }

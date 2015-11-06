@@ -6,7 +6,6 @@ import quoridor.core.state.GameState;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;
-import quoridor.gui.event.MoveConsiderationEvent;
 import quoridor.gui.event.NewGameEvent;
 import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
@@ -53,7 +52,7 @@ public class GameManager implements EventListener {
     private void performTurn() {
         Player currentPlayer = getCurrentPlayer();
         setMoveComponentsEventListener(currentPlayer);
-        currentPlayer.makeTurn(this);
+        currentPlayer.makeTurn(gameState, this);
         // TODO
     }
 
@@ -61,14 +60,7 @@ public class GameManager implements EventListener {
     public void notifyAboutEvent(Object source, Object event) {
         if (event instanceof NewGameEvent) {
             newGame((NewGameEvent) event);
-        } else if (event instanceof MoveConsiderationEvent) {
-            if (gameState == null) {
-                return;
-            }
-            MoveConsiderationEvent mce = (MoveConsiderationEvent) event;
-            mce.getMoveComponent().setHighlighted(
-                    GameRules.isLegalMove(gameState, mce.getMove()));
-        } else if (event instanceof MoveChoiceEvent) {
+        }  else if (event instanceof MoveChoiceEvent) {
             if (gameState == null) {
                 return;
             }
