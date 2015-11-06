@@ -22,6 +22,6 @@ public abstract class Player implements EventListener {
         return color;
     }
 
-    abstract public void makeTurn(EventListener moveEventListener);
-    abstract public void moveAccepted();
+    public abstract void makeTurn(EventListener moveEventListener);
+    public abstract void moveAccepted();
 }
