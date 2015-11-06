@@ -2,6 +2,9 @@ package quoridor.gui.component;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -48,8 +51,36 @@ public class NewGameDialog extends JDialog {
         setLocation((screenSize.width - getWidth()) / 2,
                 (screenSize.height - getHeight()) / 2);
 
-
+        contentPane = new JPanel(new GridBagLayout());
         setContentPane(contentPane);
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(10, 10, 10, 10);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+
+        twoPlayersRadioButton = new JRadioButton("Two players");
+        c.gridx = 0;
+        c.gridy = 0;
+        contentPane.add(twoPlayersRadioButton, c);
+
+        fourPlayersRadioButton = new JRadioButton("Four players");
+        c.gridx = 1;
+        c.gridy = 0;
+        contentPane.add(fourPlayersRadioButton, c);
+
+        c.anchor = GridBagConstraints.PAGE_END;
+        c.weighty = 1.0;
+
+        buttonOK = new JButton("OK");
+        c.gridx = 0;
+        c.gridy = 1;
+        contentPane.add(buttonOK, c);
+
+        buttonCancel = new JButton("Cancel");
+        c.gridx = 1;
+        c.gridy = 1;
+        contentPane.add(buttonCancel, c);
 
         twoPlayersRadioButton.setSelected(true);
         ButtonGroup numberOfPlayersButtonGroup = new ButtonGroup();
