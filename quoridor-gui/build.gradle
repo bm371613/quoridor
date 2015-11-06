@@ -4,3 +4,14 @@ dependencies {
     compile project(':quoridor-core')
     compile project(':quoridor-ai')
 }
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Quoridor GUI',
+                'Implementation-Version': version,
+                'Main-Class': 'quoridor.gui.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
