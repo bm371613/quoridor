@@ -5,8 +5,8 @@ import quoridor.core.Move;
 import quoridor.core.state.GameState;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.event.EventListener;
+import quoridor.gui.event.LoadGameEvent;
 import quoridor.gui.event.MoveChoiceEvent;
-import quoridor.gui.event.NewGameEvent;
 import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
 
@@ -36,9 +36,9 @@ public class GameManager implements EventListener {
         );
     }
 
-    private void newGame(NewGameEvent newGameEvent) {
-        gameState = newGameEvent.getGameState();
-        players = newGameEvent.getPlayers();
+    private void loadGame(LoadGameEvent loadGameEvent) {
+        gameState = loadGameEvent.getGameState();
+        players = loadGameEvent.getPlayers();
         players.forEachEntry((e) -> mainWindow.getBoard().setPlayerColor(
                 e.getGoal(), e.getValue().getColor()));
         updateBoard();
@@ -58,8 +58,8 @@ public class GameManager implements EventListener {
 
     @Override
     public void notifyAboutEvent(Object source, Object event) {
-        if (event instanceof NewGameEvent) {
-            newGame((NewGameEvent) event);
+        if (event instanceof LoadGameEvent) {
+            loadGame((LoadGameEvent) event);
         }  else if (event instanceof MoveChoiceEvent) {
             if (gameState == null) {
                 return;

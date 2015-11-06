@@ -7,7 +7,7 @@ import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
 
 @Value
-public class NewGameEvent {
+public class LoadGameEvent {
     private final GameState gameState;
     private final PerPlayer<Player> players;
 }
