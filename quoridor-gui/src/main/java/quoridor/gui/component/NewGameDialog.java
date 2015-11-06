@@ -1,5 +1,15 @@
 package quoridor.gui.component;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
@@ -9,16 +19,6 @@ import quoridor.gui.player.BotPlayer;
 import quoridor.gui.player.Human;
 import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 
 public class NewGameDialog extends JDialog {
 

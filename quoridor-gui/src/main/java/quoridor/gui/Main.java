@@ -1,8 +1,8 @@
 package quoridor.gui;
 
-import quoridor.gui.component.MainWindow;
-
 import javax.swing.SwingUtilities;
+
+import quoridor.gui.component.MainWindow;
 
 public final class Main {
 

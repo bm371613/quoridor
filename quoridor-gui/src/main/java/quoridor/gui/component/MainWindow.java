@@ -1,7 +1,5 @@
 package quoridor.gui.component;
 
-import quoridor.gui.component.board.Board;
-
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +9,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
+
+import quoridor.gui.component.board.Board;
 
 public class MainWindow extends JFrame implements ActionListener {
 

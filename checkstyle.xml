@@ -128,6 +128,14 @@
             <property name="severity" value="error" />
             <property name="processJavadoc" value="false" />
         </module>
+        <module name="CustomImportOrder">
+            <property name="customImportOrderRules"
+                      value="STANDARD_JAVA_PACKAGE###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STATIC"/>
+            <property name="thirdPartyPackageRegExp" value="^(com|org)\."/>
+            <property name="specialImportsRegExp" value="^quoridor\."/>
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+            <property name="separateLineBetweenGroups" value="true"/>
+        </module>
 
         <module name="LineLength">
             <property name="max" value="80" />

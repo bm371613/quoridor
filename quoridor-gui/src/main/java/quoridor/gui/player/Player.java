@@ -1,9 +1,9 @@
 package quoridor.gui.player;
 
+import java.awt.Color;
+
 import quoridor.core.state.GameState;
 import quoridor.gui.event.EventListener;
-
-import java.awt.Color;
 
 public abstract class Player implements EventListener {
 

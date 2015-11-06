@@ -1,10 +1,5 @@
 package quoridor.gui.component.board;
 
-import quoridor.core.Move;
-import quoridor.gui.event.EventListener;
-import quoridor.gui.event.MoveChoiceEvent;
-import quoridor.gui.event.MoveConsiderationEvent;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
@@ -13,6 +8,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+
+import quoridor.core.Move;
+import quoridor.gui.event.EventListener;
+import quoridor.gui.event.MoveChoiceEvent;
+import quoridor.gui.event.MoveConsiderationEvent;
 
 public class Place extends JPanel implements Highlightable, ComponentListener,
         MouseListener {

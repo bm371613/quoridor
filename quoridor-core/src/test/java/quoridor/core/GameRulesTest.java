@@ -2,6 +2,7 @@ package quoridor.core;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;

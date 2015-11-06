@@ -1,12 +1,13 @@
 package quoridor.gui.util;
 
-import com.google.common.collect.Lists;
-import quoridor.core.state.Goal;
-import quoridor.core.state.PlayerState;
-
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import com.google.common.collect.Lists;
+
+import quoridor.core.state.Goal;
+import quoridor.core.state.PlayerState;
 
 public class PerPlayer<V> {
     private  List<V> values = Lists.newArrayList(null, null, null, null);

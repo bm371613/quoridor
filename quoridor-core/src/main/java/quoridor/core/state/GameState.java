@@ -1,11 +1,12 @@
 package quoridor.core.state;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
 import quoridor.core.Move;
 import quoridor.core.util.Positioned;
-
-import java.util.List;
 
 public final class GameState {
     public static final int PLACES = 9; // number of places along each side

@@ -1,15 +1,15 @@
 package quoridor.gui.component.board;
 
-import quoridor.core.Move;
-import quoridor.gui.event.EventListener;
-import quoridor.gui.event.MoveChoiceEvent;
-import quoridor.gui.event.MoveConsiderationEvent;
-
-import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.JPanel;
+
+import quoridor.core.Move;
+import quoridor.gui.event.EventListener;
+import quoridor.gui.event.MoveChoiceEvent;
+import quoridor.gui.event.MoveConsiderationEvent;
 
 public class Wall extends JPanel implements Highlightable, MouseListener {
 

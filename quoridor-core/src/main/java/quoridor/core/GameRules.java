@@ -1,14 +1,15 @@
 package quoridor.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
+
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.WallsState;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class GameRules {
 

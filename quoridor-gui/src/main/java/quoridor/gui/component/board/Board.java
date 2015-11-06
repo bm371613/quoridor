@@ -13,8 +13,8 @@ import javax.swing.SwingConstants;
 import quoridor.core.Move;
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
-import quoridor.core.state.WallOrientation;
 import quoridor.core.state.PlayerState;
+import quoridor.core.state.WallOrientation;
 import quoridor.gui.util.PerPlayer;
 
 public class Board extends JPanel implements ComponentListener {

@@ -1,11 +1,11 @@
 package quoridor.gui.player;
 
+import java.awt.Color;
+
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveConsiderationEvent;
-
-import java.awt.Color;
 
 public final class Human extends Player {
 

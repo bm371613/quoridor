@@ -1,5 +1,9 @@
 package quoridor.gui.player;
 
+import java.awt.Color;
+import java.util.List;
+import java.util.Random;
+
 import quoridor.ai.Bot;
 import quoridor.core.GameRules;
 import quoridor.core.Move;
@@ -7,14 +11,10 @@ import quoridor.core.state.GameState;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.Random;
-
 public class BotPlayer extends Player {
 
-    Bot bot;
-    Random random = new Random(System.currentTimeMillis());
+    private Bot bot;
+    private Random random = new Random(System.currentTimeMillis());
 
     public BotPlayer(String name, Color color, Bot bot) {
         super(name, color);
