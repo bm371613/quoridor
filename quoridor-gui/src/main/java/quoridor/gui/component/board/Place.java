@@ -23,7 +23,7 @@ public class Place extends JPanel implements Highlightable, ComponentListener,
     private EventListener eventListener;
 
     private Pawn pawn;
-    private Move move;
+    private final Move move;
 
     public Place(Move move) {
         this.move = move;

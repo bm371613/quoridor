@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import lombok.Setter;
+
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
@@ -25,16 +27,12 @@ import quoridor.gui.util.PerPlayer;
 
 public class NewGameDialog extends JDialog {
 
-    private JPanel contentPane;
-    private JButton buttonOK;
-    private JButton buttonCancel;
+    private final JRadioButton twoPlayersRadioButton;
+    private final JRadioButton fourPlayersRadioButton;
 
-    private JRadioButton twoPlayersRadioButton;
-    private JRadioButton fourPlayersRadioButton;
+    @Setter private EventListener eventListener;
 
-    private EventListener eventListener;
-
-    private PerPlayer<Color> colors = new PerPlayer<Color>()
+    private final PerPlayer<Color> colors = new PerPlayer<Color>()
             .set(Goal.TOP, Color.BLACK)
             .set(Goal.BOTTOM, Color.GRAY)
             .set(Goal.LEFT, Color.BLUE)
@@ -51,7 +49,7 @@ public class NewGameDialog extends JDialog {
         setLocation((screenSize.width - getWidth()) / 2,
                 (screenSize.height - getHeight()) / 2);
 
-        contentPane = new JPanel(new GridBagLayout());
+        JPanel contentPane = new JPanel(new GridBagLayout());
         setContentPane(contentPane);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -72,12 +70,12 @@ public class NewGameDialog extends JDialog {
         c.anchor = GridBagConstraints.PAGE_END;
         c.weighty = 1.0;
 
-        buttonOK = new JButton("OK");
+        JButton buttonOK = new JButton("OK");
         c.gridx = 0;
         c.gridy = 1;
         contentPane.add(buttonOK, c);
 
-        buttonCancel = new JButton("Cancel");
+        JButton buttonCancel = new JButton("Cancel");
         c.gridx = 1;
         c.gridy = 1;
         contentPane.add(buttonCancel, c);
@@ -91,10 +89,6 @@ public class NewGameDialog extends JDialog {
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> dispose());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-    }
-
-    public void setEventListener(EventListener eventListener) {
-        this.eventListener = eventListener;
     }
 
     private void onOK() {

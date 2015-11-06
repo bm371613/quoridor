@@ -1,7 +1,7 @@
 package quoridor.core.state;
 
 public final class WallsState {
-    private WallOrientation[] walls;
+    private final WallOrientation[] walls;
 
     private WallsState() {
         walls = new WallOrientation[

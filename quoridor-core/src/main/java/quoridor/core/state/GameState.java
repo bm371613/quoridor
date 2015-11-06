@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import lombok.Getter;
 
 import quoridor.core.Move;
 import quoridor.core.util.Positioned;
@@ -12,19 +13,15 @@ public final class GameState {
     public static final int PLACES = 9; // number of places along each side
     public static final int WALL_PLACES = PLACES - 1;
 
-    private WallsState wallsState;
-    private ImmutableList<PlayerState> playerStates;
-    private int turn;
+    @Getter private final WallsState wallsState;
+    @Getter private final ImmutableList<PlayerState> playerStates;
+    private final int turn;
 
-    private GameState() {
-    }
-
-    public WallsState getWallsState() {
-        return wallsState;
-    }
-
-    public ImmutableList<PlayerState> getPlayerStates() {
-        return playerStates;
+    public GameState(WallsState wallsState,
+                     ImmutableList<PlayerState> playerStates, int turn) {
+        this.wallsState = wallsState;
+        this.playerStates = playerStates;
+        this.turn = turn;
     }
 
     public int currentPlayerIx() {
@@ -119,10 +116,10 @@ public final class GameState {
     public static final class Builder {
 
         private List<PlayerState> playerStates;
-        private GameState result;
+        private WallsState wallsState;
+        private int turn;
 
         private Builder() {
-            result = new GameState();
         }
 
         public Builder copyFrom(GameState gs) {
@@ -133,7 +130,7 @@ public final class GameState {
         }
 
         public Builder setWallsState(WallsState wallsState) {
-            result.wallsState = wallsState;
+            this.wallsState = wallsState;
             return this;
         }
 
@@ -148,13 +145,13 @@ public final class GameState {
         }
 
         public Builder setTurn(int turn) {
-            result.turn = turn;
+            this.turn = turn;
             return this;
         }
 
         public GameState build() {
-            result.playerStates = ImmutableList.copyOf(this.playerStates);
-            return result;
+            return new GameState(wallsState,
+                    ImmutableList.copyOf(this.playerStates), turn);
         }
 
     }

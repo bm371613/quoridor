@@ -1,16 +1,10 @@
 package quoridor.gui.event;
 
+import lombok.Value;
+
 import quoridor.core.Move;
 
+@Value
 public class MoveChoiceEvent {
-
-    private Move move;
-
-    public MoveChoiceEvent(Move move) {
-        this.move = move;
-    }
-
-    public Move getMove() {
-        return move;
-    }
+    private final Move move;
 }

@@ -10,13 +10,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
+import lombok.Getter;
+
 import quoridor.gui.component.board.Board;
 
 public class MainWindow extends JFrame implements ActionListener {
 
-    private Board board;
-    private JMenuItem newGameMenuItem = new JMenuItem("New Game");
-    private NewGameDialog newGameDialog = new NewGameDialog(this);
+    @Getter private final Board board;
+    @Getter private final NewGameDialog newGameDialog = new NewGameDialog(this);
+
+    private final JMenuItem newGameMenuItem = new JMenuItem("New Game");
 
     public MainWindow() {
         setTitle("Quoridor");
@@ -36,14 +39,6 @@ public class MainWindow extends JFrame implements ActionListener {
         setLayout(new GridBagLayout());
         add(board);
         pack();
-    }
-
-    public NewGameDialog getNewGameDialog() {
-        return newGameDialog;
-    }
-
-    public Board getBoard() {
-        return board;
     }
 
     @Override

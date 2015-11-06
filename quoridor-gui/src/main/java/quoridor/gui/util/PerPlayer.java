@@ -5,12 +5,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.google.common.collect.Lists;
+import lombok.Value;
 
 import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 
 public class PerPlayer<V> {
-    private  List<V> values = Lists.newArrayList(null, null, null, null);
+    private final List<V> values = Lists.newArrayList(null, null, null, null);
 
     public V get(Goal goal) {
         return values.get(goal.ordinal());
@@ -43,21 +44,9 @@ public class PerPlayer<V> {
         }
     }
 
+    @Value
     public static final class Entry<V> {
         private final Goal goal;
         private final V value;
-
-        private Entry(Goal goal, V value) {
-            this.goal = goal;
-            this.value = value;
-        }
-
-        public Goal getGoal() {
-            return goal;
-        }
-
-        public V getValue() {
-            return value;
-        }
     }
 }

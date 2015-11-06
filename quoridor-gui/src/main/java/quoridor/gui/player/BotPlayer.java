@@ -13,8 +13,8 @@ import quoridor.gui.event.MoveChoiceEvent;
 
 public class BotPlayer extends Player {
 
-    private Bot bot;
-    private Random random = new Random(System.currentTimeMillis());
+    private final Bot bot;
+    private final Random random = new Random(System.currentTimeMillis());
 
     public BotPlayer(String name, Color color, Bot bot) {
         super(name, color);

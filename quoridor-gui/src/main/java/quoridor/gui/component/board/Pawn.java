@@ -4,16 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
+import lombok.Setter;
+
 public class Pawn extends JPanel {
 
-    private Color color;
+    @Setter private Color color;
 
     public Pawn() {
         setOpaque(false);
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 
     @Override

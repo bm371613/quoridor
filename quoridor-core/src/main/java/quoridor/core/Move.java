@@ -1,14 +1,16 @@
 package quoridor.core;
 
+import lombok.Getter;
+
 import quoridor.core.state.WallOrientation;
 import quoridor.core.util.Positioned;
 
 public final class Move implements Positioned {
 
-    private int x;
-    private int y;
-    private final boolean isPawnMove;
-    private WallOrientation wallOrientation;
+    @Getter private final int x;
+    @Getter private final int y;
+    @Getter private final boolean isPawnMove;
+    @Getter private final WallOrientation wallOrientation;
 
     private Move(boolean isPawnMove, int x, int y,
                  WallOrientation wallOrientation) {
@@ -30,25 +32,7 @@ public final class Move implements Positioned {
         return new Move(false, x, y, wallOrientation);
     }
 
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    public boolean isPawnMove() {
-        return isPawnMove;
-    }
-
     public boolean isWallMove() {
         return !isPawnMove();
-    }
-
-    public WallOrientation getWallOrientation() {
-        return wallOrientation;
     }
 }

@@ -1,24 +1,13 @@
 package quoridor.gui.event;
 
+import lombok.Value;
+
 import quoridor.core.state.GameState;
 import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
 
+@Value
 public class NewGameEvent {
-
-    private GameState gameState;
-    private PerPlayer<Player> players;
-
-    public NewGameEvent(GameState gameState, PerPlayer<Player> players) {
-        this.gameState = gameState;
-        this.players = players;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public PerPlayer<Player> getPlayers() {
-        return players;
-    }
+    private final GameState gameState;
+    private final PerPlayer<Player> players;
 }

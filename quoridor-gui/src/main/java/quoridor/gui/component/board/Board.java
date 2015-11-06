@@ -22,9 +22,9 @@ public class Board extends JPanel implements ComponentListener {
     private static final int PLACES_SIZE = GameState.PLACES;
     private static final int WALLS_SIZE = GameState.WALL_PLACES;
 
-    private Place[][] places = new Place[PLACES_SIZE][PLACES_SIZE];
-    private Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
-    private Wall[][] verticalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
+    private final Place[][] places = new Place[PLACES_SIZE][PLACES_SIZE];
+    private final Wall[][] horizontalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
+    private final Wall[][] verticalWalls = new Wall[WALLS_SIZE][WALLS_SIZE];
 
     private PerPlayer<Pawn> pawns = PerPlayer.of((g) -> new Pawn());
     private PerPlayer<JLabel> wallLabels = PerPlayer.of((g) -> {
@@ -172,7 +172,6 @@ public class Board extends JPanel implements ComponentListener {
         wallLabels.get(Goal.LEFT).setBounds(boardSide - margin, 0, margin,
                 boardSide);
     }
-
 
 
     @Override
