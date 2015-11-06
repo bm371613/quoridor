@@ -1,7 +1,7 @@
 package quoridor.gui.event;
 
 import quoridor.core.state.GameState;
-import quoridor.gui.management.Player;
+import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
 
 public class NewGameEvent {

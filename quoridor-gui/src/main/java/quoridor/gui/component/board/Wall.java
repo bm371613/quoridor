@@ -9,9 +9,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JPanel;
 
-public class Wall extends JPanel implements MouseListener {
+public class Wall extends MoveComponent implements MouseListener {
 
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
@@ -46,6 +45,7 @@ public class Wall extends JPanel implements MouseListener {
         updateBackground();
     }
 
+    @Override
     public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
         updateBackground();
@@ -84,7 +84,10 @@ public class Wall extends JPanel implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        eventListener.notifyAboutEvent(this, new MoveConsiderationEvent(move));
+        if (eventListener != null) {
+            eventListener.notifyAboutEvent(this,
+                    new MoveConsiderationEvent(move, this));
+        }
     }
 
     @Override

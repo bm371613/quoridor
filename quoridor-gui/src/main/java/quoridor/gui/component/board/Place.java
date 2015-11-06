@@ -12,9 +12,9 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
-import javax.swing.JPanel;
 
-public class Place extends JPanel implements ComponentListener, MouseListener {
+public class Place extends MoveComponent implements ComponentListener,
+        MouseListener {
 
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
@@ -68,6 +68,7 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
         pawn.setBounds(w / 4, h / 4, w / 2, h / 2);
     }
 
+    @Override
     public void setHighlighted(boolean highlighted) {
         if (highlighted) {
             setBackground(Color.LIGHT_GRAY);
@@ -121,7 +122,10 @@ public class Place extends JPanel implements ComponentListener, MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        eventListener.notifyAboutEvent(this, new MoveConsiderationEvent(move));
+        if (eventListener != null) {
+            eventListener.notifyAboutEvent(this,
+                    new MoveConsiderationEvent(move, this));
+        }
     }
 
     @Override

@@ -4,7 +4,8 @@ import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.NewGameEvent;
-import quoridor.gui.management.Player;
+import quoridor.gui.player.Human;
+import quoridor.gui.player.Player;
 import quoridor.gui.util.PerPlayer;
 
 import javax.swing.ButtonGroup;
@@ -60,7 +61,7 @@ public class NewGameDialog extends JDialog {
         GameState gs = twoPlayersRadioButton.isSelected()
                 ? GameRules.makeInitialStateForTwo()
                 : GameRules.makeInitialStateForFour();
-        PerPlayer<Player> players = new PerPlayer<>().map((p) -> Player.HUMAN);
+        PerPlayer<Player> players = new PerPlayer<>().map((p) -> new Human());
         eventListener.notifyAboutEvent(null, new NewGameEvent(gs, players));
         setVisible(false);
     }
