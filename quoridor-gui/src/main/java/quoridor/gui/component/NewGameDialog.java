@@ -23,7 +23,6 @@ public class NewGameDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
 
-    private ButtonGroup numberOfPlayersButtonGroup = new ButtonGroup();
     private JRadioButton twoPlayersRadioButton;
     private JRadioButton fourPlayersRadioButton;
 
@@ -44,6 +43,7 @@ public class NewGameDialog extends JDialog {
         setContentPane(contentPane);
 
         twoPlayersRadioButton.setSelected(true);
+        ButtonGroup numberOfPlayersButtonGroup = new ButtonGroup();
         numberOfPlayersButtonGroup.add(twoPlayersRadioButton);
         numberOfPlayersButtonGroup.add(fourPlayersRadioButton);
 

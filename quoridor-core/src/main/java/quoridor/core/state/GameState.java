@@ -64,21 +64,23 @@ public final class GameState {
     }
 
     private boolean isWallAbove(int x, int y) {
-        return (wallsState.get(x, y) == WallOrientation.HORIZONTAL
-            || wallsState.get(x - 1, y) == WallOrientation.HORIZONTAL);
+        return y == PLACES - 1
+                || wallsState.get(x, y) == WallOrientation.HORIZONTAL
+                || wallsState.get(x - 1, y) == WallOrientation.HORIZONTAL;
     }
 
     private boolean isWallBelow(int x, int y) {
-        return isWallAbove(x, y - 1);
+        return y == 0 || isWallAbove(x, y - 1);
     }
 
     private boolean isWallAtRight(int x, int y) {
-        return (wallsState.get(x, y) == WallOrientation.VERTICAL
-                || wallsState.get(x, y - 1) == WallOrientation.VERTICAL);
+        return x == PLACES - 1
+                || wallsState.get(x, y) == WallOrientation.VERTICAL
+                || wallsState.get(x, y - 1) == WallOrientation.VERTICAL;
     }
 
     private boolean isWallAtLeft(int x, int y) {
-        return isWallAtRight(x - 1, y);
+        return x == 0 || isWallAtRight(x - 1, y);
     }
 
     public boolean isWallBetween(Positioned p1, Positioned p2) {
