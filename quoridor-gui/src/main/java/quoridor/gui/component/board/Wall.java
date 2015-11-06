@@ -29,6 +29,14 @@ public class Wall extends JPanel implements MouseListener {
         setBuilt(false);
     }
 
+    public Move getMove() {
+        return move;
+    }
+
+    public boolean isBuilt() {
+        return built;
+    }
+
     public void setEventListener(EventListener eventListener) {
         this.eventListener = eventListener;
     }

@@ -33,6 +33,10 @@ public class GameManager implements EventListener {
 
     private void updateBoard() {
         mainWindow.getBoard().loadGameState(gameState);
+        mainWindow.getBoard().forEachWall((wall) -> wall.setVisible(
+                        wall.isBuilt() || GameRules.isLegalMove(
+                                gameState, wall.getMove()))
+        );
     }
 
     private void newGame(NewGameEvent newGameEvent) {

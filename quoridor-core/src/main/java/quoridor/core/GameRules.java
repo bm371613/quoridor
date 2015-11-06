@@ -123,15 +123,16 @@ public class GameRules {
     private static boolean wallMoveCausesCollision(GameState gs, Move move) {
         int x = move.getX();
         int y = move.getY();
+        WallOrientation orientation = move.getWallOrientation();
         if (gs.getWallsState().get(x, y) != null) {
             return true;
         }
-        if (move.getWallOrientation() == WallOrientation.HORIZONTAL) {
-            return gs.getWallsState().get(x - 1, y) != null
-                    || gs.getWallsState().get(x + 1, y) != null;
+        if (orientation == WallOrientation.HORIZONTAL) {
+            return gs.getWallsState().get(x - 1, y) == orientation
+                    || gs.getWallsState().get(x + 1, y) == orientation;
         } else {
-            return gs.getWallsState().get(x, y - 1) != null
-                    || gs.getWallsState().get(x, y + 1) != null;
+            return gs.getWallsState().get(x, y - 1) == orientation
+                    || gs.getWallsState().get(x, y + 1) == orientation;
         }
     }
 
