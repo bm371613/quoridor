@@ -1,7 +1,7 @@
 package quoridor.gui.event;
 
 import quoridor.core.Move;
-import quoridor.gui.component.board.Highlightable;
+import quoridor.gui.util.Highlightable;
 
 public class MoveConsiderationEvent {
 

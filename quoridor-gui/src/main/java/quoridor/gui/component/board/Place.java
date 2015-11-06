@@ -13,6 +13,7 @@ import quoridor.core.Move;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;
 import quoridor.gui.event.MoveConsiderationEvent;
+import quoridor.gui.util.Highlightable;
 
 public class Place extends JPanel implements Highlightable, ComponentListener,
         MouseListener {

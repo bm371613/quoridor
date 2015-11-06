@@ -1,4 +1,4 @@
-package quoridor.gui.component.board;
+package quoridor.gui.util;
 
 public interface Highlightable {
     void setHighlighted(boolean highlighted);
