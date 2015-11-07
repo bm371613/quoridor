@@ -11,7 +11,14 @@ import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 
 public class PerPlayer<V> {
-    private final List<V> values = Lists.newArrayList(null, null, null, null);
+    private final List<V> values;
+
+    public PerPlayer() {
+        values = Lists.newArrayListWithCapacity(Goal.values().length);
+        for (int i = 0; i < Goal.values().length; ++i) {
+            values.add(null);
+        }
+    }
 
     public V get(Goal goal) {
         return values.get(goal.ordinal());
