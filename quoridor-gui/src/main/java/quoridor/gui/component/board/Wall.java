@@ -73,7 +73,9 @@ public class Wall extends JPanel implements Highlightable, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+        if (eventListener != null) {
+            eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+        }
     }
 
     @Override

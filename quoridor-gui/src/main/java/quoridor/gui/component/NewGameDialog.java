@@ -1,11 +1,10 @@
 package quoridor.gui.component;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -15,80 +14,46 @@ import javax.swing.JRadioButton;
 
 import lombok.Setter;
 
-import quoridor.ai.stub.RandomBot;
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;
-import quoridor.gui.player.BotPlayer;
-import quoridor.gui.player.Human;
-import quoridor.gui.player.Player;
+import quoridor.gui.util.GuiHelper;
 import quoridor.gui.util.PerPlayer;
 
-public class NewGameDialog extends JDialog {
+public class NewGameDialog extends JDialog implements ActionListener {
 
-    private final JRadioButton twoPlayersRadioButton;
-    private final JRadioButton fourPlayersRadioButton;
+    private final JRadioButton twoPlayersRadioButton =
+            new JRadioButton("Two players");
+    private final JRadioButton fourPlayersRadioButton =
+            new JRadioButton("Four players");
+    private final PerPlayer<PlayerForm> playerForms = PerPlayer.of(
+            (g) -> new PlayerForm(g.ordinal(), g == Goal.TOP));
+    private final JButton okButton = new JButton("OK");
+    private final JButton cancelButton = new JButton("Cancel");
 
     @Setter private EventListener eventListener;
-
-    private final PerPlayer<Color> colors = new PerPlayer<Color>()
-            .set(Goal.TOP, Color.BLACK)
-            .set(Goal.BOTTOM, Color.GRAY)
-            .set(Goal.LEFT, Color.BLUE)
-            .set(Goal.RIGHT, Color.RED);
-
 
     public NewGameDialog(JFrame owner) {
         super(owner, "New Game");
         setModal(true);
 
-        setSize(300, 300);
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-        setLocation((screenSize.width - getWidth()) / 2,
-                (screenSize.height - getHeight()) / 2);
+        setSize(700, 400);
+        GuiHelper.setLocationToCenter(this);
 
-        JPanel contentPane = new JPanel(new GridBagLayout());
-        setContentPane(contentPane);
+        setupLayout();
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(10, 10, 10, 10);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-
-        twoPlayersRadioButton = new JRadioButton("Two players");
-        c.gridx = 0;
-        c.gridy = 0;
-        contentPane.add(twoPlayersRadioButton, c);
-
-        fourPlayersRadioButton = new JRadioButton("Four players");
-        c.gridx = 1;
-        c.gridy = 0;
-        contentPane.add(fourPlayersRadioButton, c);
-
-        c.anchor = GridBagConstraints.PAGE_END;
-        c.weighty = 1.0;
-
-        JButton buttonOK = new JButton("OK");
-        c.gridx = 0;
-        c.gridy = 1;
-        contentPane.add(buttonOK, c);
-
-        JButton buttonCancel = new JButton("Cancel");
-        c.gridx = 1;
-        c.gridy = 1;
-        contentPane.add(buttonCancel, c);
-
-        twoPlayersRadioButton.setSelected(true);
         ButtonGroup numberOfPlayersButtonGroup = new ButtonGroup();
         numberOfPlayersButtonGroup.add(twoPlayersRadioButton);
         numberOfPlayersButtonGroup.add(fourPlayersRadioButton);
+        twoPlayersRadioButton.addActionListener(this);
+        fourPlayersRadioButton.addActionListener(this);
+        fourPlayersRadioButton.setSelected(true);
 
-        getRootPane().setDefaultButton(buttonOK);
-        buttonOK.addActionListener(e -> onOK());
-        buttonCancel.addActionListener(e -> dispose());
+        getRootPane().setDefaultButton(okButton);
+        okButton.addActionListener(e -> onOK());
+        cancelButton.addActionListener(e -> dispose());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
@@ -96,11 +61,84 @@ public class NewGameDialog extends JDialog {
         GameState gs = twoPlayersRadioButton.isSelected()
                 ? GameRules.makeInitialStateForTwo()
                 : GameRules.makeInitialStateForFour();
-
-        PerPlayer<Player> players = PerPlayer.of((g) -> g == Goal.TOP
-                ? new Human(g.name(), colors.get(g))
-                : new BotPlayer(g.name(), colors.get(g), new RandomBot()));
-        eventListener.notifyAboutEvent(null, new LoadGameEvent(gs, players));
+        eventListener.notifyAboutEvent(null, new LoadGameEvent(gs,
+                playerForms.map(PlayerForm::makePlayer)));
         setVisible(false);
+    }
+
+    private void setupLayout() {
+        JPanel contentPane = new JPanel(new GridBagLayout());
+        setContentPane(contentPane);
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(10, 10, 10, 10);
+
+        // top: radio buttons
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.weighty = 0;
+        c.gridy = 0;
+
+        c.gridx = 0;
+        contentPane.add(twoPlayersRadioButton, c);
+
+        c.gridx = 1;
+        contentPane.add(fourPlayersRadioButton, c);
+
+        // middle: player forms
+        c.fill = GridBagConstraints.BOTH;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 2;
+
+        JPanel formsPane = new JPanel(new GridBagLayout());
+        GridBagConstraints fc = new GridBagConstraints();
+        fc.insets = new Insets(10, 10, 10, 10);
+        fc.fill = GridBagConstraints.NONE;
+        fc.weightx = 1;
+        fc.weighty = 1;
+
+        fc.gridy = 1;
+        fc.gridx = 0;
+        formsPane.add(playerForms.get(Goal.RIGHT), fc);
+        fc.gridx = 1;
+        formsPane.add(playerForms.get(Goal.LEFT), fc);
+
+        fc.gridwidth = 2;
+        fc.gridx = 0;
+        fc.gridy = 0;
+        formsPane.add(playerForms.get(Goal.BOTTOM), fc);
+
+        fc.gridy = 2;
+        formsPane.add(playerForms.get(Goal.TOP), fc);
+
+        c.gridx = 0;
+        contentPane.add(formsPane, c);
+
+        // bottom: buttons
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.PAGE_END;
+        c.weightx = 0.5;
+        c.weighty = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+
+        c.gridx = 0;
+        contentPane.add(okButton, c);
+
+        c.gridx = 1;
+        contentPane.add(cancelButton, c);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == twoPlayersRadioButton) {
+            playerForms.get(Goal.LEFT).setVisible(false);
+            playerForms.get(Goal.RIGHT).setVisible(false);
+        } else if (e.getSource() == fourPlayersRadioButton) {
+            playerForms.get(Goal.LEFT).setVisible(true);
+            playerForms.get(Goal.RIGHT).setVisible(true);
+        }
     }
 }

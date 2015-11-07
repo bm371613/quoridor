@@ -53,7 +53,6 @@ public class GameManager implements EventListener {
         Player currentPlayer = getCurrentPlayer();
         setMoveComponentsEventListener(currentPlayer);
         currentPlayer.makeTurn(gameState, this);
-        // TODO
     }
 
     @Override

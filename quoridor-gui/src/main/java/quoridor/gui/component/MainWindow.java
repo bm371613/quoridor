@@ -13,6 +13,7 @@ import javax.swing.WindowConstants;
 import lombok.Getter;
 
 import quoridor.gui.component.board.Board;
+import quoridor.gui.util.GuiHelper;
 
 public class MainWindow extends JFrame implements ActionListener {
 
@@ -25,8 +26,8 @@ public class MainWindow extends JFrame implements ActionListener {
         setTitle("Quoridor");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setMinimumSize(new Dimension(400, 400));
-        setSize(600, 600);
+        setMinimumSize(new Dimension(600, 600));
+        GuiHelper.setLocationToCenter(this);
 
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);

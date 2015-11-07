@@ -111,7 +111,9 @@ public class Place extends JPanel implements Highlightable, ComponentListener,
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+        if (eventListener != null) {
+            eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+        }
     }
 
     @Override

@@ -51,6 +51,14 @@ public class PerPlayer<V> {
         }
     }
 
+    public <R> PerPlayer<R> map(Function<V, R> function) {
+        PerPlayer<R> result = new PerPlayer<>();
+        for (Goal goal : Goal.values()) {
+            result.set(goal, function.apply(get(goal)));
+        }
+        return result;
+    }
+
     @Value
     public static final class Entry<V> {
         private final Goal goal;
