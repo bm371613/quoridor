@@ -23,10 +23,12 @@ public class Place extends JPanel implements Highlightable, ComponentListener,
     private EventListener eventListener;
 
     private Pawn pawn;
-    private final Move move;
+    private final MoveChoiceEvent moveChoiceEvent;
+    private final MoveConsiderationEvent moveConsiderationEvent;
 
     public Place(Move move) {
-        this.move = move;
+        moveChoiceEvent = new MoveChoiceEvent(move);
+        moveConsiderationEvent = new MoveConsiderationEvent(move, this);
 
         addMouseListener(this);
         setOpaque(false);
@@ -112,7 +114,7 @@ public class Place extends JPanel implements Highlightable, ComponentListener,
     @Override
     public void mouseClicked(MouseEvent e) {
         if (eventListener != null) {
-            eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+            eventListener.notifyAboutEvent(this, moveChoiceEvent);
         }
     }
 
@@ -127,8 +129,7 @@ public class Place extends JPanel implements Highlightable, ComponentListener,
     @Override
     public void mouseEntered(MouseEvent e) {
         if (eventListener != null) {
-            eventListener.notifyAboutEvent(this,
-                    new MoveConsiderationEvent(move, this));
+            eventListener.notifyAboutEvent(this, moveConsiderationEvent);
         }
     }
 

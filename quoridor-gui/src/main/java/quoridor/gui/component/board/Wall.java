@@ -18,12 +18,16 @@ public class Wall extends JPanel implements Highlightable, MouseListener {
 
     private EventListener eventListener;
 
-    private Move move;
+    private final Move move;
     private boolean built;
     private boolean highlighted;
+    private final MoveChoiceEvent moveChoiceEvent;
+    private final MoveConsiderationEvent moveConsiderationEvent;
 
     public Wall(Move move) {
         this.move = move;
+        moveChoiceEvent = new MoveChoiceEvent(move);
+        moveConsiderationEvent = new MoveConsiderationEvent(move, this);
 
         addMouseListener(this);
         setOpaque(false);
@@ -74,7 +78,7 @@ public class Wall extends JPanel implements Highlightable, MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (eventListener != null) {
-            eventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+            eventListener.notifyAboutEvent(this, moveChoiceEvent);
         }
     }
 
@@ -89,8 +93,7 @@ public class Wall extends JPanel implements Highlightable, MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         if (eventListener != null) {
-            eventListener.notifyAboutEvent(this,
-                    new MoveConsiderationEvent(move, this));
+            eventListener.notifyAboutEvent(this, moveConsiderationEvent);
         }
     }
 
