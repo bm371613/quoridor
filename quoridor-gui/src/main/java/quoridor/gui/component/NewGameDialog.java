@@ -15,6 +15,7 @@ import javax.swing.JRadioButton;
 
 import lombok.Setter;
 
+import quoridor.ai.stub.RandomBot;
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.core.state.Goal;
@@ -96,10 +97,9 @@ public class NewGameDialog extends JDialog {
                 ? GameRules.makeInitialStateForTwo()
                 : GameRules.makeInitialStateForFour();
 
-        PerPlayer<Player> players = PerPlayer.of(
-                (g) -> g == Goal.TOP
-                        ? new Human(g.name(), colors.get(g))
-                        : new BotPlayer(g.name(), colors.get(g), null));
+        PerPlayer<Player> players = PerPlayer.of((g) -> g == Goal.TOP
+                ? new Human(g.name(), colors.get(g))
+                : new BotPlayer(g.name(), colors.get(g), new RandomBot()));
         eventListener.notifyAboutEvent(null, new LoadGameEvent(gs, players));
         setVisible(false);
     }

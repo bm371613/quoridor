@@ -148,7 +148,7 @@ public final class GameRules {
     }
 
     private static boolean isLegalJump(GameState gs, Move move,
-        PlayerState opponent) {
+            PlayerState opponent) {
         PlayerState player = gs.getCurrentPlayersState();
         boolean isJump = player.isBy(opponent) && opponent.isBy(move)
                 && !move.isAt(player);

@@ -1,4 +1,7 @@
 package quoridor.ai;
 
-public class Bot {
+import quoridor.core.state.GameState;
+
+public interface Bot {
+    ThinkingProcess thinkAbout(GameState gameState);
 }

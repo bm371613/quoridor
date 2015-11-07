@@ -1,10 +1,10 @@
 package quoridor.gui.player;
 
 import java.awt.Color;
-import java.util.List;
-import java.util.Random;
+import javax.swing.SwingUtilities;
 
 import quoridor.ai.Bot;
+import quoridor.ai.ThinkingProcess;
 import quoridor.core.GameRules;
 import quoridor.core.Move;
 import quoridor.core.state.GameState;
@@ -14,7 +14,6 @@ import quoridor.gui.event.MoveChoiceEvent;
 public class BotPlayer extends Player {
 
     private final Bot bot;
-    private final Random random = new Random(System.currentTimeMillis());
 
     public BotPlayer(String name, Color color, Bot bot) {
         super(name, color);
@@ -22,11 +21,27 @@ public class BotPlayer extends Player {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void makeTurn(GameState gameState, EventListener moveEventListener) {
-        // TODO
-        List<Move> moves = GameRules.getLegalMoves(gameState);
-        Move move = moves.get(random.nextInt(moves.size()));
-        moveEventListener.notifyAboutEvent(this, new MoveChoiceEvent(move));
+        Player player = this;
+        ThinkingProcess thinkingProcess = bot.thinkAbout(gameState);
+        new Thread(() -> {
+            Thread t = new Thread(thinkingProcess, getName() + " thinking");
+            t.start();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            t.stop();
+            Move move = thinkingProcess.getResult();
+            if (move == null) {
+                move = GameRules.getLegalMoves(gameState).get(0);
+            }
+            final MoveChoiceEvent event = new MoveChoiceEvent(move);
+            SwingUtilities.invokeLater(() -> moveEventListener.notifyAboutEvent(
+                    player, event));
+        }, getName()).start();
     }
 
     @Override
