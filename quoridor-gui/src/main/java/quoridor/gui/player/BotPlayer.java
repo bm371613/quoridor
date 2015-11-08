@@ -29,7 +29,7 @@ public class BotPlayer extends Player {
             Thread t = new Thread(thinkingProcess, getName() + " thinking");
             t.start();
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

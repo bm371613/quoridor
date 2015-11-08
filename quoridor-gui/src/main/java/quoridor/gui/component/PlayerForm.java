@@ -12,7 +12,8 @@ import com.google.common.collect.ImmutableList;
 import lombok.Value;
 
 import quoridor.ai.Bot;
-import quoridor.ai.stub.RandomBot;
+import quoridor.ai.simple.GreedyBot;
+import quoridor.ai.simple.RandomBot;
 import quoridor.gui.player.BotPlayer;
 import quoridor.gui.player.Human;
 import quoridor.gui.player.Player;
@@ -30,6 +31,7 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
+                    namedBotMaker("GreedyBot", new GreedyBot()),
                     namedBotMaker("RandomBot", new RandomBot()));
 
     private final JTextField nameField = new JTextField();

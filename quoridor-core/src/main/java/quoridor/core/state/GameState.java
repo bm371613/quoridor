@@ -61,52 +61,6 @@ public final class GameState {
                 p.getX() == player.getX() && p.getY() == player.getY());
     }
 
-    private boolean isWallAbove(int x, int y) {
-        return y == PLACES - 1
-                || wallsState.get(x, y) == WallOrientation.HORIZONTAL
-                || wallsState.get(x - 1, y) == WallOrientation.HORIZONTAL;
-    }
-
-    private boolean isWallBelow(int x, int y) {
-        return y == 0 || isWallAbove(x, y - 1);
-    }
-
-    private boolean isWallAtRight(int x, int y) {
-        return x == PLACES - 1
-                || wallsState.get(x, y) == WallOrientation.VERTICAL
-                || wallsState.get(x, y - 1) == WallOrientation.VERTICAL;
-    }
-
-    private boolean isWallAtLeft(int x, int y) {
-        return x == 0 || isWallAtRight(x - 1, y);
-    }
-
-    public boolean isWallBetween(Positioned p1, Positioned p2) {
-        assert p1.isBy(p2);
-        if (p1.getX() == p2.getX()) {
-            return isWallAbove(p1.getX(), Math.min(p1.getY(), p2.getY()));
-        } else {
-            return isWallAtRight(Math.min(p1.getX(), p2.getX()), p1.getY());
-        }
-    }
-
-    public boolean isWallBehind(Positioned p1, Positioned p2) {
-        assert p1.isBy(p2);
-        if (p1.getX() == p2.getX()) {
-            if (p1.getY() < p2.getY()) {
-                return isWallAbove(p2.getX(), p2.getY());
-            } else {
-                return isWallBelow(p2.getX(), p2.getY());
-            }
-        } else {
-            if (p1.getX() < p2.getX()) {
-                return isWallAtRight(p2.getX(), p2.getY());
-            } else {
-                return isWallAtLeft(p2.getX(), p2.getY());
-            }
-        }
-    }
-
     // builder
 
     public static Builder builder() {

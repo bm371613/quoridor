@@ -1,4 +1,4 @@
-package quoridor.ai.stub;
+package quoridor.ai.simple;
 
 import java.util.List;
 import java.util.Random;
