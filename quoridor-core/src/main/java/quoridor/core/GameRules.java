@@ -150,16 +150,12 @@ public final class GameRules {
     private static boolean isLegalJump(GameState gs, Move move,
             PlayerState opponent) {
         PlayerState player = gs.getCurrentPlayersState();
-        boolean isJump = player.isBy(opponent) && opponent.isBy(move)
-                && !move.isAt(player);
-        if (!isJump) {
-            return false;
-        }
-        if (gs.isWallBetween(player, opponent)
-                || gs.isWallBetween(opponent, move)) {
-            return false;
-        }
-        return player.getX() == move.getX() || player.getY() == move.getY()
-                || gs.isWallBehind(player, opponent);
+        return player.isBy(opponent) && opponent.isBy(move)
+                && !move.isAt(player)
+                && !gs.isWallBetween(player, opponent)
+                && !gs.isWallBetween(opponent, move)
+                && (player.getX() == move.getX()
+                    || player.getY() == move.getY()
+                    || gs.isWallBehind(player, opponent));
     }
 }

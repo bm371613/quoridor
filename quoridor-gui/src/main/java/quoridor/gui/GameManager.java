@@ -50,9 +50,13 @@ public class GameManager implements EventListener {
     }
 
     private void performTurn() {
-        Player currentPlayer = getCurrentPlayer();
-        setMoveComponentsEventListener(currentPlayer);
-        currentPlayer.makeTurn(gameState, this);
+        if (GameRules.isFinal(gameState)) {
+            setMoveComponentsEventListener(null);
+        } else {
+            Player currentPlayer = getCurrentPlayer();
+            setMoveComponentsEventListener(currentPlayer);
+            currentPlayer.makeTurn(gameState, this);
+        }
     }
 
     @Override

@@ -12,9 +12,6 @@ public class PlayerState implements Positioned {
     @Getter private final int wallsLeft;
 
     public PlayerState(Goal goal, int x, int y, int wallsLeft) {
-        if (x < 0 || y < 0 || x >= GameState.PLACES || y >= GameState.PLACES) {
-            throw new RuntimeException("Move coordinates out of bounds");
-        }
         this.goal = goal;
         this.x = x;
         this.y = y;
