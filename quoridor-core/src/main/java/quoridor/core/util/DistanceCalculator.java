@@ -30,6 +30,7 @@ public final class DistanceCalculator {
         }
 
         queue.push(ps.getX(), ps.getY());
+        distances[ps.getX()][ps.getY()] = 0;
         int x, y;
         while (!queue.isEmpty()) {
             x = queue.getFrontX();
@@ -61,7 +62,7 @@ public final class DistanceCalculator {
         }
     }
 
-    private class Queue {
+    private static class Queue {
         private final int[] xs = new int[GameState.PLACES * GameState.PLACES];
         private final int[] ys = new int[GameState.PLACES * GameState.PLACES];
         private int front;
