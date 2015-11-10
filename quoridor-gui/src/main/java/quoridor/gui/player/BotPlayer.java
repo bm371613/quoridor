@@ -3,8 +3,8 @@ package quoridor.gui.player;
 import java.awt.Color;
 import javax.swing.SwingUtilities;
 
-import quoridor.ai.Bot;
 import quoridor.ai.ThinkingProcess;
+import quoridor.ai.bot.Bot;
 import quoridor.core.GameRules;
 import quoridor.core.Move;
 import quoridor.core.state.GameState;

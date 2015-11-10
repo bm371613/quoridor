@@ -1,4 +1,4 @@
-package quoridor.ai;
+package quoridor.ai.value_function;
 
 import quoridor.core.state.GameState;
 

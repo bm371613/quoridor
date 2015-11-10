@@ -1,9 +1,8 @@
-package quoridor.ai.simple;
+package quoridor.ai.bot;
 
 import java.util.List;
 import java.util.Random;
 
-import quoridor.ai.Bot;
 import quoridor.ai.ThinkingProcess;
 import quoridor.core.GameRules;
 import quoridor.core.Move;
