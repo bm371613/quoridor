@@ -3,8 +3,8 @@ package quoridor.core;
 import org.junit.Assert;
 import org.junit.Test;
 
+import quoridor.core.direction.Direction;
 import quoridor.core.state.GameState;
-import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.WallsState;
@@ -15,7 +15,7 @@ public class GameRulesTest {
     public void shouldAllowLegalSimplePawnMove() {
         GameState gs = GameState.builder()
                 .copyFrom(GameRules.makeInitialStateForTwo())
-                .setPlayerState(0, new PlayerState(Goal.TOP, 4, 6, 0))
+                .setPlayerState(0, PlayerState.of(Direction.TOP, 4, 6, 0))
                 .build();
 
         Assert.assertTrue(GameRules.isLegalMove(gs, Move.makePawnMove(4, 7)));
@@ -28,7 +28,7 @@ public class GameRulesTest {
     public void shouldNotAllowIllegalSimplePawnMove() {
         GameState gs = GameState.builder()
                 .copyFrom(GameRules.makeInitialStateForTwo())
-                .setPlayerState(0, new PlayerState(Goal.TOP, 4, 6, 0))
+                .setPlayerState(0, PlayerState.of(Direction.TOP, 4, 6, 0))
                 .build();
 
         Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 5)));
@@ -57,7 +57,7 @@ public class GameRulesTest {
                 .build();
         GameState gs = GameState.builder()
                 .copyFrom(GameRules.makeInitialStateForTwo())
-                .setPlayerState(0, new PlayerState(Goal.TOP, 4, 6, 0))
+                .setPlayerState(0, PlayerState.of(Direction.TOP, 4, 6, 0))
                 .setWallsState(wallsState)
                 .build();
 

@@ -1,8 +1,10 @@
-package quoridor.core.util;
+package quoridor.core;
 
-import quoridor.core.GameRules;
+import java.util.function.Predicate;
+
+import quoridor.core.position.Position;
+import quoridor.core.position.Positioned;
 import quoridor.core.state.GameState;
-import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallsState;
 
 public final class DistanceCalculator {
@@ -21,7 +23,8 @@ public final class DistanceCalculator {
         return INSTANCE;
     }
 
-    public synchronized int distanceToGoal(WallsState walls, PlayerState ps) {
+    public synchronized int calculateDistance(WallsState walls, Positioned from,
+                Predicate<Positioned> to) {
         queue.clear();
         for (int i = 0; i < GameState.PLACES; ++i) {
             for (int j = 0; j < GameState.PLACES; ++j) {
@@ -29,15 +32,15 @@ public final class DistanceCalculator {
             }
         }
 
-        queue.push(ps.getX(), ps.getY());
-        distances[ps.getX()][ps.getY()] = 0;
+        queue.push(from.getX(), from.getY());
+        distances[from.getX()][from.getY()] = 0;
         int x, y;
         while (!queue.isEmpty()) {
             x = queue.getFrontX();
             y = queue.getFrontY();
             queue.pop();
 
-            if (GameRules.isWon(ps.getGoal(), x, y)) {
+            if (to.test(Position.of(x, y))) {
                 return distances[x][y];
             }
 

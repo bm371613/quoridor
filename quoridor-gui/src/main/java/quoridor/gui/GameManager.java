@@ -2,18 +2,18 @@ package quoridor.gui;
 
 import quoridor.core.GameRules;
 import quoridor.core.Move;
+import quoridor.core.direction.PerDirection;
 import quoridor.core.state.GameState;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;
 import quoridor.gui.event.MoveChoiceEvent;
 import quoridor.gui.player.Player;
-import quoridor.gui.util.PerPlayer;
 
 public class GameManager implements EventListener {
 
     private GameState gameState;
-    private PerPlayer<Player> players;
+    private PerDirection<Player> players;
     private MainWindow mainWindow;
 
     public GameManager(MainWindow mainWindow) {
@@ -40,7 +40,7 @@ public class GameManager implements EventListener {
         gameState = loadGameEvent.getGameState();
         players = loadGameEvent.getPlayers();
         players.forEachEntry((e) -> mainWindow.getBoard().setPlayerColor(
-                e.getGoal(), e.getValue().getColor()));
+                e, e.getValue().getColor()));
         updateBoard();
         performTurn();
     }

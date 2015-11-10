@@ -2,20 +2,31 @@ package quoridor.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
 
+import quoridor.core.direction.Directed;
+import quoridor.core.direction.Direction;
+import quoridor.core.direction.PerDirection;
+import quoridor.core.position.Positioned;
 import quoridor.core.state.GameState;
-import quoridor.core.state.Goal;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
 import quoridor.core.state.WallsState;
-import quoridor.core.util.DistanceCalculator;
 
 public final class GameRules {
 
     private GameRules() {
     }
+
+    private static PerDirection<Predicate<Positioned>> goalPredicates =
+            (new PerDirection<Predicate<Positioned>>())
+                    .set(Direction.BOTTOM, (p) -> p.getY() == 0)
+                    .set(Direction.LEFT, (p) -> p.getX() == 0)
+                    .set(Direction.TOP, (p) -> p.getY() == GameState.PLACES - 1)
+                    .set(Direction.RIGHT,
+                            (p) -> p.getX() == GameState.PLACES - 1);
 
     public static GameState makeInitialStateForTwo() {
         int top = GameState.PLACES - 1;
@@ -23,8 +34,8 @@ public final class GameRules {
         int middle = GameState.PLACES / 2;
         int initWalls = 10;
         List<PlayerState> playerStates = ImmutableList.of(
-                    new PlayerState(Goal.TOP, middle, bottom, initWalls),
-                    new PlayerState(Goal.BOTTOM, middle, top, initWalls));
+                    PlayerState.of(Direction.TOP, middle, bottom, initWalls),
+                    PlayerState.of(Direction.BOTTOM, middle, top, initWalls));
         return GameState.builder()
                 .setWallsState(WallsState.builder().build())
                 .setPlayersStates(playerStates)
@@ -40,10 +51,10 @@ public final class GameRules {
         int middle = GameState.PLACES / 2;
         int initWalls = 5;
         List<PlayerState> playerStates = ImmutableList.of(
-                new PlayerState(Goal.TOP, middle, bottom, initWalls),
-                new PlayerState(Goal.RIGHT, left, middle, initWalls),
-                new PlayerState(Goal.BOTTOM, middle, top, initWalls),
-                new PlayerState(Goal.LEFT, right, middle, initWalls));
+                PlayerState.of(Direction.TOP, middle, bottom, initWalls),
+                PlayerState.of(Direction.RIGHT, left, middle, initWalls),
+                PlayerState.of(Direction.BOTTOM, middle, top, initWalls),
+                PlayerState.of(Direction.LEFT, right, middle, initWalls));
         return GameState.builder()
                 .setWallsState(WallsState.builder().build())
                 .setPlayersStates(playerStates)
@@ -111,27 +122,16 @@ public final class GameRules {
         }
     }
 
+    public static Predicate<Positioned> getGoalPredicate(Directed directed) {
+        return goalPredicates.get(directed);
+    }
+
     public static boolean isFinal(GameState gameState) {
         return gameState.getPlayerStates().stream().anyMatch(GameRules::isWon);
     }
 
     public static boolean isWon(PlayerState ps) {
-        return isWon(ps.getGoal(), ps.getX(), ps.getY());
-    }
-
-    public static boolean isWon(Goal goal, int x, int y) {
-        switch (goal) {
-            case TOP:
-                return y == GameState.PLACES - 1;
-            case BOTTOM:
-                return y == 0;
-            case LEFT:
-                return x == 0;
-            case RIGHT:
-                return x == GameState.PLACES - 1;
-            default:
-                throw new RuntimeException("Bad arguments.");
-        }
+        return getGoalPredicate(ps).test(ps);
     }
 
     private static boolean wallMoveCausesCollision(GameState gs, Move move) {
@@ -153,8 +153,8 @@ public final class GameRules {
     private static boolean wallMoveCausesBlocking(GameState gs, Move move) {
         WallsState walls = gs.apply(move).getWallsState();
         return !gs.getPlayerStates().stream().allMatch((p) ->
-                DistanceCalculator.getInstance().distanceToGoal(walls, p)
-                        < DistanceCalculator.INFINITY);
+                DistanceCalculator.getInstance().calculateDistance(walls, p,
+                        getGoalPredicate(p)) < DistanceCalculator.INFINITY);
     }
 
     private static boolean isLegalJump(GameState gs, Move move,

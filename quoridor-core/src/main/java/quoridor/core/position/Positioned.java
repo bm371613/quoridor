@@ -1,10 +1,16 @@
-package quoridor.core.util;
+package quoridor.core.position;
 
 public interface Positioned {
 
-    int getX();
+    Position getPosition();
 
-    int getY();
+    default int getX() {
+        return getPosition().getX();
+    }
+
+    default int getY() {
+        return getPosition().getY();
+    }
 
     default boolean isAt(int x, int y) {
         return getX() == x && getY() == y;

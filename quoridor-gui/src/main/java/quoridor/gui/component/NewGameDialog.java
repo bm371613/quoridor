@@ -15,12 +15,12 @@ import javax.swing.JRadioButton;
 import lombok.Setter;
 
 import quoridor.core.GameRules;
+import quoridor.core.direction.Direction;
+import quoridor.core.direction.PerDirection;
 import quoridor.core.state.GameState;
-import quoridor.core.state.Goal;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;
 import quoridor.gui.util.GuiHelper;
-import quoridor.gui.util.PerPlayer;
 
 public class NewGameDialog extends JDialog implements ActionListener {
 
@@ -28,8 +28,8 @@ public class NewGameDialog extends JDialog implements ActionListener {
             new JRadioButton("Two players");
     private final JRadioButton fourPlayersRadioButton =
             new JRadioButton("Four players");
-    private final PerPlayer<PlayerForm> playerForms = PerPlayer.of(
-            (g) -> new PlayerForm(g.ordinal(), g == Goal.TOP));
+    private final PerDirection<PlayerForm> playerForms = PerDirection.of(
+            (g) -> new PlayerForm(g.ordinal(), g == Direction.TOP));
     private final JButton okButton = new JButton("OK");
     private final JButton cancelButton = new JButton("Cancel");
 
@@ -101,17 +101,17 @@ public class NewGameDialog extends JDialog implements ActionListener {
 
         fc.gridy = 1;
         fc.gridx = 0;
-        formsPane.add(playerForms.get(Goal.RIGHT), fc);
+        formsPane.add(playerForms.get(Direction.RIGHT), fc);
         fc.gridx = 1;
-        formsPane.add(playerForms.get(Goal.LEFT), fc);
+        formsPane.add(playerForms.get(Direction.LEFT), fc);
 
         fc.gridwidth = 2;
         fc.gridx = 0;
         fc.gridy = 0;
-        formsPane.add(playerForms.get(Goal.BOTTOM), fc);
+        formsPane.add(playerForms.get(Direction.BOTTOM), fc);
 
         fc.gridy = 2;
-        formsPane.add(playerForms.get(Goal.TOP), fc);
+        formsPane.add(playerForms.get(Direction.TOP), fc);
 
         c.gridx = 0;
         contentPane.add(formsPane, c);
@@ -134,11 +134,11 @@ public class NewGameDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == twoPlayersRadioButton) {
-            playerForms.get(Goal.LEFT).setVisible(false);
-            playerForms.get(Goal.RIGHT).setVisible(false);
+            playerForms.get(Direction.LEFT).setVisible(false);
+            playerForms.get(Direction.RIGHT).setVisible(false);
         } else if (e.getSource() == fourPlayersRadioButton) {
-            playerForms.get(Goal.LEFT).setVisible(true);
-            playerForms.get(Goal.RIGHT).setVisible(true);
+            playerForms.get(Direction.LEFT).setVisible(true);
+            playerForms.get(Direction.RIGHT).setVisible(true);
         }
     }
 }

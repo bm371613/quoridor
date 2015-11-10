@@ -1,6 +1,6 @@
 package quoridor.core.state;
 
-import quoridor.core.util.Positioned;
+import quoridor.core.position.Positioned;
 
 public final class WallsState {
     private final WallOrientation[] walls;

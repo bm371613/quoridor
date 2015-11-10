@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 
 import quoridor.core.Move;
-import quoridor.core.util.Positioned;
+import quoridor.core.position.Positioned;
 
 public final class GameState {
     public static final int PLACES = 9; // number of places along each side
