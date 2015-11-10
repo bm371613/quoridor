@@ -1,5 +1,9 @@
 package quoridor.ai.bot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import quoridor.ai.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
 import quoridor.core.GameRules;
@@ -9,6 +13,8 @@ import quoridor.core.state.GameState;
 public class GreedyBot implements Bot {
 
     private final ValueFunction valueFunction;
+
+    private final Random random = new Random(System.currentTimeMillis());
 
     public GreedyBot(ValueFunction valueFunction) {
         this.valueFunction = valueFunction;
@@ -22,14 +28,19 @@ public class GreedyBot implements Bot {
                 int bestValue = Integer.MIN_VALUE;
                 int currentValue;
                 int playerIx = gameState.currentPlayerIx();
+                final List<Move> bestMoves = new ArrayList<>();
                 for (Move move : GameRules.getLegalMoves(gameState)) {
                     currentValue = valueFunction.apply(gameState.apply(move),
                             playerIx);
-                    if (getResult() == null || bestValue < currentValue) {
-                        setResult(move);
+                    if (bestValue < currentValue) {
+                        bestMoves.clear();
                         bestValue = currentValue;
                     }
+                    if (bestValue == currentValue) {
+                        bestMoves.add(move);
+                    }
                 }
+                setResult(bestMoves.get(random.nextInt(bestMoves.size())));
             }
         };
     }

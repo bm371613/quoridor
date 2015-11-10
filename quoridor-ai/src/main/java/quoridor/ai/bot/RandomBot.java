@@ -10,7 +10,7 @@ import quoridor.core.state.GameState;
 
 public class RandomBot implements Bot {
 
-    private Random random = new Random(System.currentTimeMillis());
+    private final Random random = new Random(System.currentTimeMillis());
 
     @Override
     public ThinkingProcess thinkAbout(GameState gameState) {
