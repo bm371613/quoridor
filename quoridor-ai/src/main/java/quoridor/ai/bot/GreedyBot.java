@@ -33,6 +33,7 @@ public class GreedyBot implements Bot {
                     currentValue = valueFunction.apply(gameState.apply(move),
                             playerIx);
                     if (bestValue < currentValue) {
+                        setResult(move);
                         bestMoves.clear();
                         bestValue = currentValue;
                     }

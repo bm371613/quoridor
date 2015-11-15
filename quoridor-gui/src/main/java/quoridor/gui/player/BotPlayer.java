@@ -27,6 +27,7 @@ public class BotPlayer extends Player {
         ThinkingProcess thinkingProcess = bot.thinkAbout(gameState);
         new Thread(() -> {
             Thread t = new Thread(thinkingProcess, getName() + " thinking");
+            System.gc();
             t.start();
             try {
                 Thread.sleep(500);
