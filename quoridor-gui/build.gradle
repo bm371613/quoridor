@@ -10,6 +10,7 @@ task fatJar(type: Jar) {
                 'Main-Class': 'quoridor.gui.Main'
     }
     baseName = project.name + '-all'
+    destinationDir = project.distsDir
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
