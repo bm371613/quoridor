@@ -18,6 +18,7 @@ import quoridor.core.GameRules;
 import quoridor.core.direction.Direction;
 import quoridor.core.direction.PerDirection;
 import quoridor.core.state.GameState;
+import quoridor.gui.Game;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;
 import quoridor.gui.util.GuiHelper;
@@ -61,8 +62,8 @@ public class NewGameDialog extends JDialog implements ActionListener {
         GameState gs = twoPlayersRadioButton.isSelected()
                 ? GameRules.makeInitialStateForTwo()
                 : GameRules.makeInitialStateForFour();
-        eventListener.notifyAboutEvent(null, new LoadGameEvent(gs,
-                playerForms.map(PlayerForm::makePlayer)));
+        eventListener.notifyAboutEvent(null, new LoadGameEvent(new Game(gs,
+                playerForms.map(PlayerForm::makePlayer))));
         setVisible(false);
     }
 

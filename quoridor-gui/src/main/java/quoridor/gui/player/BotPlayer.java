@@ -14,6 +14,8 @@ import quoridor.gui.event.MoveChoiceEvent;
 public class BotPlayer extends Player {
 
     private final Bot bot;
+    private Thread outerThread;
+    private Thread innerThread;
 
     public BotPlayer(String name, Color color, Bot bot) {
         super(name, color);
@@ -25,16 +27,16 @@ public class BotPlayer extends Player {
     public void makeTurn(GameState gameState, EventListener moveEventListener) {
         Player player = this;
         ThinkingProcess thinkingProcess = bot.thinkAbout(gameState);
-        new Thread(() -> {
-            Thread t = new Thread(thinkingProcess, getName() + " thinking");
+        outerThread = new Thread(() -> {
+            innerThread = new Thread(thinkingProcess, getName() + " thinking");
             System.gc();
-            t.start();
+            innerThread.start();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            t.stop();
+            innerThread.stop();
             Move move = thinkingProcess.getResult();
             if (move == null) {
                 move = GameRules.getLegalMoves(gameState).get(0);
@@ -42,11 +44,23 @@ public class BotPlayer extends Player {
             final MoveChoiceEvent event = new MoveChoiceEvent(move);
             SwingUtilities.invokeLater(() -> moveEventListener.notifyAboutEvent(
                     player, event));
-        }, getName()).start();
+        }, getName());
+        outerThread.start();
     }
 
     @Override
     public void moveAccepted() {
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void moveCancelled() {
+        if (outerThread.isAlive()) {
+            outerThread.stop();
+        }
+        if (innerThread.isAlive()) {
+            innerThread.stop();
+        }
     }
 
     @Override

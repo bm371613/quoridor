@@ -62,7 +62,7 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        wallLabels.forEachValue(this::add);
+        wallLabels.valueStream().forEach(this::add);
     }
 
     public void setPlayerColor(Directed goal, Color color) {
@@ -77,7 +77,7 @@ public class Board extends JPanel implements ComponentListener {
             }
         });
 
-        wallLabels.forEachValue((wallLabel) -> wallLabel.setText(""));
+        wallLabels.valueStream().forEach((wallLabel) -> wallLabel.setText(""));
 
         gs.getPlayerStates().forEach(this::loadPlayerState);
 

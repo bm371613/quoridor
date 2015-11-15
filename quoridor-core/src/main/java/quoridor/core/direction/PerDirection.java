@@ -3,6 +3,7 @@ package quoridor.core.direction;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import lombok.Value;
@@ -34,8 +35,8 @@ public class PerDirection<V> {
         return result;
     }
 
-    public void forEachValue(Consumer<V> consumer) {
-        values.forEach(consumer::accept);
+    public Stream<V> valueStream() {
+        return values.stream();
     }
 
     public void forEachEntry(Consumer<Entry<V>> consumer) {

@@ -2,12 +2,9 @@ package quoridor.gui.event;
 
 import lombok.Value;
 
-import quoridor.core.direction.PerDirection;
-import quoridor.core.state.GameState;
-import quoridor.gui.player.Player;
+import quoridor.gui.Game;
 
 @Value
 public class LoadGameEvent {
-    private final GameState gameState;
-    private final PerDirection<Player> players;
+    private final Game game;
 }

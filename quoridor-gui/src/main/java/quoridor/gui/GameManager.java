@@ -2,23 +2,49 @@ package quoridor.gui;
 
 import quoridor.core.GameRules;
 import quoridor.core.Move;
-import quoridor.core.direction.PerDirection;
-import quoridor.core.state.GameState;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;
 import quoridor.gui.event.MoveChoiceEvent;
+import quoridor.gui.event.RedoEvent;
+import quoridor.gui.event.UndoEvent;
 import quoridor.gui.player.Player;
 
 public class GameManager implements EventListener {
 
-    private GameState gameState;
-    private PerDirection<Player> players;
     private MainWindow mainWindow;
+    private Game game;
 
     public GameManager(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
+        this.mainWindow.setEventListener(this);
         this.mainWindow.getNewGameDialog().setEventListener(this);
+    }
+
+    private void loadGame(LoadGameEvent loadGameEvent) {
+        game = loadGameEvent.getGame();
+        game.getPlayers().forEachEntry((e) -> mainWindow.getBoard()
+                .setPlayerColor(e, e.getValue().getColor()));
+        updateBoard();
+        performTurn();
+    }
+
+    private void updateBoard() {
+        mainWindow.getBoard().loadGameState(game.getState());
+        mainWindow.getBoard().forEachWall((wall) -> wall.setVisible(
+                        wall.isBuilt() || GameRules.isLegalMove(
+                                game.getState(), wall.getMove()))
+        );
+    }
+
+    private void performTurn() {
+        if (GameRules.isFinal(game.getState())) {
+            setMoveComponentsEventListener(null);
+        } else {
+            Player currentPlayer = game.getCurrentPlayer();
+            setMoveComponentsEventListener(currentPlayer);
+            currentPlayer.makeTurn(game.getState(), this);
+        }
     }
 
     private void setMoveComponentsEventListener(EventListener eventListener) {
@@ -28,53 +54,42 @@ public class GameManager implements EventListener {
                 (w) -> w.setEventListener(eventListener));
     }
 
-    private void updateBoard() {
-        mainWindow.getBoard().loadGameState(gameState);
-        mainWindow.getBoard().forEachWall((wall) -> wall.setVisible(
-                        wall.isBuilt() || GameRules.isLegalMove(
-                                gameState, wall.getMove()))
-        );
-    }
-
-    private void loadGame(LoadGameEvent loadGameEvent) {
-        gameState = loadGameEvent.getGameState();
-        players = loadGameEvent.getPlayers();
-        players.forEachEntry((e) -> mainWindow.getBoard().setPlayerColor(
-                e, e.getValue().getColor()));
-        updateBoard();
-        performTurn();
-    }
-
-    private Player getCurrentPlayer() {
-        return players.get(gameState.getCurrentPlayersState());
-    }
-
-    private void performTurn() {
-        if (GameRules.isFinal(gameState)) {
-            setMoveComponentsEventListener(null);
-        } else {
-            Player currentPlayer = getCurrentPlayer();
-            setMoveComponentsEventListener(currentPlayer);
-            currentPlayer.makeTurn(gameState, this);
-        }
-    }
-
     @Override
     public void notifyAboutEvent(Object source, Object event) {
         if (event instanceof LoadGameEvent) {
             loadGame((LoadGameEvent) event);
         }  else if (event instanceof MoveChoiceEvent) {
-            if (gameState == null) {
+            if (game == null) {
                 return;
             }
-            Player currentPlayer = getCurrentPlayer();
+            Player currentPlayer = game.getCurrentPlayer();
             if (source != currentPlayer) {
                 return;
             }
             Move move = ((MoveChoiceEvent) event).getMove();
-            if (GameRules.isLegalMove(gameState, move)) {
+            if (GameRules.isLegalMove(game.getState(), move)) {
                 currentPlayer.moveAccepted();
-                gameState = gameState.apply(move);
+                game.performMove(move);
+                updateBoard();
+                performTurn();
+            }
+        } else if (event instanceof UndoEvent) {
+            if (game == null) {
+                return;
+            }
+            Player player = game.getCurrentPlayer();
+            if (game.undo()) {
+                player.moveCancelled();
+                updateBoard();
+                performTurn();
+            }
+        } else if (event instanceof RedoEvent) {
+            if (game == null) {
+                return;
+            }
+            Player player = game.getCurrentPlayer();
+            if (game.redo()) {
+                player.moveCancelled();
                 updateBoard();
                 performTurn();
             }

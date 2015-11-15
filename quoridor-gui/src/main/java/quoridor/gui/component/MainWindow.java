@@ -5,14 +5,17 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import quoridor.gui.component.board.Board;
+import quoridor.gui.event.EventListener;
+import quoridor.gui.event.RedoEvent;
+import quoridor.gui.event.UndoEvent;
 import quoridor.gui.util.GuiHelper;
 
 public class MainWindow extends JFrame implements ActionListener {
@@ -21,6 +24,10 @@ public class MainWindow extends JFrame implements ActionListener {
     @Getter private final NewGameDialog newGameDialog = new NewGameDialog(this);
 
     private final JMenuItem newGameMenuItem = new JMenuItem("New Game");
+    private final JMenuItem undoMenuItem = new JMenuItem("Undo");
+    private final JMenuItem redoMenuItem = new JMenuItem("Redo");
+
+    @Setter private EventListener eventListener;
 
     public MainWindow() {
         setTitle("Quoridor");
@@ -31,10 +38,9 @@ public class MainWindow extends JFrame implements ActionListener {
 
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
-        JMenu gameMenu = new JMenu("Game");
-        menuBar.add(gameMenu);
-        newGameMenuItem.addActionListener(this);
-        gameMenu.add(newGameMenuItem);
+        addMenuItem(menuBar, newGameMenuItem);
+        addMenuItem(menuBar, undoMenuItem);
+        addMenuItem(menuBar, redoMenuItem);
 
         board = new Board();
         setLayout(new GridBagLayout());
@@ -42,10 +48,22 @@ public class MainWindow extends JFrame implements ActionListener {
         pack();
     }
 
+    private void addMenuItem(JMenuBar menuBar, JMenuItem menuItem) {
+        menuItem.addActionListener(this);
+        menuItem.setMaximumSize(new Dimension(
+                menuItem.getPreferredSize().width,
+                menuItem.getMaximumSize().height));
+        menuBar.add(menuItem);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == newGameMenuItem) {
             newGameDialog.setVisible(true);
+        } else if (e.getSource() == undoMenuItem) {
+            eventListener.notifyAboutEvent(this, UndoEvent.makeUndoEvent());
+        } else if (e.getSource() == redoMenuItem) {
+            eventListener.notifyAboutEvent(this, RedoEvent.makeRedoEvent());
         }
     }
 }

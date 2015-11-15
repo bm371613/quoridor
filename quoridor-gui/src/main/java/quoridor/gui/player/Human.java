@@ -13,7 +13,7 @@ public final class Human extends Player {
     private EventListener moveEventListener;
 
     public Human(String name, Color color) {
-        super(name, color);
+        super(name, color, true);
     }
 
     @Override
@@ -27,6 +27,12 @@ public final class Human extends Player {
 
     @Override
     public void moveAccepted() {
+        this.gameState = null;
+        this.moveEventListener = null;
+    }
+
+    @Override
+    public void moveCancelled() {
         this.gameState = null;
         this.moveEventListener = null;
     }
