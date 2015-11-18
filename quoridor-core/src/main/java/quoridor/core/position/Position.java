@@ -2,6 +2,8 @@ package quoridor.core.position;
 
 import lombok.Value;
 
+import quoridor.core.direction.Directed;
+
 @Value
 public final class Position implements Positioned {
     private final int x;
@@ -19,5 +21,20 @@ public final class Position implements Positioned {
     @Override
     public Position getPosition() {
         return this;
+    }
+
+    public static Position next(Positioned p, Directed d) {
+        switch (d.getDirection()) {
+            case UP:
+                return of(p.getX(), p.getY() + 1);
+            case DOWN:
+                return of(p.getX(), p.getY() - 1);
+            case LEFT:
+                return of(p.getX() - 1, p.getY());
+            case RIGHT:
+                return of(p.getX() + 1, p.getY());
+            default:
+                return null;
+        }
     }
 }

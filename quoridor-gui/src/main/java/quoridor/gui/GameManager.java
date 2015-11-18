@@ -1,7 +1,7 @@
 package quoridor.gui;
 
 import quoridor.core.GameRules;
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 import quoridor.gui.component.MainWindow;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;

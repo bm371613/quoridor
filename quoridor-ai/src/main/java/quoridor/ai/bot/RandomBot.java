@@ -5,7 +5,7 @@ import java.util.Random;
 
 import quoridor.ai.ThinkingProcess;
 import quoridor.core.GameRules;
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
 
 public class RandomBot implements Bot {

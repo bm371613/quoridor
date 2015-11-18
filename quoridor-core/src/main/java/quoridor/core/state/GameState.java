@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 
-import quoridor.core.Move;
 import quoridor.core.position.Positioned;
 
 public final class GameState {
@@ -28,28 +27,6 @@ public final class GameState {
         return turn % playerStates.size();
     }
 
-    public GameState apply(Move move) {
-        Builder builder = builder().copyFrom(this);
-
-        if (move.isPawnMove()) {
-            PlayerState playerState = getCurrentPlayersState()
-                    .movedTo(move.getX(), move.getY());
-            builder.setPlayerState(currentPlayerIx(), playerState);
-        } else {
-            WallsState newWallState = WallsState.builder()
-                    .copyFrom(getWallsState())
-                    .set(move.getX(), move.getY(), move.getWallOrientation())
-                    .build();
-            PlayerState newCurrentPlayersState = getCurrentPlayersState()
-                    .withWallsLeft(getCurrentPlayersState().getWallsLeft() - 1);
-            builder.setWallsState(newWallState)
-                    .setPlayerState(currentPlayerIx(), newCurrentPlayersState);
-        }
-
-        builder.setTurn(turn + 1);
-        return builder.build();
-    }
-
     // helpers
 
     public PlayerState getCurrentPlayersState() {
@@ -61,10 +38,22 @@ public final class GameState {
                 p.getX() == player.getX() && p.getY() == player.getY());
     }
 
+    public static boolean placeInBoardBounds(Positioned p) {
+        return 0 <= p.getX() && p.getX() < PLACES
+                && 0 <= p.getY() && p.getY() < PLACES;
+    }
+
     // builder
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public Builder buildNext() {
+        Builder result = new Builder();
+        result.copyFrom(this);
+        result.setTurn(turn + 1);
+        return result;
     }
 
     public static final class Builder {

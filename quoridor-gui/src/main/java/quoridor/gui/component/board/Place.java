@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;
 import quoridor.gui.event.MoveConsiderationEvent;

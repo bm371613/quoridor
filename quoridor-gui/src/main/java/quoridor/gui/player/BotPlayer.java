@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 import quoridor.ai.ThinkingProcess;
 import quoridor.ai.bot.Bot;
 import quoridor.core.GameRules;
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.MoveChoiceEvent;

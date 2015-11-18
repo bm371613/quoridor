@@ -10,20 +10,25 @@ public final class WallsState {
                 GameState.WALL_PLACES * GameState.WALL_PLACES];
     }
 
-    private static boolean inBounds(int x, int y) {
-        return 0 <= x && x < GameState.WALL_PLACES && 0 <= y
-                && y < GameState.WALL_PLACES;
+    public WallOrientation get(int x, int y) {
+        return inBounds(x, y) ? walls[ix(x, y)] : null;
     }
+
+    public static boolean inBounds(Positioned p) {
+        return inBounds(p.getX(), p.getY());
+    }
+
+    // helpers
 
     private static int ix(int x, int y) {
         return GameState.WALL_PLACES * x + y;
     }
 
-    public WallOrientation get(int x, int y) {
-        return inBounds(x, y) ? walls[ix(x, y)] : null;
+    private static boolean inBounds(int x, int y) {
+        return 0 <= x && x < GameState.WALL_PLACES
+                && 0 <= y && y < GameState.WALL_PLACES;
     }
 
-    // helpers
 
     private boolean isWallAbove(int x, int y) {
         return y == GameState.WALL_PLACES

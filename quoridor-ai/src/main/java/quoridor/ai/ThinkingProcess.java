@@ -1,6 +1,6 @@
 package quoridor.ai;
 
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 
 public abstract class ThinkingProcess implements Runnable {
 

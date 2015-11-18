@@ -7,7 +7,7 @@ import java.util.Random;
 import quoridor.ai.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
 import quoridor.core.GameRules;
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
 
 public class GreedyBot implements Bot {
@@ -30,7 +30,7 @@ public class GreedyBot implements Bot {
                 int playerIx = gameState.currentPlayerIx();
                 final List<Move> bestMoves = new ArrayList<>();
                 for (Move move : GameRules.getLegalMoves(gameState)) {
-                    currentValue = valueFunction.apply(gameState.apply(move),
+                    currentValue = valueFunction.apply(move.apply(gameState),
                             playerIx);
                     if (bestValue < currentValue) {
                         setResult(move);

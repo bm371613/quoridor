@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import quoridor.core.direction.Direction;
+import quoridor.core.move.PawnMove;
 import quoridor.core.state.GameState;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
@@ -15,36 +16,36 @@ public class GameRulesTest {
     public void shouldAllowLegalSimplePawnMove() {
         GameState gs = GameState.builder()
                 .copyFrom(GameRules.makeInitialStateForTwo())
-                .setPlayerState(0, PlayerState.of(Direction.TOP, 4, 6, 0))
+                .setPlayerState(0, PlayerState.of(Direction.UP, 4, 6, 0))
                 .build();
 
-        Assert.assertTrue(GameRules.isLegalMove(gs, Move.makePawnMove(4, 7)));
-        Assert.assertTrue(GameRules.isLegalMove(gs, Move.makePawnMove(4, 5)));
-        Assert.assertTrue(GameRules.isLegalMove(gs, Move.makePawnMove(3, 6)));
-        Assert.assertTrue(GameRules.isLegalMove(gs, Move.makePawnMove(5, 6)));
+        Assert.assertTrue(GameRules.isLegalMove(gs, PawnMove.of(4, 7)));
+        Assert.assertTrue(GameRules.isLegalMove(gs, PawnMove.of(4, 5)));
+        Assert.assertTrue(GameRules.isLegalMove(gs, PawnMove.of(3, 6)));
+        Assert.assertTrue(GameRules.isLegalMove(gs, PawnMove.of(5, 6)));
     }
 
     @Test
     public void shouldNotAllowIllegalSimplePawnMove() {
         GameState gs = GameState.builder()
                 .copyFrom(GameRules.makeInitialStateForTwo())
-                .setPlayerState(0, PlayerState.of(Direction.TOP, 4, 6, 0))
+                .setPlayerState(0, PlayerState.of(Direction.UP, 4, 6, 0))
                 .build();
 
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 5)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 5)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(5, 7)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 7)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(3, 5)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(3, 5)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(5, 7)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(3, 7)));
 
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(4, 8)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(4, 4)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(2, 6)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(6, 6)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(4, 8)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(4, 4)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(2, 6)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(6, 6)));
 
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(1, 3)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 2)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(5, 4)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 7)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(1, 3)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(3, 2)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(5, 4)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(3, 7)));
     }
 
     @Test
@@ -57,14 +58,14 @@ public class GameRulesTest {
                 .build();
         GameState gs = GameState.builder()
                 .copyFrom(GameRules.makeInitialStateForTwo())
-                .setPlayerState(0, PlayerState.of(Direction.TOP, 4, 6, 0))
+                .setPlayerState(0, PlayerState.of(Direction.UP, 4, 6, 0))
                 .setWallsState(wallsState)
                 .build();
 
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(4, 7)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(4, 5)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(3, 6)));
-        Assert.assertFalse(GameRules.isLegalMove(gs, Move.makePawnMove(5, 6)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(4, 7)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(4, 5)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(3, 6)));
+        Assert.assertFalse(GameRules.isLegalMove(gs, PawnMove.of(5, 6)));
     }
 
     @Test

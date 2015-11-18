@@ -30,7 +30,7 @@ public class NewGameDialog extends JDialog implements ActionListener {
     private final JRadioButton fourPlayersRadioButton =
             new JRadioButton("Four players");
     private final PerDirection<PlayerForm> playerForms = PerDirection.of(
-            (g) -> new PlayerForm(g.ordinal(), g == Direction.TOP));
+            (g) -> new PlayerForm(g.ordinal(), g == Direction.UP));
     private final JButton okButton = new JButton("OK");
     private final JButton cancelButton = new JButton("Cancel");
 
@@ -109,10 +109,10 @@ public class NewGameDialog extends JDialog implements ActionListener {
         fc.gridwidth = 2;
         fc.gridx = 0;
         fc.gridy = 0;
-        formsPane.add(playerForms.get(Direction.BOTTOM), fc);
+        formsPane.add(playerForms.get(Direction.DOWN), fc);
 
         fc.gridy = 2;
-        formsPane.add(playerForms.get(Direction.TOP), fc);
+        formsPane.add(playerForms.get(Direction.UP), fc);
 
         c.gridx = 0;
         contentPane.add(formsPane, c);

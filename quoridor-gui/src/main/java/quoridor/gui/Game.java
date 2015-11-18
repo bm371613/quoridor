@@ -6,8 +6,8 @@ import java.util.List;
 import lombok.Getter;
 
 import quoridor.core.GameRules;
-import quoridor.core.Move;
 import quoridor.core.direction.PerDirection;
+import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
 import quoridor.gui.player.Player;
 
@@ -34,7 +34,7 @@ public class Game {
         for (int i = gameStates.size() - 1; gameStateIx < i; --i) {
             gameStates.remove(i);
         }
-        gameStates.add(getState().apply(move));
+        gameStates.add(move.apply(getState()));
         gameStateIx = gameStates.size() - 1;
     }
 

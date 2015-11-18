@@ -1,8 +1,8 @@
 package quoridor.core.direction;
 
 public enum Direction implements Directed {
-    TOP,
-    BOTTOM,
+    UP,
+    DOWN,
     LEFT,
     RIGHT;
 

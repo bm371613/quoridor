@@ -10,10 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import quoridor.core.Move;
 import quoridor.core.direction.Directed;
 import quoridor.core.direction.Direction;
 import quoridor.core.direction.PerDirection;
+import quoridor.core.move.PawnMove;
+import quoridor.core.move.WallMove;
 import quoridor.core.state.GameState;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
@@ -42,7 +43,7 @@ public class Board extends JPanel implements ComponentListener {
 
         for (int x = 0; x < PLACES_SIZE; ++x) {
             for (int y = 0; y < PLACES_SIZE; ++y) {
-                Place place = new Place(Move.makePawnMove(x, y));
+                Place place = new Place(PawnMove.of(x, y));
                 add(place);
                 places[x][y] = place;
             }
@@ -50,13 +51,13 @@ public class Board extends JPanel implements ComponentListener {
 
         for (int x = 0; x < WALLS_SIZE; ++x) {
             for (int y = 0; y < WALLS_SIZE; ++y) {
-                Wall horizontalWall = new Wall(Move.makeWallMove(x, y,
-                        WallOrientation.HORIZONTAL));
+                Wall horizontalWall = new Wall(
+                        WallMove.of(x, y, WallOrientation.HORIZONTAL));
                 add(horizontalWall);
                 horizontalWalls[x][y] = horizontalWall;
 
-                Wall verticalWall = new Wall(Move.makeWallMove(x, y,
-                        WallOrientation.VERTICAL));
+                Wall verticalWall = new Wall(
+                        WallMove.of(x, y, WallOrientation.VERTICAL));
                 add(verticalWall);
                 verticalWalls[x][y] = verticalWall;
             }
@@ -166,10 +167,10 @@ public class Board extends JPanel implements ComponentListener {
             }
         }
 
-        wallLabels.get(Direction.TOP).setBounds(0, boardSide - margin,
+        wallLabels.get(Direction.UP).setBounds(0, boardSide - margin,
                 boardSide, margin);
         wallLabels.get(Direction.RIGHT).setBounds(0, 0, margin, boardSide);
-        wallLabels.get(Direction.BOTTOM).setBounds(0, 0, boardSide, margin);
+        wallLabels.get(Direction.DOWN).setBounds(0, 0, boardSide, margin);
         wallLabels.get(Direction.LEFT).setBounds(boardSide - margin, 0, margin,
                 boardSide);
     }

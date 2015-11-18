@@ -2,7 +2,7 @@ package quoridor.gui.event;
 
 import lombok.Value;
 
-import quoridor.core.Move;
+import quoridor.core.move.Move;
 import quoridor.gui.util.Highlightable;
 
 @Value

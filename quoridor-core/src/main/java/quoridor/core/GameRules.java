@@ -1,14 +1,22 @@
 package quoridor.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 
 import quoridor.core.direction.Directed;
 import quoridor.core.direction.Direction;
 import quoridor.core.direction.PerDirection;
+import quoridor.core.move.Move;
+import quoridor.core.move.PawnMove;
+import quoridor.core.move.WallMove;
+import quoridor.core.position.Position;
 import quoridor.core.position.Positioned;
 import quoridor.core.state.GameState;
 import quoridor.core.state.PlayerState;
@@ -22,9 +30,9 @@ public final class GameRules {
 
     private static PerDirection<Predicate<Positioned>> goalPredicates =
             (new PerDirection<Predicate<Positioned>>())
-                    .set(Direction.BOTTOM, (p) -> p.getY() == 0)
+                    .set(Direction.DOWN, (p) -> p.getY() == 0)
                     .set(Direction.LEFT, (p) -> p.getX() == 0)
-                    .set(Direction.TOP, (p) -> p.getY() == GameState.PLACES - 1)
+                    .set(Direction.UP, (p) -> p.getY() == GameState.PLACES - 1)
                     .set(Direction.RIGHT,
                             (p) -> p.getX() == GameState.PLACES - 1);
 
@@ -34,8 +42,8 @@ public final class GameRules {
         int middle = GameState.PLACES / 2;
         int initWalls = 10;
         List<PlayerState> playerStates = ImmutableList.of(
-                    PlayerState.of(Direction.TOP, middle, bottom, initWalls),
-                    PlayerState.of(Direction.BOTTOM, middle, top, initWalls));
+                    PlayerState.of(Direction.UP, middle, bottom, initWalls),
+                    PlayerState.of(Direction.DOWN, middle, top, initWalls));
         return GameState.builder()
                 .setWallsState(WallsState.builder().build())
                 .setPlayersStates(playerStates)
@@ -51,9 +59,9 @@ public final class GameRules {
         int middle = GameState.PLACES / 2;
         int initWalls = 5;
         List<PlayerState> playerStates = ImmutableList.of(
-                PlayerState.of(Direction.TOP, middle, bottom, initWalls),
+                PlayerState.of(Direction.UP, middle, bottom, initWalls),
                 PlayerState.of(Direction.RIGHT, left, middle, initWalls),
-                PlayerState.of(Direction.BOTTOM, middle, top, initWalls),
+                PlayerState.of(Direction.DOWN, middle, top, initWalls),
                 PlayerState.of(Direction.LEFT, right, middle, initWalls));
         return GameState.builder()
                 .setWallsState(WallsState.builder().build())
@@ -67,28 +75,16 @@ public final class GameRules {
         Move move;
 
         // pawn moves
-        PlayerState player = gs.getCurrentPlayersState();
-        int minX = Math.max(0, player.getX() - 4);
-        int maxX = Math.max(GameState.PLACES - 1, player.getX() + 4);
-        int minY = Math.max(0, player.getY() - 4);
-        int maxY = Math.max(GameState.PLACES - 1, player.getY() + 4);
-        for (int x = minX; x <= maxX; ++x) {
-            for (int y = minY; y <= maxY; ++y) {
-                move = Move.makePawnMove(x, y);
-                if (isLegalMove(gs, move)) {
-                    result.add(move);
-                }
-            }
-        }
+        Iterators.addAll(result, LegalPawnMovesIterator.create(gs));
 
         // wall moves
         for (int x = 0; x < GameState.WALL_PLACES; ++x) {
             for (int y = 0; y < GameState.WALL_PLACES; ++y) {
-                move = Move.makeWallMove(x, y, WallOrientation.HORIZONTAL);
+                move = WallMove.of(x, y, WallOrientation.HORIZONTAL);
                 if (isLegalMove(gs, move)) {
                     result.add(move);
                 }
-                move = Move.makeWallMove(x, y, WallOrientation.VERTICAL);
+                move = WallMove.of(x, y, WallOrientation.VERTICAL);
                 if (isLegalMove(gs, move)) {
                     result.add(move);
                 }
@@ -98,27 +94,25 @@ public final class GameRules {
         return result;
     }
 
+    public static boolean isLegalMove(GameState gs, WallMove move) {
+        return WallsState.inBounds(move)
+                && gs.getCurrentPlayersState().getWallsLeft() > 0
+                && !wallMoveCausesCollision(gs, move)
+                && !wallMoveCausesBlocking(gs, move);
+    }
+
+    public static boolean isLegalMove(GameState gs, PawnMove move) {
+        return Iterators.any(LegalPawnMovesIterator.create(gs), move::equals);
+    }
+
     public static boolean isLegalMove(GameState gs, Move move) {
-        if (move.isWallMove()) {
-            return 0 <= move.getX() && move.getX() < GameState.WALL_PLACES
-                    && 0 <= move.getY() && move.getY() < GameState.WALL_PLACES
-                    && gs.getCurrentPlayersState().getWallsLeft() > 0
-                    && !wallMoveCausesCollision(gs, move)
-                    && !wallMoveCausesBlocking(gs, move);
-        } else {
-            if (!(0 <= move.getX() && move.getX() < GameState.PLACES
-                    && 0 <= move.getY() && move.getY() < GameState.PLACES)) {
+        switch (move.getType()) {
+            case WALL:
+                return isLegalMove(gs, (WallMove) move);
+            case PAWN:
+                return isLegalMove(gs, (PawnMove) move);
+            default:
                 return false;
-            }
-            PlayerState player = gs.getCurrentPlayersState();
-            if (player.isBy(move)) {
-                return !gs.getWallsState().isWallBetween(player, move)
-                        && !gs.isOccupied(move);
-            } else {
-                // TODO fix double/triple jumps
-                return gs.getPlayerStates().stream().anyMatch((opponent) ->
-                        opponent != player && isLegalJump(gs, move, opponent));
-            }
         }
     }
 
@@ -134,7 +128,8 @@ public final class GameRules {
         return getGoalPredicate(ps).test(ps);
     }
 
-    private static boolean wallMoveCausesCollision(GameState gs, Move move) {
+    private static boolean wallMoveCausesCollision(GameState gs,
+                WallMove move) {
         int x = move.getX();
         int y = move.getY();
         WallOrientation orientation = move.getWallOrientation();
@@ -150,25 +145,92 @@ public final class GameRules {
         }
     }
 
-    private static boolean wallMoveCausesBlocking(GameState gs, Move move) {
-        WallsState walls = gs.apply(move).getWallsState();
+    private static boolean wallMoveCausesBlocking(GameState gs,
+                WallMove move) {
+        WallsState walls = move.apply(gs).getWallsState();
         return !gs.getPlayerStates().stream().allMatch((p) ->
                 DistanceCalculator.getInstance().calculateDistance(walls, p,
                         getGoalPredicate(p)) < DistanceCalculator.INFINITY);
     }
+}
 
-    private static boolean isLegalJump(GameState gs, Move move,
-            PlayerState opponent) {
-        // TODO fix double/triple jumps
-        PlayerState player = gs.getCurrentPlayersState();
-        WallsState walls = gs.getWallsState();
-        return player.isBy(opponent) && opponent.isBy(move)
-                && !move.isAt(player)
-                && !walls.isWallBetween(player, opponent)
-                && !walls.isWallBetween(opponent, move)
-                && (player.getX() == move.getX()
-                    || player.getY() == move.getY()
-                    || walls.isWallBehind(player, opponent))
-                && !gs.isOccupied(move);
+final class LegalPawnMovesIterator implements Iterator<PawnMove> {
+
+    private GameState gameState;
+    private boolean advanced;
+    private PawnMove next;
+
+    private List<Positioned> sources = new ArrayList<>(4);
+    private List<Positioned> targets = new ArrayList<>(10);
+    private HashSet<Integer> considered = new HashSet<>();
+
+    private LegalPawnMovesIterator(GameState gameState) {
+        this.gameState = gameState;
+        sources.add(gameState.getCurrentPlayersState());
+    }
+
+    public static LegalPawnMovesIterator create(GameState gameState) {
+        return new LegalPawnMovesIterator(gameState);
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (!advanced) {
+            advance();
+        }
+        return next != null;
+    }
+
+    @Override
+    public PawnMove next() {
+        if (hasNext()) {
+            advanced = false;
+            return next;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    private void advance() {
+        advanced = true;
+        next = null;
+
+        while (targets.isEmpty() && !sources.isEmpty()) {
+            Positioned source = sources.remove(sources.size() - 1);
+            for (Direction direction : Direction.values()) {
+                Positioned p = Position.next(source, direction);
+
+                // skip already considered
+                if (considered.contains(positionedHash(p))) {
+                    continue;
+                }
+                considered.add(positionedHash(p));
+
+                // skip out of bounds
+                if (!GameState.placeInBoardBounds(p)) {
+                    continue;
+                }
+
+                // skip unreachable
+                if (gameState.getWallsState().isWallBetween(source, p)) {
+                    continue;
+                }
+
+                if (gameState.isOccupied(p)) {
+                    sources.add(p);
+                } else {
+                    targets.add(p);
+                }
+            }
+        }
+
+        if (!targets.isEmpty()) {
+            next = PawnMove.of(
+                    targets.remove(targets.size() - 1).getPosition());
+        }
+    }
+
+    private int positionedHash(Positioned p) {
+        return p.getX() * GameState.PLACES + p.getY();
     }
 }
