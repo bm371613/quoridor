@@ -14,7 +14,9 @@ import lombok.Value;
 import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.GreedyBot;
 import quoridor.ai.bot.RandomBot;
-import quoridor.ai.value_function.DistanceBehindBestOpponent;
+import quoridor.ai.value_function.Careless;
+import quoridor.ai.value_function.RadicalDistance;
+import quoridor.ai.value_function.SimpleDistance;
 import quoridor.gui.player.BotPlayer;
 import quoridor.gui.player.Human;
 import quoridor.gui.player.Player;
@@ -32,8 +34,12 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
-                    namedBotMaker("GreedyBot", new GreedyBot(
-                            new DistanceBehindBestOpponent())),
+                    namedBotMaker("GreedyBot - SimpleDistance", new GreedyBot(
+                            new SimpleDistance())),
+                    namedBotMaker("GreedyBot - RadicalDistance", new GreedyBot(
+                            new RadicalDistance())),
+                    namedBotMaker("GreedyBot - Careless", new GreedyBot(
+                            new Careless())),
                     namedBotMaker("RandomBot", new RandomBot()));
 
     private final JTextField nameField = new JTextField();

@@ -10,6 +10,8 @@ import quoridor.core.state.WallsState;
 public final class DistanceCalculator {
 
     public static final int INFINITY = Integer.MAX_VALUE;
+    public static final int DISTANCE_UPPER_BOUND =
+            GameState.PLACES * GameState.PLACES;
 
     private static final DistanceCalculator INSTANCE = new DistanceCalculator();
 
