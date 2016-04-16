@@ -23,7 +23,7 @@ import quoridor.gui.event.EventListener;
 import quoridor.gui.event.LoadGameEvent;
 import quoridor.gui.util.GuiHelper;
 
-public class NewGameDialog extends JDialog implements ActionListener {
+public class StartGameDialog extends JDialog implements ActionListener {
 
     private final JRadioButton twoPlayersRadioButton =
             new JRadioButton("Two players");
@@ -36,7 +36,7 @@ public class NewGameDialog extends JDialog implements ActionListener {
 
     @Setter private EventListener eventListener;
 
-    public NewGameDialog(JFrame owner) {
+    public StartGameDialog(JFrame owner) {
         super(owner, "New Game");
         setModal(true);
 

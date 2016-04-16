@@ -19,7 +19,7 @@ public class GameManager implements EventListener {
     public GameManager(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.mainWindow.setEventListener(this);
-        this.mainWindow.getNewGameDialog().setEventListener(this);
+        this.mainWindow.getStartGameDialog().setEventListener(this);
     }
 
     private void loadGame(LoadGameEvent loadGameEvent) {

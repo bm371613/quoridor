@@ -22,9 +22,10 @@ import quoridor.gui.util.GuiHelper;
 public class MainWindow extends JFrame implements ActionListener {
 
     @Getter private final Board board;
-    @Getter private final NewGameDialog newGameDialog = new NewGameDialog(this);
+    @Getter private final StartGameDialog startGameDialog =
+            new StartGameDialog(this);
 
-    private final JMenuItem newGameMenuItem = new JMenuItem("New Game");
+    private final JMenuItem startGameMenuItem = new JMenuItem("Start Game");
     private final JMenuItem undoMenuItem = new JMenuItem("Undo");
     private final JMenuItem redoMenuItem = new JMenuItem("Redo");
     private final JMenuItem dumpMenuItem = new JMenuItem("Dump Game State");
@@ -40,7 +41,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
-        addMenuItem(menuBar, newGameMenuItem);
+        addMenuItem(menuBar, startGameMenuItem);
         addMenuItem(menuBar, undoMenuItem);
         addMenuItem(menuBar, redoMenuItem);
         addMenuItem(menuBar, dumpMenuItem);
@@ -61,8 +62,8 @@ public class MainWindow extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == newGameMenuItem) {
-            newGameDialog.setVisible(true);
+        if (e.getSource() == startGameMenuItem) {
+            startGameDialog.setVisible(true);
         } else if (e.getSource() == undoMenuItem) {
             eventListener.notifyAboutEvent(this, UndoEvent.makeUndoEvent());
         } else if (e.getSource() == redoMenuItem) {
