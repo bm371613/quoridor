@@ -5,12 +5,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import javax.swing.*;
 
 import lombok.Setter;
 
@@ -31,8 +30,11 @@ public class StartGameDialog extends JDialog implements ActionListener {
             new JRadioButton("Four players");
     private final PerDirection<PlayerForm> playerForms = PerDirection.of(
             (g) -> new PlayerForm(g.ordinal(), g == Direction.UP));
-    private final JButton okButton = new JButton("OK");
+    private final JButton startNewButton = new JButton("Start new game");
+    private final JButton restoreButton = new JButton("Restore game state");
     private final JButton cancelButton = new JButton("Cancel");
+
+    final JFileChooser restoreFileChooser = new JFileChooser(".");
 
     @Setter private EventListener eventListener;
 
@@ -52,16 +54,53 @@ public class StartGameDialog extends JDialog implements ActionListener {
         fourPlayersRadioButton.addActionListener(this);
         fourPlayersRadioButton.setSelected(true);
 
-        getRootPane().setDefaultButton(okButton);
-        okButton.addActionListener(e -> onOK());
+        getRootPane().setDefaultButton(startNewButton);
+        startNewButton.addActionListener(e -> onStartNew());
+        restoreButton.addActionListener(e -> onRestore());
         cancelButton.addActionListener(e -> dispose());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    private void onOK() {
+    private void onStartNew() {
         GameState gs = twoPlayersRadioButton.isSelected()
                 ? GameRules.makeInitialStateForTwo()
                 : GameRules.makeInitialStateForFour();
+        eventListener.notifyAboutEvent(null, new LoadGameEvent(new Game(gs,
+                playerForms.map(PlayerForm::makePlayer))));
+        setVisible(false);
+    }
+
+    private void onRestore() {
+        if (restoreFileChooser.showOpenDialog(this)
+                != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File file = restoreFileChooser.getSelectedFile();
+        GameState gs;
+        try {
+            FileInputStream fileIn = new FileInputStream(file);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            gs = (GameState) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Failed to restore game state from selected file.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        if ((gs.getPlayerStates().size() == 2)
+                ^ twoPlayersRadioButton.isSelected()) {
+            JOptionPane.showMessageDialog(this,
+                    "Number of players in game state and configuration differ.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         eventListener.notifyAboutEvent(null, new LoadGameEvent(new Game(gs,
                 playerForms.map(PlayerForm::makePlayer))));
         setVisible(false);
@@ -120,15 +159,18 @@ public class StartGameDialog extends JDialog implements ActionListener {
         // bottom: buttons
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.PAGE_END;
-        c.weightx = 0.5;
+        c.weightx = 0;
         c.weighty = 0;
         c.gridy = 2;
         c.gridwidth = 1;
 
         c.gridx = 0;
-        contentPane.add(okButton, c);
+        contentPane.add(startNewButton, c);
 
         c.gridx = 1;
+        contentPane.add(restoreButton, c);
+
+        c.gridx = 2;
         contentPane.add(cancelButton, c);
     }
 
