@@ -9,7 +9,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import lombok.Setter;
 
@@ -34,7 +41,7 @@ public class StartGameDialog extends JDialog implements ActionListener {
     private final JButton restoreButton = new JButton("Restore game state");
     private final JButton cancelButton = new JButton("Cancel");
 
-    final JFileChooser restoreFileChooser = new JFileChooser(".");
+    private final JFileChooser restoreFileChooser = new JFileChooser(".");
 
     @Setter private EventListener eventListener;
 
@@ -90,7 +97,6 @@ public class StartGameDialog extends JDialog implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             return;
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
             return;
         }
         if ((gs.getPlayerStates().size() == 2)

@@ -1,12 +1,13 @@
 package quoridor.ai.bot;
 
+import java.util.Arrays;
+
 import quoridor.ai.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
 
-import java.util.Arrays;
 
 public class MinimaxBot implements Bot {
 
@@ -37,15 +38,15 @@ class MinimaxThinkingProcess extends ThinkingProcess {
 
     private int[] estimate(GameState gameState, int depth) {
         if (depth < 1) {
-            int result[] = new int[playersCount];
+            int[] result = new int[playersCount];
             for (int i = 0; i < playersCount; ++i) {
                 result[i] = valueFunction.apply(gameState, i);
             }
             return result;
         }
 
-        int bestValue[] = new int[playersCount];
-        int currentValue[];
+        int[] bestValue = new int[playersCount];
+        int[] currentValue;
         int playerIx = gameState.currentPlayerIx();
         Arrays.fill(bestValue, Integer.MIN_VALUE);
         for (Move move : GameRules.getLegalMoves(gameState)) {

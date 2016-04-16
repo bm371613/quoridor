@@ -1,10 +1,10 @@
 package quoridor.gui.event;
 
-public class DumpEvent {
+public final class DumpEvent {
 
     private static DumpEvent instance = new DumpEvent();
 
-    private DumpEvent(){
+    private DumpEvent() {
     }
 
     public static DumpEvent makeDumpEvent() {

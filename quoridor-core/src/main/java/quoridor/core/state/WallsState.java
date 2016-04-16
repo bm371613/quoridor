@@ -1,8 +1,8 @@
 package quoridor.core.state;
 
-import quoridor.core.position.Positioned;
-
 import java.io.Serializable;
+
+import quoridor.core.position.Positioned;
 
 public final class WallsState implements Serializable {
     private final WallOrientation[] walls;
