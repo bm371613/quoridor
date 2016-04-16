@@ -1,5 +1,6 @@
 package quoridor.core.state;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -8,7 +9,7 @@ import lombok.Getter;
 
 import quoridor.core.position.Positioned;
 
-public final class GameState {
+public final class GameState implements Serializable {
     public static final int PLACES = 9; // number of places along each side
     public static final int WALL_PLACES = PLACES - 1;
 

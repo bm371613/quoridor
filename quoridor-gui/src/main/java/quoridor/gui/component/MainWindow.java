@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import quoridor.gui.component.board.Board;
+import quoridor.gui.event.DumpEvent;
 import quoridor.gui.event.EventListener;
 import quoridor.gui.event.RedoEvent;
 import quoridor.gui.event.UndoEvent;
@@ -26,6 +27,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private final JMenuItem newGameMenuItem = new JMenuItem("New Game");
     private final JMenuItem undoMenuItem = new JMenuItem("Undo");
     private final JMenuItem redoMenuItem = new JMenuItem("Redo");
+    private final JMenuItem dumpMenuItem = new JMenuItem("Dump Game State");
 
     @Setter private EventListener eventListener;
 
@@ -41,6 +43,7 @@ public class MainWindow extends JFrame implements ActionListener {
         addMenuItem(menuBar, newGameMenuItem);
         addMenuItem(menuBar, undoMenuItem);
         addMenuItem(menuBar, redoMenuItem);
+        addMenuItem(menuBar, dumpMenuItem);
 
         board = new Board();
         setLayout(new GridBagLayout());
@@ -64,6 +67,8 @@ public class MainWindow extends JFrame implements ActionListener {
             eventListener.notifyAboutEvent(this, UndoEvent.makeUndoEvent());
         } else if (e.getSource() == redoMenuItem) {
             eventListener.notifyAboutEvent(this, RedoEvent.makeRedoEvent());
+        } else if (e.getSource() == dumpMenuItem) {
+            eventListener.notifyAboutEvent(this, DumpEvent.makeDumpEvent());
         }
     }
 }

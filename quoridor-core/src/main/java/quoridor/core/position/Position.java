@@ -4,8 +4,10 @@ import lombok.Value;
 
 import quoridor.core.direction.Directed;
 
+import java.io.Serializable;
+
 @Value
-public final class Position implements Positioned {
+public final class Position implements Serializable, Positioned {
     private final int x;
     private final int y;
 

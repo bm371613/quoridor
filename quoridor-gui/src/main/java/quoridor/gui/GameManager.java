@@ -3,12 +3,13 @@ package quoridor.gui;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
 import quoridor.gui.component.MainWindow;
-import quoridor.gui.event.EventListener;
-import quoridor.gui.event.LoadGameEvent;
-import quoridor.gui.event.MoveChoiceEvent;
-import quoridor.gui.event.RedoEvent;
-import quoridor.gui.event.UndoEvent;
+import quoridor.gui.event.*;
 import quoridor.gui.player.Player;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class GameManager implements EventListener {
 
@@ -92,6 +93,19 @@ public class GameManager implements EventListener {
                 player.moveCancelled();
                 updateBoard();
                 performTurn();
+            }
+        } else if (event instanceof DumpEvent) {
+            if (game == null) {
+                return;
+            }
+            try {
+                FileOutputStream fileOut = new FileOutputStream("dump.ser");
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(game.getState());
+                out.close();
+                fileOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

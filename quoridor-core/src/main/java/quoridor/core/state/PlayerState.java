@@ -1,5 +1,7 @@
 package quoridor.core.state;
 
+import java.io.Serializable;
+
 import lombok.Value;
 
 import quoridor.core.direction.Directed;
@@ -8,7 +10,7 @@ import quoridor.core.position.Position;
 import quoridor.core.position.Positioned;
 
 @Value
-public final class PlayerState implements Directed, Positioned {
+public final class PlayerState implements Serializable, Directed, Positioned {
     private final Direction goal;
     private final Position position;
     private final int wallsLeft;
