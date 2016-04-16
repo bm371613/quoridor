@@ -13,6 +13,7 @@ import lombok.Value;
 
 import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.GreedyBot;
+import quoridor.ai.bot.MinimaxBot;
 import quoridor.ai.bot.RandomBot;
 import quoridor.ai.value_function.Careless;
 import quoridor.ai.value_function.RadicalDistance;
@@ -34,6 +35,8 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
+                    namedBotMaker("Minimax - SimpleDistance", new MinimaxBot(
+                            new SimpleDistance())),
                     namedBotMaker("GreedyBot - SimpleDistance", new GreedyBot(
                             new SimpleDistance())),
                     namedBotMaker("GreedyBot - RadicalDistance", new GreedyBot(
