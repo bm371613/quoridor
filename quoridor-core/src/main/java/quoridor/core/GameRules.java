@@ -1,6 +1,7 @@
 package quoridor.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -71,22 +72,26 @@ public final class GameRules {
     }
 
     public static List<Move> getLegalMoves(GameState gs) {
+        if (isFinal(gs)) {
+            return Collections.emptyList();
+        }
+
         List<Move> result = new ArrayList<>();
-        Move move;
 
         // pawn moves
         Iterators.addAll(result, LegalPawnMovesIterator.create(gs));
 
         // wall moves
+        WallMove wallMove;
         for (int x = 0; x < GameState.WALL_PLACES; ++x) {
             for (int y = 0; y < GameState.WALL_PLACES; ++y) {
-                move = WallMove.of(x, y, WallOrientation.HORIZONTAL);
-                if (isLegalMove(gs, move)) {
-                    result.add(move);
+                wallMove = WallMove.of(x, y, WallOrientation.HORIZONTAL);
+                if (isLegalMove(gs, wallMove)) {
+                    result.add(wallMove);
                 }
-                move = WallMove.of(x, y, WallOrientation.VERTICAL);
-                if (isLegalMove(gs, move)) {
-                    result.add(move);
+                wallMove = WallMove.of(x, y, WallOrientation.VERTICAL);
+                if (isLegalMove(gs, wallMove)) {
+                    result.add(wallMove);
                 }
             }
         }
@@ -94,18 +99,21 @@ public final class GameRules {
         return result;
     }
 
-    public static boolean isLegalMove(GameState gs, WallMove move) {
+    private static boolean isLegalMove(GameState gs, WallMove move) {
         return WallsState.inBounds(move)
                 && gs.getCurrentPlayersState().getWallsLeft() > 0
                 && !wallMoveCausesCollision(gs, move)
                 && !wallMoveCausesBlocking(gs, move);
     }
 
-    public static boolean isLegalMove(GameState gs, PawnMove move) {
+    private static boolean isLegalMove(GameState gs, PawnMove move) {
         return Iterators.any(LegalPawnMovesIterator.create(gs), move::equals);
     }
 
     public static boolean isLegalMove(GameState gs, Move move) {
+        if (isFinal(gs)) {
+            return false;
+        }
         switch (move.getType()) {
             case WALL:
                 return isLegalMove(gs, (WallMove) move);
@@ -169,7 +177,7 @@ final class LegalPawnMovesIterator implements Iterator<PawnMove> {
         sources.add(gameState.getCurrentPlayersState());
     }
 
-    public static LegalPawnMovesIterator create(GameState gameState) {
+    static LegalPawnMovesIterator create(GameState gameState) {
         return new LegalPawnMovesIterator(gameState);
     }
 

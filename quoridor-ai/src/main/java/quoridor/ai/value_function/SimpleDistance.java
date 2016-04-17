@@ -10,5 +10,5 @@ public class SimpleDistance implements ValueFunction {
     public int apply(GameState gameState, int playerIx) {
         return minOtherPlayerDistance(gameState, playerIx)
                 - distance(gameState, playerIx);
-    };
+    }
 }
