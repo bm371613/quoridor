@@ -136,6 +136,17 @@ public final class GameRules {
         return getGoalPredicate(ps).test(ps);
     }
 
+    public static int getWinner(GameState gs) {
+        List<PlayerState> playerStates = gs.getPlayerStates();
+        for (int playerIx = 0; playerIx < playerStates.size(); ++playerIx) {
+            if (isWon(playerStates.get(playerIx))) {
+                return playerIx;
+            }
+        }
+        throw new RuntimeException(
+                "Cannot determine winner for a non-final game state");
+    }
+
     private static boolean wallMoveCausesCollision(GameState gs,
                 WallMove move) {
         int x = move.getX();

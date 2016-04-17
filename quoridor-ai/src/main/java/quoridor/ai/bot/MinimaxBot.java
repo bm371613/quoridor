@@ -37,25 +37,33 @@ class MinimaxThinkingProcess extends ThinkingProcess {
     }
 
     private int[] estimate(GameState gameState, int depth) {
+        int[] result = null;
+
         if (depth < 1) {
-            int[] result = new int[playersCount];
+            result = new int[playersCount];
             for (int i = 0; i < playersCount; ++i) {
                 result[i] = valueFunction.apply(gameState, i);
             }
             return result;
         }
 
-        int[] bestValue = new int[playersCount];
+
+        if (GameRules.isFinal(gameState)) {
+            result = new int[playersCount];
+            Arrays.fill(result, Integer.MIN_VALUE);
+            result[GameRules.getWinner(gameState)] = Integer.MAX_VALUE;
+            return result;
+        }
+
         int[] currentValue;
         int playerIx = gameState.currentPlayerIx();
-        Arrays.fill(bestValue, Integer.MIN_VALUE);
         for (Move move : GameRules.getLegalMoves(gameState)) {
             currentValue = estimate(move.apply(gameState), depth - 1);
-            if (bestValue[playerIx] < currentValue[playerIx]) {
-                bestValue = currentValue;
+            if (result == null || result[playerIx] < currentValue[playerIx]) {
+                result = currentValue;
             }
         }
-        return bestValue;
+        return result;
     }
 
     private Move choose(int depth) {
