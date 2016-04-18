@@ -15,7 +15,7 @@ public final class GameState implements Serializable {
 
     @Getter private final WallsState wallsState;
     @Getter private final ImmutableList<PlayerState> playerStates;
-    private final int turn;
+    @Getter private final int turn;
 
     public GameState(WallsState wallsState,
                      ImmutableList<PlayerState> playerStates, int turn) {

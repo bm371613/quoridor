@@ -1,7 +1,5 @@
 package quoridor.ai.bot;
 
-import java.util.Arrays;
-
 import quoridor.ai.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
 import quoridor.core.GameRules;
@@ -38,29 +36,20 @@ class MinimaxThinkingProcess extends ThinkingProcess {
 
     private int[] estimate(GameState gameState, int depth) {
         int[] result = null;
-
-        if (depth < 1) {
+        if (depth < 1 || GameRules.isFinal(gameState)) {
             result = new int[playersCount];
             for (int i = 0; i < playersCount; ++i) {
                 result[i] = valueFunction.apply(gameState, i);
             }
-            return result;
-        }
-
-
-        if (GameRules.isFinal(gameState)) {
-            result = new int[playersCount];
-            Arrays.fill(result, Integer.MIN_VALUE);
-            result[GameRules.getWinner(gameState)] = Integer.MAX_VALUE;
-            return result;
-        }
-
-        int[] currentValue;
-        int playerIx = gameState.currentPlayerIx();
-        for (Move move : GameRules.getLegalMoves(gameState)) {
-            currentValue = estimate(move.apply(gameState), depth - 1);
-            if (result == null || result[playerIx] < currentValue[playerIx]) {
-                result = currentValue;
+        } else {
+            int[] currentValue;
+            int playerIx = gameState.currentPlayerIx();
+            for (Move move : GameRules.getLegalMoves(gameState)) {
+                currentValue = estimate(move.apply(gameState), depth - 1);
+                if (result == null
+                        || result[playerIx] < currentValue[playerIx]) {
+                    result = currentValue;
+                }
             }
         }
         return result;
