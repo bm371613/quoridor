@@ -72,10 +72,10 @@ class MinimaxThinkingProcess extends ThinkingProcess {
 
     @Override
     public void run() {
-        int depth = 1;
+        int depth = 0;
         while (true) {
             setResult(choose(depth));
-            depth *= 2;
+            depth += 1;
         }
     }
 }
