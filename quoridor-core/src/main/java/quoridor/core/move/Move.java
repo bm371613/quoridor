@@ -4,7 +4,7 @@ import quoridor.core.state.GameState;
 
 public interface Move {
 
-    public enum Type {
+    enum Type {
         PAWN, WALL
     }
 
