@@ -1,6 +1,7 @@
 package quoridor.ai.bot;
 
-import quoridor.ai.ThinkingProcess;
+import quoridor.ai.thinking_process.IterativeDeepeningThinkingProcess;
+import quoridor.ai.thinking_process.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
@@ -21,7 +22,7 @@ public class MinimaxBot implements Bot {
     }
 }
 
-class MinimaxThinkingProcess extends ThinkingProcess {
+class MinimaxThinkingProcess extends IterativeDeepeningThinkingProcess {
 
     private final ValueFunction valueFunction;
     private final GameState gameState;
@@ -55,7 +56,8 @@ class MinimaxThinkingProcess extends ThinkingProcess {
         return result;
     }
 
-    private Move choose(int depth) {
+    @Override
+    protected Move choose(int depth) {
         Move bestMove = null;
         int bestValue = Integer.MIN_VALUE;
         int currentValue;
@@ -70,12 +72,4 @@ class MinimaxThinkingProcess extends ThinkingProcess {
         return bestMove;
     }
 
-    @Override
-    public void run() {
-        int depth = 0;
-        while (true) {
-            setResult(choose(depth));
-            depth += 1;
-        }
-    }
 }

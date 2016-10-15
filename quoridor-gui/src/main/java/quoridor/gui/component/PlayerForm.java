@@ -14,7 +14,9 @@ import lombok.Value;
 import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.GreedyBot;
 import quoridor.ai.bot.MinimaxBot;
+import quoridor.ai.bot.MinimaxTTBot;
 import quoridor.ai.bot.RandomBot;
+import quoridor.ai.hash.Zobrista;
 import quoridor.ai.value_function.TopOpponentDistanceComparison;
 import quoridor.gui.player.BotPlayer;
 import quoridor.gui.player.Human;
@@ -33,10 +35,14 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
+                    namedBotMaker("MinimaxTT", new MinimaxTTBot(
+                            TopOpponentDistanceComparison.getInstance(),
+                            Zobrista.getInstance(),
+                            4 * 1024 * 1024)),
                     namedBotMaker("Minimax", new MinimaxBot(
-                            new TopOpponentDistanceComparison())),
+                            TopOpponentDistanceComparison.getInstance())),
                     namedBotMaker("GreedyBot", new GreedyBot(
-                            new TopOpponentDistanceComparison())),
+                            TopOpponentDistanceComparison.getInstance())),
                     namedBotMaker("RandomBot", new RandomBot()));
 
     private final JTextField nameField = new JTextField();

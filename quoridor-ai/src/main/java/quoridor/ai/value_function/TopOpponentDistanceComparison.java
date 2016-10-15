@@ -7,12 +7,23 @@ import quoridor.core.state.GameState;
 import static quoridor.ai.value_function.Utils.distance;
 import static quoridor.ai.value_function.Utils.minOtherPlayerDistance;
 
-public class TopOpponentDistanceComparison implements ValueFunction {
+public final class TopOpponentDistanceComparison implements ValueFunction {
+
+
+    private static final TopOpponentDistanceComparison INSTANCE =
+            new TopOpponentDistanceComparison();
+
+    private TopOpponentDistanceComparison() {
+    }
+
+    public static TopOpponentDistanceComparison getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public int apply(GameState gameState, int playerIx) {
         if (GameRules.isWon(gameState.getPlayerStates().get(playerIx))) {
-            return Integer.MAX_VALUE - (DistanceCalculator.DISTANCE_UPPER_BOUND
-                    - minOtherPlayerDistance(gameState, playerIx));
+            return Integer.MAX_VALUE - gameState.getTurn();
         } else if (GameRules.isFinal(gameState)) {
             return Integer.MIN_VALUE + (DistanceCalculator.DISTANCE_UPPER_BOUND
                         - distance(gameState, playerIx));

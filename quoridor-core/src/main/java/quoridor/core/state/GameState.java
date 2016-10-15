@@ -44,6 +44,62 @@ public final class GameState implements Serializable {
                 && 0 <= p.getY() && p.getY() < PLACES;
     }
 
+    public String toPrettyString() {
+        int size = PLACES + WALL_PLACES;
+        StringBuilder builder = new StringBuilder();
+        builder.append("Turn: ").append(currentPlayerIx()).append("\n");
+        char[][] board = new char[size][size];
+        for (int y = 0; y < size; ++y) {
+            for (int x = 0; x < size; ++x) {
+                board[y][x] = ' ';
+            }
+        }
+        for (int i = 0; i < playerStates.size(); ++i) {
+            PlayerState playerState = playerStates.get(i);
+            builder.append("Player ").append(i).append(": ")
+                    .append(playerState.getGoal()).append(" ")
+                    .append(playerState.getWallsLeft()).append("\n");
+            board[2 * playerState.getY()][2 * playerState.getX()]
+                    = Character.forDigit(i, 10);
+        }
+        for (int wx = 0; wx < WALL_PLACES; ++wx) {
+            for (int wy = 0; wy < WALL_PLACES; ++wy) {
+                WallOrientation wallOrientation = wallsState.get(wx, wy);
+                int x = 2 * wx + 1;
+                int y = 2 * wy + 1;
+                if (wallOrientation == WallOrientation.HORIZONTAL) {
+                    board[y][x - 1] = '-';
+                    board[y][x] = '-';
+                    board[y][x + 1] = '-';
+                } else if (wallOrientation == WallOrientation.VERTICAL) {
+                    board[y - 1][x] = '|';
+                    board[y][x] = '|';
+                    board[y + 1][x] = '|';
+                } else {
+                    board[y][x] = '+';
+                }
+            }
+        }
+        builder.append('+');
+        for (int x = 0; x < size; ++x) {
+            builder.append('-');
+        }
+        builder.append("+\n");
+        for (int y = size - 1; y >= 0; --y) {
+            builder.append('|');
+            for (int x = 0; x < size; ++x) {
+                builder.append(board[y][x]);
+            }
+            builder.append("|\n");
+        }
+        builder.append('+');
+        for (int x = 0; x < size; ++x) {
+            builder.append('-');
+        }
+        builder.append("+\n");
+        return builder.toString();
+    }
+
     // builder
 
     public static Builder builder() {

@@ -3,7 +3,7 @@ package quoridor.ai.bot;
 import java.util.List;
 import java.util.Random;
 
-import quoridor.ai.ThinkingProcess;
+import quoridor.ai.thinking_process.ThinkingProcess;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
 import quoridor.core.state.GameState;

@@ -39,7 +39,7 @@ public final class Zobrista implements IncrementalHash<GameState, Move> {
 
         //players
         ImmutableList<PlayerState> playerStates = gameState.getPlayerStates();
-        for (int i = 0; i > playerStates.size(); ++i) {
+        for (int i = 0; i < playerStates.size(); ++i) {
             PlayerState playerState = playerStates.get(i);
             Position position = playerState.getPosition();
             result ^= PLAYER_MAGIC[i][0][playerState.getWallsLeft()];
@@ -52,7 +52,14 @@ public final class Zobrista implements IncrementalHash<GameState, Move> {
 
     @Override
     public long after(GameState gameState, long hash, Move move) {
-        throw new RuntimeException("Unsupported move");
+        switch (move.getType()) {
+            case WALL:
+                return after(gameState, hash, (WallMove) move);
+            case PAWN:
+                return after(gameState, hash, (PawnMove) move);
+            default:
+                throw new RuntimeException("Unsupported move");
+        }
     }
 
     public long after(GameState gameState, long hash, WallMove move) {
@@ -61,7 +68,8 @@ public final class Zobrista implements IncrementalHash<GameState, Move> {
         int playerIx = gameState.currentPlayerIx();
         PlayerState playerState = gameState.getCurrentPlayersState();
         result ^= CURRENT_PLAYER_INDEX_MAGIC[playerIx];
-        result ^= CURRENT_PLAYER_INDEX_MAGIC[(playerIx + 1) / 4];
+        result ^= CURRENT_PLAYER_INDEX_MAGIC[
+                (playerIx + 1) % gameState.getPlayerStates().size()];
 
         int wallsLeft = playerState.getWallsLeft();
         result ^= PLAYER_MAGIC[playerIx][0][wallsLeft];
@@ -83,7 +91,8 @@ public final class Zobrista implements IncrementalHash<GameState, Move> {
         int playerIx = gameState.currentPlayerIx();
         PlayerState playerState = gameState.getCurrentPlayersState();
         result ^= CURRENT_PLAYER_INDEX_MAGIC[playerIx];
-        result ^= CURRENT_PLAYER_INDEX_MAGIC[(playerIx + 1) / 4];
+        result ^= CURRENT_PLAYER_INDEX_MAGIC[
+                (playerIx + 1) % gameState.getPlayerStates().size()];
 
         result ^= PLAYER_MAGIC[playerIx][1][playerState.getX()];
         result ^= PLAYER_MAGIC[playerIx][1][move.getX()];

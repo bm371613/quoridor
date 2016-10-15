@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import quoridor.ai.ThinkingProcess;
+import quoridor.ai.thinking_process.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;

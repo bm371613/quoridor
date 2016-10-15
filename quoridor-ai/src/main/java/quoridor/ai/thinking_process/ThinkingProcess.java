@@ -1,4 +1,4 @@
-package quoridor.ai;
+package quoridor.ai.thinking_process;
 
 import quoridor.core.move.Move;
 
