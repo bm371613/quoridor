@@ -23,12 +23,21 @@ public final class TopOpponentDistanceComparison implements ValueFunction {
     @Override
     public int apply(GameState gameState, int playerIx) {
         if (GameRules.isWon(gameState.getPlayerStates().get(playerIx))) {
-            return Integer.MAX_VALUE - gameState.getTurn();
+            return max();
         } else if (GameRules.isFinal(gameState)) {
-            return Integer.MIN_VALUE + (DistanceCalculator.DISTANCE_UPPER_BOUND
-                        - distance(gameState, playerIx));
+            return min();
         }
         return minOtherPlayerDistance(gameState, playerIx)
                 - distance(gameState, playerIx);
+    }
+
+    @Override
+    public int min() {
+        return -DistanceCalculator.DISTANCE_UPPER_BOUND;
+    }
+
+    @Override
+    public int max() {
+        return DistanceCalculator.DISTANCE_UPPER_BOUND;
     }
 }

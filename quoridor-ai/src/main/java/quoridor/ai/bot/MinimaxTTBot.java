@@ -94,6 +94,10 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
                 bestValue = currentValue;
             }
         }
+        if (bestValue == valueFunction.min()
+                || bestValue == valueFunction.max()) {
+            stopDeepening();
+        }
         return bestMove;
     }
 
