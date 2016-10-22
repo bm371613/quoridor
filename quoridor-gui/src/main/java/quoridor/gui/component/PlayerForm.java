@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import com.google.common.collect.ImmutableList;
 import lombok.Value;
 
+import quoridor.ai.bot.AlphaBetaBot;
 import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.GreedyBot;
 import quoridor.ai.bot.MinimaxBot;
@@ -35,6 +36,8 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
+                    namedBotMaker("AlphaBeta", new AlphaBetaBot(
+                            TopOpponentDistanceComparison.getInstance())),
                     namedBotMaker("MinimaxTT", new MinimaxTTBot(
                             TopOpponentDistanceComparison.getInstance(),
                             Zobrista.getInstance(),
