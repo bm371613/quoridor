@@ -1,5 +1,7 @@
 package quoridor.ai.bot;
 
+import java.util.List;
+
 import quoridor.ai.thinking_process.IterativeDeepeningThinkingProcess;
 import quoridor.ai.thinking_process.ThinkingProcess;
 import quoridor.ai.value_function.ValueFunction;
@@ -21,8 +23,8 @@ public class AlphaBetaBot implements Bot {
             return new TwoPlayersAlphaBetaThinkingProcess(
                     valueFunction, gameState);
         } else {
-            // TODO
-            throw new RuntimeException("Not supported");
+            return new MultiPlayerAlphaBetaThinkingProcess(
+                    valueFunction, gameState);
         }
     }
 }
@@ -95,3 +97,70 @@ class TwoPlayersAlphaBetaThinkingProcess
 
 }
 
+class MultiPlayerAlphaBetaThinkingProcess
+        extends IterativeDeepeningThinkingProcess {
+
+    private final ValueFunction valueFunction;
+    private final GameState gameState;
+    private final int playersCount;
+    private final int maxTotal;
+    private final int initialBound;
+
+    MultiPlayerAlphaBetaThinkingProcess(ValueFunction valueFunction,
+                           GameState gameState) {
+        this.valueFunction = valueFunction;
+        this.gameState = gameState;
+        this.playersCount = gameState.getPlayerStates().size();
+        this.maxTotal = valueFunction.maxTotal(playersCount);
+        this.initialBound = maxTotal - valueFunction.min();
+    }
+
+    private int[] estimate(GameState gameState, int depth, int bound) {
+        if (depth < 1 || GameRules.isFinal(gameState)) {
+            int[] result = new int[playersCount];
+            for (int i = 0; i < playersCount; ++i) {
+                result[i] = valueFunction.apply(gameState, i);
+            }
+            return result;
+        } else {
+            List<Move> moves = GameRules.getLegalMoves(gameState);
+            int[] best = estimate(moves.get(0).apply(gameState), depth - 1,
+                    initialBound);
+            int[] currentValue;
+            int playerIx = gameState.currentPlayerIx();
+            for (int i = 1; i < moves.size(); ++i) {
+                if (best[playerIx] >= bound) {
+                    break;
+                }
+                currentValue = estimate(moves.get(i).apply(gameState),
+                        depth - 1, maxTotal - best[playerIx]);
+                if (best[playerIx] < currentValue[playerIx]) {
+                    best = currentValue;
+                }
+            }
+            return best;
+        }
+    }
+
+
+    @Override
+    protected Move choose(int depth) {
+        Move bestMove = null;
+        int bestValue = Integer.MIN_VALUE;
+        int currentValue;
+        for (Move move : GameRules.getLegalMoves(gameState)) {
+            currentValue = estimate(move.apply(gameState), depth, initialBound)
+                    [gameState.currentPlayerIx()];
+            if (bestValue < currentValue) {
+                bestMove = move;
+                bestValue = currentValue;
+            }
+        }
+        if (bestValue == valueFunction.min()
+                || bestValue == valueFunction.max()) {
+            stopDeepening();
+        }
+        return bestMove;
+    }
+
+}

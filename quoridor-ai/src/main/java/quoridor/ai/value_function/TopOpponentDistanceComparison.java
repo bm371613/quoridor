@@ -40,4 +40,9 @@ public final class TopOpponentDistanceComparison implements ValueFunction {
     public int max() {
         return DistanceCalculator.DISTANCE_UPPER_BOUND;
     }
+
+    @Override
+    public int maxTotal(int playersCount) {
+        return 0;
+    }
 }
