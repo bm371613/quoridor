@@ -36,17 +36,17 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
-                    namedBotMaker("AlphaBeta", new AlphaBetaBot(
+                    namedBotPlayerMaker("AlphaBeta", () -> new AlphaBetaBot(
                             TopOpponentDistanceComparison.getInstance())),
-                    namedBotMaker("MinimaxTT", new MinimaxTTBot(
+                    namedBotPlayerMaker("MinimaxTT", () -> new MinimaxTTBot(
                             TopOpponentDistanceComparison.getInstance(),
                             Zobrista.getInstance(),
                             4 * 1024 * 1024)),
-                    namedBotMaker("Minimax", new MinimaxBot(
+                    namedBotPlayerMaker("Minimax", () -> new MinimaxBot(
                             TopOpponentDistanceComparison.getInstance())),
-                    namedBotMaker("GreedyBot", new GreedyBot(
+                    namedBotPlayerMaker("GreedyBot", () -> new GreedyBot(
                             TopOpponentDistanceComparison.getInstance())),
-                    namedBotMaker("RandomBot", new RandomBot()));
+                    namedBotPlayerMaker("RandomBot", RandomBot::new));
 
     private final JTextField nameField = new JTextField();
     private final JComboBox<Named<Color>> colorChooser = new JComboBox<>(
@@ -75,9 +75,10 @@ public class PlayerForm extends JPanel {
                 .makePlayer(nameField.getText(), color);
     }
 
-    private static Named<PlayerMaker> namedBotMaker(String name, Bot bot) {
+    private static Named<PlayerMaker> namedBotPlayerMaker(String name,
+                                                          BotMaker botMaker) {
         return new Named<>(name, (PlayerMaker) (n, c) ->
-                new BotPlayer(n, c, bot));
+                new BotPlayer(n, c, botMaker.makeBot()));
     }
 
     @Value
@@ -88,6 +89,10 @@ public class PlayerForm extends JPanel {
         public String toString() {
             return name;
         }
+    }
+
+    private static interface BotMaker {
+        Bot makeBot();
     }
 
     private static interface PlayerMaker {
