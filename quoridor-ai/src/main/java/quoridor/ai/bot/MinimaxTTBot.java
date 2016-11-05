@@ -1,5 +1,7 @@
 package quoridor.ai.bot;
 
+import lombok.Value;
+
 import quoridor.ai.hash.IncrementalHash;
 import quoridor.ai.thinking_process.IterativeDeepeningThinkingProcess;
 import quoridor.ai.thinking_process.ThinkingProcess;
@@ -12,14 +14,14 @@ public class MinimaxTTBot implements Bot {
 
     private final ValueFunction valueFunction;
     private final IncrementalHash<GameState, Move> hash;
-    private final TranspositionTable table;
+    private final TranspositionTable<MinimaxTTThinkingProcess.TTEntry> table;
 
     public MinimaxTTBot(ValueFunction valueFunction,
                         IncrementalHash<GameState, Move> hash,
                         int tableSize) {
         this.valueFunction = valueFunction;
         this.hash = hash;
-        this.table = new TranspositionTable(tableSize);
+        this.table = new TranspositionTable<>(tableSize);
     }
 
     @Override
@@ -29,18 +31,24 @@ public class MinimaxTTBot implements Bot {
     }
 }
 
+
 class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
 
     private final ValueFunction valueFunction;
     private final GameState gameState;
     private final int playersCount;
     private final IncrementalHash<GameState, Move> hash;
-    private final TranspositionTable table;
+    private final TranspositionTable<TTEntry> table;
+
+    @Value(staticConstructor = "of")
+    static final class TTEntry {
+        private int[] value;
+    }
 
     MinimaxTTThinkingProcess(ValueFunction valueFunction,
                              GameState gameState,
                              IncrementalHash<GameState, Move> hash,
-                             TranspositionTable table) {
+                             TranspositionTable<TTEntry> table) {
         this.valueFunction = valueFunction;
         this.gameState = gameState;
         this.playersCount = gameState.getPlayerStates().size();
@@ -52,10 +60,10 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
                            Move move, int depth) {
         long hashAfterMove = this.hash.after(gameState, hash, move);
         if (this.table.has(hashAfterMove, depth)) {
-            return this.table.get(hashAfterMove);
+            return this.table.get(hashAfterMove).getValue();
         }
         int[] result = estimate(move.apply(gameState), hashAfterMove, depth);
-        this.table.set(hashAfterMove, depth, result);
+        this.table.set(hashAfterMove, depth, TTEntry.of(result));
         return result;
     }
 
@@ -101,42 +109,4 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
         return bestMove;
     }
 
-}
-
-class TranspositionTable {
-    private int size;
-    private final long[] hash;
-    private final int[][] value;
-    private final int[] depth;
-
-    TranspositionTable(int size) {
-        this.size = size;
-        this.hash = new long[size];
-        this.value = new int[size][4];
-        this.depth = new int[size];
-        for (int i = 0; i < size; ++i) {
-            this.depth[i] = -1;
-        }
-    }
-
-    boolean has(long hash, int depth) {
-        int ix = this.ix(hash);
-        return this.hash[ix] == hash && this.depth[ix] >= depth;
-    }
-
-    int[] get(long hash) {
-        return this.value[ix(hash)];
-    }
-
-    void set(long hash, int depth, int[] value) {
-        int ix = this.ix(hash);
-        this.hash[ix] = hash;
-        this.value[ix] = value;
-        this.depth[ix] = depth;
-    }
-
-    private int ix(long hash) {
-        int result = (int) (hash % size);
-        return result < 0 ? result + size : result;
-    }
 }
