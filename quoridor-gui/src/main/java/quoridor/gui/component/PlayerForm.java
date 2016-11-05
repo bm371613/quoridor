@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.Value;
 
 import quoridor.ai.bot.AlphaBetaBot;
+import quoridor.ai.bot.AlphaBetaTTBot;
 import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.GreedyBot;
 import quoridor.ai.bot.MinimaxBot;
@@ -36,6 +37,10 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
+                    namedBotPlayerMaker("AlphaBetaTT", () -> new AlphaBetaTTBot(
+                            TopOpponentDistanceComparison.getInstance(),
+                            Zobrista.getInstance(),
+                            4 * 1024 * 1024)),
                     namedBotPlayerMaker("AlphaBeta", () -> new AlphaBetaBot(
                             TopOpponentDistanceComparison.getInstance())),
                     namedBotPlayerMaker("MinimaxTT", () -> new MinimaxTTBot(
