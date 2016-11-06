@@ -46,9 +46,11 @@ public abstract class IterativeDeepeningThinkingProcess
                     bestValue = currentValue;
                 }
             }
+            if (bestValue == valueFunction.min()) {
+                break;
+            }
             setResult(bestMove);
-            if (bestValue == valueFunction.min()
-                    || bestValue == valueFunction.max()) {
+            if (bestValue == valueFunction.max()) {
                 break;
             }
             depth += 1;
