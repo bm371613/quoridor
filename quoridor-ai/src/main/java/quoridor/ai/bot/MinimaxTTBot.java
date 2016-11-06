@@ -42,6 +42,7 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
 
     @Value(staticConstructor = "of")
     static final class TTEntry {
+        private int depth;
         private int[] value;
     }
 
@@ -59,11 +60,12 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
     private int[] estimate(GameState gameState, long hash,
                            Move move, int depth) {
         long hashAfterMove = this.hash.after(gameState, hash, move);
-        if (this.table.has(hashAfterMove, depth)) {
-            return this.table.get(hashAfterMove).getValue();
+        TTEntry entry = table.get(hashAfterMove);
+        if (entry != null && entry.getDepth() >= depth) {
+            return table.get(hashAfterMove).value;
         }
         int[] result = estimate(move.apply(gameState), hashAfterMove, depth);
-        this.table.set(hashAfterMove, depth, TTEntry.of(result));
+        table.set(hashAfterMove, TTEntry.of(depth, result));
         return result;
     }
 

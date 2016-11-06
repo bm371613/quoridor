@@ -2,6 +2,8 @@ package quoridor.ai.bot;
 
 import java.util.List;
 
+import lombok.Value;
+
 import quoridor.ai.hash.IncrementalHash;
 import quoridor.ai.thinking_process.IterativeDeepeningThinkingProcess;
 import quoridor.ai.thinking_process.ThinkingProcess;
@@ -14,14 +16,16 @@ public class AlphaBetaTTBot implements Bot {
 
     private final ValueFunction valueFunction;
     private final IncrementalHash<GameState, Move> hash;
-    private final TranspositionTable table;
+    private final int tableSize;
+    private TranspositionTable <MultiPlayerAlphaBetaTTThinkingProcess.TTEntry>
+            multiPlayerTable;
 
     public AlphaBetaTTBot(ValueFunction valueFunction,
                           IncrementalHash<GameState, Move> hash,
                           int tableSize) {
         this.valueFunction = valueFunction;
         this.hash = hash;
-        this.table = null; // TODO
+        this.tableSize = tableSize;
     }
 
     @Override
@@ -31,8 +35,16 @@ public class AlphaBetaTTBot implements Bot {
                     valueFunction, gameState);
         } else {
             return new MultiPlayerAlphaBetaTTThinkingProcess(
-                    valueFunction, gameState);
+                    valueFunction, gameState, hash, getMultiPlayerTable());
         }
+    }
+
+    private TranspositionTable<MultiPlayerAlphaBetaTTThinkingProcess.TTEntry>
+            getMultiPlayerTable() {
+        if (multiPlayerTable == null) {
+            multiPlayerTable = new TranspositionTable<>(tableSize);
+        }
+        return multiPlayerTable;
     }
 }
 
@@ -110,19 +122,52 @@ class MultiPlayerAlphaBetaTTThinkingProcess
     private final ValueFunction valueFunction;
     private final GameState gameState;
     private final int playersCount;
+    private final IncrementalHash<GameState, Move> hash;
+    private final TranspositionTable<TTEntry> table;
     private final int maxTotal;
     private final int initialBound;
 
+    @Value(staticConstructor = "of")
+    static final class TTEntry {
+        private int depth;
+        private final boolean exact;
+        private final int[] value;
+    }
+
     MultiPlayerAlphaBetaTTThinkingProcess(ValueFunction valueFunction,
-                           GameState gameState) {
+                                          GameState gameState,
+                                          IncrementalHash<GameState, Move> hash,
+                                          TranspositionTable<TTEntry> table) {
         this.valueFunction = valueFunction;
         this.gameState = gameState;
         this.playersCount = gameState.getPlayerStates().size();
+        this.hash = hash;
+        this.table = table;
         this.maxTotal = valueFunction.maxTotal(playersCount);
         this.initialBound = maxTotal - valueFunction.min();
     }
 
-    private int[] estimate(GameState gameState, int depth, int bound) {
+    private int[] estimate(GameState gameState, long hash,
+                           Move move, int depth, int bound) {
+        int playerIx = gameState.currentPlayerIx();
+        long hashAfterMove = this.hash.after(gameState, hash, move);
+        TTEntry entry = table.get(hashAfterMove);
+        if (entry != null && entry.getDepth() >= depth
+                && (entry.isExact() || bound <= entry.getValue()[playerIx])) {
+            return entry.getValue();
+        }
+        int[] result = estimate(move.apply(gameState), hashAfterMove,
+                depth, bound);
+        if (entry == null || entry.getDepth() <= depth) {
+            table.set(hashAfterMove, TTEntry.of(
+                    depth, result[playerIx] < bound, result
+            ));
+        }
+        return result;
+    }
+
+    private int[] estimate(GameState gameState, long hash,
+                           int depth, int bound) {
         if (depth < 1 || GameRules.isFinal(gameState)) {
             int[] result = new int[playersCount];
             for (int i = 0; i < playersCount; ++i) {
@@ -131,7 +176,7 @@ class MultiPlayerAlphaBetaTTThinkingProcess
             return result;
         } else {
             List<Move> moves = GameRules.getLegalMoves(gameState);
-            int[] best = estimate(moves.get(0).apply(gameState), depth - 1,
+            int[] best = estimate(gameState, hash, moves.get(0), depth - 1,
                     initialBound);
             int[] currentValue;
             int playerIx = gameState.currentPlayerIx();
@@ -139,7 +184,7 @@ class MultiPlayerAlphaBetaTTThinkingProcess
                 if (best[playerIx] >= bound) {
                     break;
                 }
-                currentValue = estimate(moves.get(i).apply(gameState),
+                currentValue = estimate(gameState, hash, moves.get(i),
                         depth - 1, maxTotal - best[playerIx]);
                 if (best[playerIx] < currentValue[playerIx]) {
                     best = currentValue;
@@ -155,9 +200,10 @@ class MultiPlayerAlphaBetaTTThinkingProcess
         Move bestMove = null;
         int bestValue = Integer.MIN_VALUE;
         int currentValue;
+        long gameStateHash = hash.of(gameState);
         for (Move move : GameRules.getLegalMoves(gameState)) {
-            currentValue = estimate(move.apply(gameState), depth, initialBound)
-                    [gameState.currentPlayerIx()];
+            currentValue = estimate(gameState, gameStateHash, move, depth,
+                    initialBound)[gameState.currentPlayerIx()];
             if (bestValue < currentValue) {
                 bestMove = move;
                 bestValue = currentValue;
