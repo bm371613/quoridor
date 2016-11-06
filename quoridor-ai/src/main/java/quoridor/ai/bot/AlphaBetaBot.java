@@ -1,6 +1,6 @@
 package quoridor.ai.bot;
 
-import java.util.List;
+import java.util.Iterator;
 
 import quoridor.ai.thinking_process.IterativeDeepeningThinkingProcess;
 import quoridor.ai.thinking_process.ThinkingProcess;
@@ -32,28 +32,34 @@ public class AlphaBetaBot implements Bot {
 class TwoPlayersAlphaBetaThinkingProcess
         extends IterativeDeepeningThinkingProcess {
 
-    private final ValueFunction valueFunction;
-    private final GameState gameState;
     private final int me;
     private final int opponent;
 
     TwoPlayersAlphaBetaThinkingProcess(ValueFunction valueFunction,
                                        GameState gameState) {
-        this.valueFunction = valueFunction;
-        this.gameState = gameState;
+        super(valueFunction, gameState);
         this.me = gameState.currentPlayerIx();
         this.opponent = 1 - me;
     }
 
+    @Override
+    protected int estimate(Move move, int depth) {
+        ValueFunction valueFunction = getValueFunction();
+        return estimate(move.apply(getGameState()), depth,
+                valueFunction.min(), valueFunction.max());
+    }
+
     private int estimate(GameState gameState, int depth, int alpha, int beta) {
         if (depth < 1 || GameRules.isFinal(gameState)) {
-            return valueFunction.apply(gameState, me);
+            return getValueFunction().apply(gameState, me);
         }
+        Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
         if (gameState.currentPlayerIx() == opponent) {
-            for (Move move : GameRules.getLegalMoves(gameState)) {
+            while (moveIterator.hasNext()) {
                 beta = Math.min(
                         beta,
-                        estimate(move.apply(gameState), depth - 1, alpha, beta)
+                        estimate(moveIterator.next().apply(gameState),
+                                depth - 1, alpha, beta)
                 );
                 if (alpha >= beta) {
                     break;
@@ -61,10 +67,11 @@ class TwoPlayersAlphaBetaThinkingProcess
             }
             return beta;
         } else {
-            for (Move move : GameRules.getLegalMoves(gameState)) {
+            while (moveIterator.hasNext()) {
                 alpha = Math.max(
                         alpha,
-                        estimate(move.apply(gameState), depth - 1, alpha, beta)
+                        estimate(moveIterator.next().apply(gameState),
+                                depth - 1, alpha, beta)
                 );
                 if (alpha >= beta) {
                     break;
@@ -73,66 +80,49 @@ class TwoPlayersAlphaBetaThinkingProcess
             return alpha;
         }
     }
-
-    @Override
-    protected Move choose(int depth) {
-        Move bestMove = null;
-        int bestValue = Integer.MIN_VALUE;
-        int currentValue;
-        for (Move move : GameRules.getLegalMoves(gameState)) {
-            currentValue = estimate(
-                    move.apply(gameState), depth,
-                    valueFunction.min(), valueFunction.max());
-            if (bestValue < currentValue) {
-                bestMove = move;
-                bestValue = currentValue;
-            }
-        }
-        if (bestValue == valueFunction.min()
-                || bestValue == valueFunction.max()) {
-            stopDeepening();
-        }
-        return bestMove;
-    }
-
 }
 
 class MultiPlayerAlphaBetaThinkingProcess
         extends IterativeDeepeningThinkingProcess {
 
-    private final ValueFunction valueFunction;
-    private final GameState gameState;
     private final int playersCount;
     private final int maxTotal;
     private final int initialBound;
 
     MultiPlayerAlphaBetaThinkingProcess(ValueFunction valueFunction,
                            GameState gameState) {
-        this.valueFunction = valueFunction;
-        this.gameState = gameState;
+        super(valueFunction, gameState);
         this.playersCount = gameState.getPlayerStates().size();
         this.maxTotal = valueFunction.maxTotal(playersCount);
         this.initialBound = maxTotal - valueFunction.min();
     }
 
+    @Override
+    protected int estimate(Move move, int depth) {
+        GameState gameState = getGameState();
+        return estimate(move.apply(gameState), depth, initialBound)
+                [gameState.currentPlayerIx()];
+    }
+
     private int[] estimate(GameState gameState, int depth, int bound) {
         if (depth < 1 || GameRules.isFinal(gameState)) {
+            ValueFunction valueFunction = getValueFunction();
             int[] result = new int[playersCount];
             for (int i = 0; i < playersCount; ++i) {
                 result[i] = valueFunction.apply(gameState, i);
             }
             return result;
         } else {
-            List<Move> moves = GameRules.getLegalMoves(gameState);
-            int[] best = estimate(moves.get(0).apply(gameState), depth - 1,
-                    initialBound);
+            Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
+            int[] best = estimate(moveIterator.next().apply(gameState),
+                    depth - 1, initialBound);
             int[] currentValue;
             int playerIx = gameState.currentPlayerIx();
-            for (int i = 1; i < moves.size(); ++i) {
+            while (moveIterator.hasNext()) {
                 if (best[playerIx] >= bound) {
                     break;
                 }
-                currentValue = estimate(moves.get(i).apply(gameState),
+                currentValue = estimate(moveIterator.next().apply(gameState),
                         depth - 1, maxTotal - best[playerIx]);
                 if (best[playerIx] < currentValue[playerIx]) {
                     best = currentValue;
@@ -140,27 +130,6 @@ class MultiPlayerAlphaBetaThinkingProcess
             }
             return best;
         }
-    }
-
-
-    @Override
-    protected Move choose(int depth) {
-        Move bestMove = null;
-        int bestValue = Integer.MIN_VALUE;
-        int currentValue;
-        for (Move move : GameRules.getLegalMoves(gameState)) {
-            currentValue = estimate(move.apply(gameState), depth, initialBound)
-                    [gameState.currentPlayerIx()];
-            if (bestValue < currentValue) {
-                bestMove = move;
-                bestValue = currentValue;
-            }
-        }
-        if (bestValue == valueFunction.min()
-                || bestValue == valueFunction.max()) {
-            stopDeepening();
-        }
-        return bestMove;
     }
 
 }

@@ -12,6 +12,7 @@ import quoridor.core.position.Positioned;
 public final class GameState implements Serializable {
     public static final int PLACES = 9; // number of places along each side
     public static final int WALL_PLACES = PLACES - 1;
+    public static final boolean ODD_PLACES = PLACES % 2 == 1;
 
     @Getter private final WallsState wallsState;
     @Getter private final ImmutableList<PlayerState> playerStates;

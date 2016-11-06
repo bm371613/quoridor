@@ -17,7 +17,6 @@ import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.GreedyBot;
 import quoridor.ai.bot.MinimaxBot;
 import quoridor.ai.bot.MinimaxTTBot;
-import quoridor.ai.bot.RandomBot;
 import quoridor.ai.hash.Zobrista;
 import quoridor.ai.value_function.TopOpponentDistanceComparison;
 import quoridor.gui.player.BotPlayer;
@@ -50,8 +49,8 @@ public class PlayerForm extends JPanel {
                     namedBotPlayerMaker("Minimax", () -> new MinimaxBot(
                             TopOpponentDistanceComparison.getInstance())),
                     namedBotPlayerMaker("GreedyBot", () -> new GreedyBot(
-                            TopOpponentDistanceComparison.getInstance())),
-                    namedBotPlayerMaker("RandomBot", RandomBot::new));
+                            TopOpponentDistanceComparison.getInstance()))
+                    );
 
     private final JTextField nameField = new JTextField();
     private final JComboBox<Named<Color>> colorChooser = new JComboBox<>(

@@ -39,7 +39,7 @@ public class BotPlayer extends Player {
             innerThread.stop();
             Move move = thinkingProcess.getResult();
             if (move == null) {
-                move = GameRules.getLegalMoves(gameState).get(0);
+                move = GameRules.getLegalMoves(gameState).next();
             }
             final MoveChoiceEvent event = new MoveChoiceEvent(move);
             SwingUtilities.invokeLater(() -> moveEventListener.notifyAboutEvent(

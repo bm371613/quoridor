@@ -1,5 +1,7 @@
 package quoridor.ai.bot;
 
+import java.util.Iterator;
+
 import lombok.Value;
 
 import quoridor.ai.hash.IncrementalHash;
@@ -32,10 +34,9 @@ public class MinimaxTTBot implements Bot {
 }
 
 
-class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
+final class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
 
-    private final ValueFunction valueFunction;
-    private final GameState gameState;
+    private final long gameStateHash;
     private final int playersCount;
     private final IncrementalHash<GameState, Move> hash;
     private final TranspositionTable<TTEntry> table;
@@ -50,11 +51,18 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
                              GameState gameState,
                              IncrementalHash<GameState, Move> hash,
                              TranspositionTable<TTEntry> table) {
-        this.valueFunction = valueFunction;
-        this.gameState = gameState;
+        super(valueFunction, gameState);
+        this.gameStateHash = hash.of(gameState);
         this.playersCount = gameState.getPlayerStates().size();
         this.hash = hash;
         this.table = table;
+    }
+
+    @Override
+    protected int estimate(Move move, int depth) {
+        GameState gameState = getGameState();
+        return estimate(gameState, gameStateHash, move, depth)
+                [gameState.currentPlayerIx()];
     }
 
     private int[] estimate(GameState gameState, long hash,
@@ -72,6 +80,7 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
     private int[] estimate(GameState gameState, long hash, int depth) {
         int[] result = null;
         if (depth < 1 || GameRules.isFinal(gameState)) {
+            ValueFunction valueFunction = getValueFunction();
             result = new int[playersCount];
             for (int i = 0; i < playersCount; ++i) {
                 result[i] = valueFunction.apply(gameState, i);
@@ -79,8 +88,10 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
         } else {
             int[] currentValue;
             int playerIx = gameState.currentPlayerIx();
-            for (Move move : GameRules.getLegalMoves(gameState)) {
-                currentValue = estimate(gameState, hash, move, depth - 1);
+            Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
+            while (moveIterator.hasNext()) {
+                currentValue = estimate(gameState, hash, moveIterator.next(),
+                        depth - 1);
                 if (result == null
                         || result[playerIx] < currentValue[playerIx]) {
                     result = currentValue;
@@ -88,27 +99,6 @@ class MinimaxTTThinkingProcess extends IterativeDeepeningThinkingProcess {
             }
         }
         return result;
-    }
-
-    @Override
-    protected Move choose(int depth) {
-        Move bestMove = null;
-        int bestValue = Integer.MIN_VALUE;
-        int currentValue;
-        long gameStateHash = this.hash.of(gameState);
-        for (Move move : GameRules.getLegalMoves(gameState)) {
-            currentValue = estimate(gameState, gameStateHash, move, depth)
-                    [gameState.currentPlayerIx()];
-            if (bestValue < currentValue) {
-                bestMove = move;
-                bestValue = currentValue;
-            }
-        }
-        if (bestValue == valueFunction.min()
-                || bestValue == valueFunction.max()) {
-            stopDeepening();
-        }
-        return bestMove;
     }
 
 }

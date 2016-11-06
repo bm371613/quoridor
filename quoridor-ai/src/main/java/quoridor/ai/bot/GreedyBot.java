@@ -1,6 +1,7 @@
 package quoridor.ai.bot;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -29,7 +30,11 @@ public class GreedyBot implements Bot {
                 int currentValue;
                 int playerIx = gameState.currentPlayerIx();
                 final List<Move> bestMoves = new ArrayList<>();
-                for (Move move : GameRules.getLegalMoves(gameState)) {
+                Iterator<Move> moveIterator =
+                        GameRules.getLegalMoves(gameState);
+                Move move;
+                while (moveIterator.hasNext()) {
+                    move = moveIterator.next();
                     currentValue = valueFunction.apply(move.apply(gameState),
                             playerIx);
                     if (bestValue < currentValue) {

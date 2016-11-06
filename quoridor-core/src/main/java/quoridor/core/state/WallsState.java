@@ -6,10 +6,22 @@ import quoridor.core.position.Positioned;
 
 public final class WallsState implements Serializable {
     private final WallOrientation[] walls;
+    private final int horizontalCount;
+    private final int verticalCount;
 
-    private WallsState() {
-        walls = new WallOrientation[
-                GameState.WALL_PLACES * GameState.WALL_PLACES];
+    private WallsState(WallOrientation[] walls,
+                       int horizontalCount, int verticalCount) {
+        this.walls = walls;
+        this.horizontalCount = horizontalCount;
+        this.verticalCount = verticalCount;
+    }
+
+    public int getHorizontalCount() {
+        return horizontalCount;
+    }
+
+    public int getVerticalCount() {
+        return verticalCount;
     }
 
     public WallOrientation get(int x, int y) {
@@ -90,15 +102,22 @@ public final class WallsState implements Serializable {
     }
 
     public static final class Builder {
-        private WallsState result;
+        private WallOrientation[] walls;
+        private int horizontalCount;
+        private int verticalCount;
 
         private Builder() {
-            result = new WallsState();
+            walls = new WallOrientation[
+                    GameState.WALL_PLACES * GameState.WALL_PLACES];
+            horizontalCount = 0;
+            verticalCount = 0;
         }
 
         public Builder copyFrom(WallsState wallsState) {
-            System.arraycopy(wallsState.walls, 0, result.walls, 0,
+            System.arraycopy(wallsState.walls, 0, walls, 0,
                     wallsState.walls.length);
+            horizontalCount = wallsState.horizontalCount;
+            verticalCount = wallsState.verticalCount;
             return this;
         }
 
@@ -106,12 +125,25 @@ public final class WallsState implements Serializable {
             if (!inBounds(x, y)) {
                 throw new RuntimeException("Coordinates out of bounds");
             }
-            result.walls[ix(x, y)] = wall;
+            int ix = ix(x, y);
+            if (walls[ix] == null) {
+                switch (wall) {
+                    case HORIZONTAL:
+                        horizontalCount += 1;
+                        break;
+                    case VERTICAL:
+                        verticalCount += 1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            walls[ix(x, y)] = wall;
             return this;
         }
 
         public WallsState build() {
-            return result;
+            return new WallsState(walls, horizontalCount, verticalCount);
         }
 
     }

@@ -71,32 +71,19 @@ public final class GameRules {
                 .build();
     }
 
-    public static List<Move> getLegalMoves(GameState gs) {
+    public static Iterator<Move> getLegalMoves(GameState gs) {
         if (isFinal(gs)) {
-            return Collections.emptyList();
+            return Collections.emptyIterator();
         }
 
-        List<Move> result = new ArrayList<>();
-
-        // pawn moves
-        Iterators.addAll(result, LegalPawnMovesIterator.create(gs));
-
-        // wall moves
-        WallMove wallMove;
-        for (int x = 0; x < GameState.WALL_PLACES; ++x) {
-            for (int y = 0; y < GameState.WALL_PLACES; ++y) {
-                wallMove = WallMove.of(x, y, WallOrientation.HORIZONTAL);
-                if (isLegalMove(gs, wallMove)) {
-                    result.add(wallMove);
-                }
-                wallMove = WallMove.of(x, y, WallOrientation.VERTICAL);
-                if (isLegalMove(gs, wallMove)) {
-                    result.add(wallMove);
-                }
-            }
+        if (gs.getCurrentPlayersState().getWallsLeft() < 1) {
+            return new LegalPawnMovesIterator(gs);
+        } else {
+            return Iterators.concat(
+                    new LegalPawnMovesIterator(gs),
+                    new LegalWallMovesIterator(gs)
+            );
         }
-
-        return result;
     }
 
     private static boolean isLegalMove(GameState gs, WallMove move) {
@@ -107,7 +94,7 @@ public final class GameRules {
     }
 
     private static boolean isLegalMove(GameState gs, PawnMove move) {
-        return Iterators.any(LegalPawnMovesIterator.create(gs), move::equals);
+        return Iterators.any(new LegalPawnMovesIterator(gs), move::equals);
     }
 
     public static boolean isLegalMove(GameState gs, Move move) {
@@ -129,7 +116,12 @@ public final class GameRules {
     }
 
     public static boolean isFinal(GameState gameState) {
-        return gameState.getPlayerStates().stream().anyMatch(GameRules::isWon);
+        for (PlayerState ps : gameState.getPlayerStates()) {
+            if (GameRules.isWon(ps)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isWon(PlayerState ps) {
@@ -147,7 +139,7 @@ public final class GameRules {
                 "Cannot determine winner for a non-final game state");
     }
 
-    private static boolean wallMoveCausesCollision(GameState gs,
+    static boolean wallMoveCausesCollision(GameState gs,
                 WallMove move) {
         int x = move.getX();
         int y = move.getY();
@@ -164,16 +156,25 @@ public final class GameRules {
         }
     }
 
-    private static boolean wallMoveCausesBlocking(GameState gs,
+    static boolean wallMoveCausesBlocking(GameState gs,
                 WallMove move) {
         WallsState walls = move.apply(gs).getWallsState();
-        return !gs.getPlayerStates().stream().allMatch((p) ->
-                DistanceCalculator.getInstance().calculateDistance(walls, p,
-                        getGoalPredicate(p)) < DistanceCalculator.INFINITY);
+        if ((walls.getHorizontalCount() == 0 || walls.getVerticalCount() == 0)
+                && GameState.ODD_PLACES) {
+            return false;
+        }
+        DistanceCalculator dc = DistanceCalculator.getInstance();
+        for (PlayerState ps : gs.getPlayerStates()) {
+            if (dc.calculateDistance(walls, ps, getGoalPredicate(ps))
+                    >= DistanceCalculator.INFINITY) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
-final class LegalPawnMovesIterator implements Iterator<PawnMove> {
+final class LegalPawnMovesIterator implements Iterator<Move> {
 
     private GameState gameState;
     private boolean advanced;
@@ -183,13 +184,9 @@ final class LegalPawnMovesIterator implements Iterator<PawnMove> {
     private List<Positioned> targets = new ArrayList<>(10);
     private HashSet<Integer> considered = new HashSet<>();
 
-    private LegalPawnMovesIterator(GameState gameState) {
+    LegalPawnMovesIterator(GameState gameState) {
         this.gameState = gameState;
         sources.add(gameState.getCurrentPlayersState());
-    }
-
-    static LegalPawnMovesIterator create(GameState gameState) {
-        return new LegalPawnMovesIterator(gameState);
     }
 
     @Override
@@ -251,5 +248,61 @@ final class LegalPawnMovesIterator implements Iterator<PawnMove> {
 
     private int positionedHash(Positioned p) {
         return p.getX() * GameState.PLACES + p.getY();
+    }
+}
+
+final class LegalWallMovesIterator implements Iterator<Move> {
+
+    private static final int IX_LIMIT =
+            2 * GameState.WALL_PLACES * GameState.WALL_PLACES;
+
+    private GameState gameState;
+    private boolean advanced;
+    private WallMove next;
+    private int ix;
+
+    LegalWallMovesIterator(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (!advanced) {
+            advance();
+        }
+        return next != null;
+    }
+
+    @Override
+    public WallMove next() {
+        if (hasNext()) {
+            advanced = false;
+            return next;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    private void advance() {
+        advanced = true;
+        next = null;
+
+        int tmp;
+        WallMove move;
+        while (next == null && ix < IX_LIMIT) {
+            tmp = ix / 2;
+            move = WallMove.of(
+                    tmp / GameState.WALL_PLACES,
+                    tmp % GameState.WALL_PLACES,
+                    ix % 2 == 0
+                            ? WallOrientation.HORIZONTAL
+                            : WallOrientation.VERTICAL
+            );
+            if (!GameRules.wallMoveCausesCollision(gameState, move)
+                    && !GameRules.wallMoveCausesBlocking(gameState, move)) {
+                next = move;
+            }
+            ++ix;
+        }
     }
 }

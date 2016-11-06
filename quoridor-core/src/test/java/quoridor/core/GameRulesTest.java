@@ -1,10 +1,16 @@
 package quoridor.core;
 
+import java.util.Set;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Test;
 
 import quoridor.core.direction.Direction;
+import quoridor.core.move.Move;
 import quoridor.core.move.PawnMove;
+import quoridor.core.move.WallMove;
 import quoridor.core.state.GameState;
 import quoridor.core.state.PlayerState;
 import quoridor.core.state.WallOrientation;
@@ -105,7 +111,27 @@ public class GameRulesTest {
 
     @Test
     public void shouldAllowLegalWallMove() {
-        // TODO
+        // given
+        GameState gameState = GameRules.makeInitialStateForTwo();
+
+        // when
+        Set<Move> wallMoves = Sets.newHashSet(Iterators.filter(
+            GameRules.getLegalMoves(gameState),
+            (move) -> move instanceof WallMove));
+
+        // then
+        Assert.assertEquals(wallMoves.size(), 128);
+
+        for (int x = 0; x < 8; ++x) {
+            for (int y = 0; y < 8; ++y) {
+                Assert.assertTrue(wallMoves.contains(WallMove.of(
+                        x, y, WallOrientation.HORIZONTAL
+                )));
+                Assert.assertTrue(wallMoves.contains(WallMove.of(
+                        x, y, WallOrientation.VERTICAL
+                )));
+            }
+        }
     }
 
     @Test
