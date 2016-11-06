@@ -17,7 +17,9 @@ public class AlphaBetaTTBot implements Bot {
     private final ValueFunction valueFunction;
     private final IncrementalHash<GameState, Move> hash;
     private final int tableSize;
-    private TranspositionTable <MultiPlayerAlphaBetaTTThinkingProcess.TTEntry>
+    private TranspositionTable<TwoPlayersAlphaBetaTTThinkingProcess.TTEntry>
+            twoPlayerTable;
+    private TranspositionTable<MultiPlayerAlphaBetaTTThinkingProcess.TTEntry>
             multiPlayerTable;
 
     public AlphaBetaTTBot(ValueFunction valueFunction,
@@ -32,11 +34,19 @@ public class AlphaBetaTTBot implements Bot {
     public final ThinkingProcess thinkAbout(GameState gameState) {
         if (gameState.getPlayerStates().size() == 2) {
             return new TwoPlayersAlphaBetaTTThinkingProcess(
-                    valueFunction, gameState);
+                    valueFunction, gameState, hash, getTwoPlayerTable());
         } else {
             return new MultiPlayerAlphaBetaTTThinkingProcess(
                     valueFunction, gameState, hash, getMultiPlayerTable());
         }
+    }
+
+    private TranspositionTable<TwoPlayersAlphaBetaTTThinkingProcess.TTEntry>
+            getTwoPlayerTable() {
+        if (twoPlayerTable == null) {
+            twoPlayerTable = new TranspositionTable<>(tableSize);
+        }
+        return twoPlayerTable;
     }
 
     private TranspositionTable<MultiPlayerAlphaBetaTTThinkingProcess.TTEntry>
@@ -51,12 +61,27 @@ public class AlphaBetaTTBot implements Bot {
 class TwoPlayersAlphaBetaTTThinkingProcess
         extends IterativeDeepeningThinkingProcess {
 
+    private final long gameStateHash;
+    private IncrementalHash<GameState, Move> hash;
+    private TranspositionTable<TTEntry> table;
     private final int me;
     private final int opponent;
 
+    @Value(staticConstructor = "of")
+    static final class TTEntry {
+        private int depth;
+        private int alpha;
+        private int beta;
+    }
+
     TwoPlayersAlphaBetaTTThinkingProcess(ValueFunction valueFunction,
-                                       GameState gameState) {
+                                         GameState gameState,
+                                         IncrementalHash<GameState, Move> hash,
+                                         TranspositionTable<TTEntry> table) {
         super(valueFunction, gameState);
+        this.gameStateHash = hash.of(gameState);
+        this.hash = hash;
+        this.table = table;
         this.me = gameState.currentPlayerIx();
         this.opponent = 1 - me;
     }
@@ -64,11 +89,47 @@ class TwoPlayersAlphaBetaTTThinkingProcess
     @Override
     protected int estimate(Move move, int depth) {
         ValueFunction valueFunction = getValueFunction();
-        return estimate(move.apply(getGameState()), depth,
+        return estimate(getGameState(), gameStateHash, move, depth,
                 valueFunction.min(), valueFunction.max());
     }
 
-    private int estimate(GameState gameState, int depth, int alpha, int beta) {
+    private int estimate(GameState gameState, long hash,
+                         Move move, int depth, int alpha, int beta) {
+        long hashAfterMove = this.hash.after(gameState, hash, move);
+        TTEntry entry = table.get(hashAfterMove);
+        if (entry != null && entry.getDepth() >= depth) {
+            alpha = Math.max(alpha, entry.getAlpha());
+            beta = Math.min(beta, entry.getBeta());
+            if (alpha >= beta) {
+                return alpha;
+            }
+        }
+
+        int result = estimate(move.apply(gameState), hashAfterMove, depth,
+                alpha, beta);
+        if (entry == null || entry.getDepth() <= depth) {
+            ValueFunction valueFunction = getValueFunction();
+            int ta = valueFunction.min();
+            int tb = valueFunction.max();
+            if (entry != null && entry.getDepth() >= depth) {
+                ta = Math.max(ta, entry.getAlpha());
+                tb = Math.min(tb, entry.getBeta());
+            }
+            if (result <= alpha) {
+                tb = alpha;
+            } else if (beta <= result) {
+                ta = beta;
+            } else {
+                ta = result;
+                tb = result;
+            }
+            table.set(hashAfterMove, TTEntry.of(depth, ta, tb));
+        }
+        return result;
+    }
+
+    private int estimate(GameState gameState, long hash, int depth,
+                         int alpha, int beta) {
         if (depth < 1 || GameRules.isFinal(gameState)) {
             return getValueFunction().apply(gameState, me);
         }
@@ -77,7 +138,7 @@ class TwoPlayersAlphaBetaTTThinkingProcess
             while (moveIterator.hasNext()) {
                 beta = Math.min(
                         beta,
-                        estimate(moveIterator.next().apply(gameState),
+                        estimate(gameState, hash, moveIterator.next(),
                                 depth - 1, alpha, beta)
                 );
                 if (alpha >= beta) {
@@ -89,7 +150,7 @@ class TwoPlayersAlphaBetaTTThinkingProcess
             while (moveIterator.hasNext()) {
                 alpha = Math.max(
                         alpha,
-                        estimate(moveIterator.next().apply(gameState),
+                        estimate(gameState, hash, moveIterator.next(),
                                 depth - 1, alpha, beta)
                 );
                 if (alpha >= beta) {
