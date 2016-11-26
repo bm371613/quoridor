@@ -4,8 +4,8 @@ import quoridor.core.DistanceCalculator;
 import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 
-import static quoridor.ai.value_function.Utils.distance;
-import static quoridor.ai.value_function.Utils.minOtherPlayerDistance;
+import static quoridor.ai.Utils.distance;
+import static quoridor.ai.Utils.minOtherPlayerDistance;
 
 public final class TopOpponentDistanceComparison implements ValueFunction {
 

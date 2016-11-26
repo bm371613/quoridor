@@ -1,4 +1,4 @@
-package quoridor.ai.value_function;
+package quoridor.ai;
 
 import com.google.common.collect.ImmutableList;
 
@@ -7,21 +7,21 @@ import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 import quoridor.core.state.PlayerState;
 
-final class Utils {
+public final class Utils {
 
     private static DistanceCalculator calc = DistanceCalculator.getInstance();
 
     private Utils() {
     }
 
-    static int distance(GameState gameState, int playerIx) {
+    public static int distance(GameState gameState, int playerIx) {
         PlayerState playerState = gameState.getPlayerStates().get(playerIx);
         return calc.calculateDistance(gameState.getWallsState(),
                 playerState,
                 GameRules.getGoalPredicate(playerState));
     }
 
-    static int minOtherPlayerDistance(GameState gameState,
+    public static int minOtherPlayerDistance(GameState gameState,
                 int playerIx) {
         ImmutableList<PlayerState> playerStates = gameState.getPlayerStates();
         int result = Integer.MAX_VALUE;
