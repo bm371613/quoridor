@@ -67,9 +67,20 @@ final class MCTSThinkingProcess extends ThinkingProcess {
         return winner;
     }
 
+    private void prepareRoot() {
+        int winner;
+
+        root.expand();
+        for (Node child : root.getChildren()) {
+            winner = simulator.simulate(child);
+            child.incrementCounters(winner);
+            root.incrementCounters(winner);
+        }
+    }
+
     @Override
     public void run() {
-        root.expand();
+        prepareRoot();
 
         int currentPlayerIx = root.getGameState().currentPlayerIx();
         int bestSimulationCount;

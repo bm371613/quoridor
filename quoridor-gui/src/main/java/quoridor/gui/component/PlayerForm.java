@@ -19,7 +19,8 @@ import quoridor.ai.bot.MinimaxBot;
 import quoridor.ai.bot.MinimaxTTBot;
 import quoridor.ai.bot.mcts.ChildSelector;
 import quoridor.ai.bot.mcts.MCTSBot;
-import quoridor.ai.bot.mcts.RandomSimulator;
+import quoridor.ai.bot.mcts.ReducedWallsSimulator;
+import quoridor.ai.bot.mcts.Simulator;
 import quoridor.ai.hash.Zobrista;
 import quoridor.ai.value_function.TopOpponentDistanceComparison;
 import quoridor.gui.player.BotPlayer;
@@ -39,9 +40,12 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
-                    namedBotPlayerMaker("MCTS-30-Log-Random", () ->
-                            new MCTSBot(30, ChildSelector.WITH_LOG_HOPE,
-                                    new RandomSimulator())),
+                    namedBotPlayerMaker("MCTS-100-Log-ReducedWalls-2", () ->
+                            new MCTSBot(100, ChildSelector.WITH_LOG_HOPE,
+                                    new ReducedWallsSimulator(2))),
+                    namedBotPlayerMaker("MCTS-100-Log", () ->
+                            new MCTSBot(100, ChildSelector.WITH_LOG_HOPE,
+                                    new Simulator())),
                     namedBotPlayerMaker("AlphaBetaTT", () -> new AlphaBetaTTBot(
                             TopOpponentDistanceComparison.getInstance(),
                             Zobrista.getInstance(),

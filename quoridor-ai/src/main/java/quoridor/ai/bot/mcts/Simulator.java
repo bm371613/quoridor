@@ -1,5 +1,10 @@
 package quoridor.ai.bot.mcts;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
@@ -7,17 +12,32 @@ import quoridor.core.state.PlayerState;
 
 import static quoridor.ai.Utils.closestToGoal;
 
-public interface Simulator {
+public class Simulator {
 
-    Move chooseMove(GameState gameState);
+    private final Random random = new Random();
+    private final List<Move> moves = new ArrayList<>(132);
 
-    default int simulate(Node node) {
-        GameState gameState = node.getGameState();
-        Move move;
+    protected int maxWallMoves(GameState gameState) {
         int wallsLeft = 0;
         for (PlayerState ps : gameState.getPlayerStates()) {
             wallsLeft += ps.getWallsLeft();
         }
+        return wallsLeft;
+    }
+
+    protected Move chooseMove(GameState gameState) {
+        Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
+        moves.clear();
+        while (moveIterator.hasNext()) {
+            moves.add(moveIterator.next());
+        }
+        return moves.get(random.nextInt(moves.size()));
+    }
+
+    public int simulate(Node node) {
+        GameState gameState = node.getGameState();
+        Move move;
+        int wallsLeft = maxWallMoves(gameState);
 
         while (true) {
             if (GameRules.isFinal(gameState)) {
