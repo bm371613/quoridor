@@ -1,14 +1,14 @@
 package quoridor.ai.bot.mcts;
 
-import quoridor.ai.value_function.ValueFunction;
-import quoridor.core.GameRules;
-import quoridor.core.move.Move;
-import quoridor.core.state.GameState;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import quoridor.ai.value_function.ValueFunction;
+import quoridor.core.GameRules;
+import quoridor.core.move.Move;
+import quoridor.core.state.GameState;
 
 public final class GreedySimulator implements Simulator {
 

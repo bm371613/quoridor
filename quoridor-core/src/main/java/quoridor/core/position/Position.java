@@ -5,9 +5,22 @@ import java.io.Serializable;
 import lombok.Value;
 
 import quoridor.core.direction.Directed;
+import quoridor.core.state.GameState;
 
 @Value
 public final class Position implements Serializable, Positioned {
+
+    private static Position[][] positions =
+            new Position[GameState.PLACES + 2][GameState.PLACES + 2];
+
+    static {
+        for (int x = -1; x <= GameState.PLACES; ++x) {
+            for (int y = -1; y <= GameState.PLACES; ++y) {
+                positions[x + 1][y + 1] = new Position(x, y);
+            }
+        }
+    }
+
     private final int x;
     private final int y;
 
@@ -17,7 +30,7 @@ public final class Position implements Serializable, Positioned {
     }
 
     public static Position of(int x, int y) {
-        return new Position(x, y);
+        return positions[x + 1][y + 1];
     }
 
     @Override
