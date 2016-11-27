@@ -19,11 +19,11 @@ public class Node {
     @Getter private int childrenSimulationCount;
     @Getter private int simulationCount;
 
-    Node(GameState gameState) {
+    public Node(GameState gameState) {
         this(gameState, null);
     }
 
-    Node(GameState gameState, Move lastMove) {
+    private Node(GameState gameState, Move lastMove) {
         this.gameState = gameState;
         this.winCount = new int[gameState.getPlayerStates().size()];
         this.lastMove = lastMove;

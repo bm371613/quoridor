@@ -5,3 +5,5 @@ include 'quoridor-core'
 include 'quoridor-ai'
 
 include 'quoridor-gui'
+
+include 'quoridor-analysis'

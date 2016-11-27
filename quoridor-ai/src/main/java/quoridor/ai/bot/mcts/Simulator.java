@@ -7,7 +7,7 @@ import quoridor.core.state.PlayerState;
 
 import static quoridor.ai.Utils.closestToGoal;
 
-interface Simulator {
+public interface Simulator {
 
     Move chooseMove(GameState gameState);
 
