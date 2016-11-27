@@ -8,8 +8,9 @@ import java.util.Random;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
+import quoridor.core.state.PlayerState;
 
-import static quoridor.ai.Utils.distance;
+import static quoridor.ai.Utils.closestToGoal;
 
 public class RandomSimulator implements Simulator {
 
@@ -26,7 +27,13 @@ public class RandomSimulator implements Simulator {
     public int simulate(Node node) {
         GameState gameState = node.getGameState();
         Iterator<Move> moveIterator;
-        for (int depth = 0; depth < maxDepth; ++depth) {
+        Move move;
+        int wallsLeft = 0;
+        for (PlayerState ps : gameState.getPlayerStates()) {
+            wallsLeft += ps.getWallsLeft();
+        }
+
+        for (int depth = 0; depth < maxDepth && wallsLeft > 0; ++depth) {
             if (GameRules.isFinal(gameState)) {
                 return GameRules.getWinner(gameState);
             }
@@ -35,27 +42,13 @@ public class RandomSimulator implements Simulator {
             while (moveIterator.hasNext()) {
                 moves.add(moveIterator.next());
             }
-            gameState = moves.get(random.nextInt(moves.size()))
-                    .apply(gameState);
-        }
-
-        int playersCount = gameState.getPlayerStates().size();
-        int currentPlayerIx = gameState.currentPlayerIx();
-
-        int best = -1;
-        int bestDistance = Integer.MAX_VALUE;
-
-        int current;
-        int distance;
-
-        for (int i = currentPlayerIx; i < currentPlayerIx + playersCount; ++i) {
-            current = i % playersCount;
-            distance = distance(gameState, current);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                best = current;
+            move = moves.get(random.nextInt(moves.size()));
+            if (move.getType() == Move.Type.WALL) {
+                --wallsLeft;
             }
+            gameState = move.apply(gameState);
         }
-        return best;
+
+        return closestToGoal(gameState);
     }
 }

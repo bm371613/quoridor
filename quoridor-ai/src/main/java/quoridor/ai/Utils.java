@@ -32,4 +32,25 @@ public final class Utils {
         }
         return result;
     }
+
+    public static int closestToGoal(GameState gameState) {
+        int playersCount = gameState.getPlayerStates().size();
+        int currentPlayerIx = gameState.currentPlayerIx();
+
+        int best = -1;
+        int bestDistance = Integer.MAX_VALUE;
+
+        int current;
+        int distance;
+
+        for (int i = currentPlayerIx; i < currentPlayerIx + playersCount; ++i) {
+            current = i % playersCount;
+            distance = distance(gameState, current);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                best = current;
+            }
+        }
+        return best;
+    }
 }
