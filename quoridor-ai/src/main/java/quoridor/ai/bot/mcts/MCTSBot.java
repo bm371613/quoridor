@@ -4,9 +4,10 @@ import java.util.List;
 
 import quoridor.ai.bot.Bot;
 import quoridor.ai.thinking_process.ThinkingProcess;
+import quoridor.core.GameRules;
 import quoridor.core.state.GameState;
 
-public class MCTSBot implements Bot {
+public final class MCTSBot implements Bot {
 
     private final int expansionThreshold;
     private final ChildSelector childSelector;
@@ -27,7 +28,7 @@ public class MCTSBot implements Bot {
 }
 
 
-class MCTSThinkingProcess extends ThinkingProcess {
+final class MCTSThinkingProcess extends ThinkingProcess {
 
     private final Node root;
     private final int expansionThreshold;
@@ -43,17 +44,24 @@ class MCTSThinkingProcess extends ThinkingProcess {
         this.simulator = simulator;
     }
 
+    private int searchChild(Node node) {
+        GameState gameState = node.getGameState();
+        return GameRules.isFinal(gameState)
+                ? GameRules.getWinner(gameState)
+                : search(childSelector.selectChild(node));
+    }
+
     private int search(Node node) {
         int winner;
         if (node.isLeaf()) {
             if (node.getSimulationCount() >= expansionThreshold) {
                 node.expand();
-                winner = search(childSelector.selectChild(node));
+                winner = searchChild(node);
             } else {
                 winner = simulator.simulate(node);
             }
         } else {
-            winner = search(childSelector.selectChild(node));
+            winner = searchChild(node);
         }
         node.incrementCounters(winner);
         return winner;
@@ -64,14 +72,16 @@ class MCTSThinkingProcess extends ThinkingProcess {
         root.expand();
 
         int currentPlayerIx = root.getGameState().currentPlayerIx();
-        int bestSimulationCount = 0;
-        int bestWinCount = 0;
+        int bestSimulationCount;
+        int bestWinCount;
         int simulationCount;
         int winCount;
         List<Node> children = root.getChildren();
 
         while (true) {
             search(root);
+            bestSimulationCount = 0;
+            bestWinCount = 0;
             for (Node child : children) {
                 simulationCount = child.getSimulationCount();
                 winCount = child.getWinCount()[currentPlayerIx];

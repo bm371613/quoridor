@@ -6,7 +6,7 @@ public interface ChildSelector {
 
     default Node selectChild(Node parent) {
         int playerIx = parent.getGameState().currentPlayerIx();
-        double bestValue = Float.MIN_VALUE;
+        double bestValue = 0;
         double currentValue;
         Node bestChild = null;
         double hopeFactor = hopeFactor(parent.getChildrenSimulationCount());

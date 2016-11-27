@@ -48,7 +48,7 @@ public final class GreedySimulator implements Simulator {
         Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
         while (moveIterator.hasNext()) {
             current = moveIterator.next();
-            currentValue = valueFunction.apply(gameState,
+            currentValue = valueFunction.apply(current.apply(gameState),
                     gameState.currentPlayerIx());
             if (currentValue > bestValue) {
                 best = current;

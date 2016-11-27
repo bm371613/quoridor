@@ -44,7 +44,7 @@ public class PlayerForm extends JPanel {
                         new MCTSBot(30, ChildSelector.WITH_LOG_HOPE,
                             new GreedySimulator(
                                     TopOpponentDistanceComparison.getInstance(),
-                                    1
+                                    0.5
                             ))),
                     namedBotPlayerMaker("MCTS-30-Log-Random", () ->
                             new MCTSBot(30, ChildSelector.WITH_LOG_HOPE,
