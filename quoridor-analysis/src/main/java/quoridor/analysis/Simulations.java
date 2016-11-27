@@ -1,12 +1,13 @@
 package quoridor.analysis;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import quoridor.ai.bot.mcts.Node;
 import quoridor.ai.bot.mcts.ReducedWallsSimulator;
 import quoridor.ai.bot.mcts.Simulator;
 import quoridor.core.GameRules;
-
-import java.util.List;
 
 public final class Simulations {
 
