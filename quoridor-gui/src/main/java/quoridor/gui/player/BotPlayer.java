@@ -32,7 +32,7 @@ public class BotPlayer extends Player {
             System.gc();
             innerThread.start();
             try {
-                Thread.sleep(500);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -66,4 +66,5 @@ public class BotPlayer extends Player {
     @Override
     public void notifyAboutEvent(Object source, Object event) {
     }
+
 }
