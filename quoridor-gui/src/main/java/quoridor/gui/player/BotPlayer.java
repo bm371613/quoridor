@@ -32,7 +32,7 @@ public class BotPlayer extends Player {
             System.gc();
             innerThread.start();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

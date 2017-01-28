@@ -26,6 +26,8 @@ import quoridor.core.state.WallsState;
 
 public final class GameRules {
 
+    public static final int WALL_COUNT = 20;
+
     private GameRules() {
     }
 
@@ -41,7 +43,7 @@ public final class GameRules {
         int top = GameState.PLACES - 1;
         int bottom = 0;
         int middle = GameState.PLACES / 2;
-        int initWalls = 10;
+        int initWalls = WALL_COUNT / 2;
         List<PlayerState> playerStates = ImmutableList.of(
                     PlayerState.of(Direction.UP, middle, bottom, initWalls),
                     PlayerState.of(Direction.DOWN, middle, top, initWalls));
@@ -58,7 +60,7 @@ public final class GameRules {
         int left = 0;
         int right = GameState.PLACES - 1;
         int middle = GameState.PLACES / 2;
-        int initWalls = 5;
+        int initWalls = WALL_COUNT / 4;
         List<PlayerState> playerStates = ImmutableList.of(
                 PlayerState.of(Direction.UP, middle, bottom, initWalls),
                 PlayerState.of(Direction.RIGHT, left, middle, initWalls),

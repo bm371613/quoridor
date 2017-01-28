@@ -48,7 +48,11 @@ public final class GameState implements Serializable {
     public String toPrettyString() {
         int size = PLACES + WALL_PLACES;
         StringBuilder builder = new StringBuilder();
-        builder.append("Turn: ").append(currentPlayerIx()).append("\n");
+        builder.append("Turn: ")
+                .append(getTurn())
+                .append(" (")
+                .append(currentPlayerIx())
+                .append(")\n");
         char[][] board = new char[size][size];
         for (int y = 0; y < size; ++y) {
             for (int x = 0; x < size; ++x) {

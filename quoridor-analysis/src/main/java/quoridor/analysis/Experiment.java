@@ -83,6 +83,8 @@ public final class Experiment {
 
     public static Experiment experiment1() {
         Experiment result = new Experiment();
+        result.add("Minimax",
+                new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
         result.addMcts(
                 new int[] {50, 100, 200},
                 new ChildSelector[] {
