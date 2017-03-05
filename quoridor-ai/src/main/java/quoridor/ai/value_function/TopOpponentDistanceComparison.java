@@ -47,6 +47,6 @@ public final class TopOpponentDistanceComparison implements ValueFunction {
 
     @Override
     public int maxTotal(int playersCount) {
-        return 0;
+        return GameRules.WALL_COUNT;
     }
 }
