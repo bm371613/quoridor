@@ -94,7 +94,7 @@ class MultiPlayerAlphaBetaThinkingProcess
         super(valueFunction, gameState);
         this.playersCount = gameState.getPlayerStates().size();
         this.maxTotal = valueFunction.maxTotal(playersCount);
-        this.initialBound = maxTotal - valueFunction.min();
+        this.initialBound = valueFunction.max();
     }
 
     @Override

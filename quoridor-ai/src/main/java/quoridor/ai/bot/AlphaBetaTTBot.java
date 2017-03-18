@@ -190,7 +190,7 @@ class MultiPlayerAlphaBetaTTThinkingProcess
         this.hash = hash;
         this.table = table;
         this.maxTotal = valueFunction.maxTotal(playersCount);
-        this.initialBound = maxTotal - valueFunction.min();
+        this.initialBound = valueFunction.max();
     }
 
     @Override
