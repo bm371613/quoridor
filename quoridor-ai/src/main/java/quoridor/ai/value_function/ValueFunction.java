@@ -7,7 +7,7 @@ public interface ValueFunction {
     int apply(GameState gameState, int playerIx);
     int min();
     int max();
-    default int maxTotal(int playersCount) {
-        return playersCount * max();
+    default int opponentBound(int value) {
+        return max();
     };
 }

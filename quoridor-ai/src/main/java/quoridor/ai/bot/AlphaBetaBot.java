@@ -86,21 +86,17 @@ class MultiPlayerAlphaBetaThinkingProcess
         extends IterativeDeepeningThinkingProcess {
 
     private final int playersCount;
-    private final int maxTotal;
-    private final int initialBound;
 
     MultiPlayerAlphaBetaThinkingProcess(ValueFunction valueFunction,
                            GameState gameState) {
         super(valueFunction, gameState);
         this.playersCount = gameState.getPlayerStates().size();
-        this.maxTotal = valueFunction.maxTotal(playersCount);
-        this.initialBound = valueFunction.max();
     }
 
     @Override
     protected int estimate(Move move, int depth) {
         GameState gameState = getGameState();
-        return estimate(move.apply(gameState), depth, initialBound)
+        return estimate(move.apply(gameState), depth, getValueFunction().max())
                 [gameState.currentPlayerIx()];
     }
 
@@ -115,7 +111,7 @@ class MultiPlayerAlphaBetaThinkingProcess
         } else {
             Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
             int[] best = estimate(moveIterator.next().apply(gameState),
-                    depth - 1, initialBound);
+                    depth - 1, getValueFunction().max());
             int[] currentValue;
             int playerIx = gameState.currentPlayerIx();
             while (moveIterator.hasNext()) {
@@ -123,7 +119,8 @@ class MultiPlayerAlphaBetaThinkingProcess
                     break;
                 }
                 currentValue = estimate(moveIterator.next().apply(gameState),
-                        depth - 1, maxTotal - best[playerIx]);
+                        depth - 1,
+                        getValueFunction().opponentBound(best[playerIx]));
                 if (best[playerIx] < currentValue[playerIx]) {
                     best = currentValue;
                 }
