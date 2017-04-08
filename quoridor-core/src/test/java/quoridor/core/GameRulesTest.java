@@ -75,41 +75,6 @@ public class GameRulesTest {
     }
 
     @Test
-    public void shouldNotAllowMovingOutOfBoard() {
-        // TODO
-    }
-
-    @Test
-    public void shouldAllowLegalJumpForward() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowJumpingOutOfBoard() {
-        // TODO
-    }
-
-    @Test
-    public void shouldAllowLegalJumpWithTurn() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowJumpingWithTurnOutOfBoard() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowJumpWithTurnWithoutWallBehindOpponent() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowQuasiJumpBackToTheSamePlace() {
-        // TODO
-    }
-
-    @Test
     public void shouldAllowLegalWallMove() {
         // given
         GameState gameState = GameRules.makeInitialStateForTwo();
@@ -134,28 +99,4 @@ public class GameRulesTest {
         }
     }
 
-    @Test
-    public void shouldNotAllowWallMoveIfNoWallsAreLeft() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowWallMoveOutOfBoard() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowParallelWallCollision() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowOrthogonalWallCollision() {
-        // TODO
-    }
-
-    @Test
-    public void shouldNotAllowBlocking() {
-        // TODO
-    }
 }
