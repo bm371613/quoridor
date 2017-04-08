@@ -47,14 +47,6 @@ public final class TopOpponentDistanceComparison implements ValueFunction {
 
     @Override
     public int opponentBound(int value) {
-        if (value == min()) {
-            return max();
-        } else if (value == max()) {
-            return min();
-        }
-        int advantage = value / GameRules.WALL_COUNT;
-        int wallsLeft = value % GameRules.WALL_COUNT;
-        return (-advantage) * GameRules.WALL_COUNT
-                + (GameRules.WALL_COUNT - wallsLeft);
+        return GameRules.WALL_COUNT - value;
     }
 }
