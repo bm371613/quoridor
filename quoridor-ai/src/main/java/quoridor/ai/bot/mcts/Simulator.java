@@ -22,10 +22,15 @@ public class Simulator {
     }
 
     protected Move chooseMove(GameState gameState) {
+        Move move;
         Iterator<Move> moveIterator = GameRules.getLegalMoves(gameState);
         moves.clear();
         while (moveIterator.hasNext()) {
-            moves.add(moveIterator.next());
+            move = moveIterator.next();
+            if (GameRules.isFinal(move.apply(gameState))) {
+                return move;
+            }
+            moves.add(move);
         }
         return moves.get(random.nextInt(moves.size()));
     }
