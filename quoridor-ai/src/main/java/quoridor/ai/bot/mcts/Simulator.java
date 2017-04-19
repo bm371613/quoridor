@@ -13,7 +13,7 @@ import static quoridor.ai.Utils.closestToGoal;
 
 public class Simulator {
 
-    private final Random random = new Random();
+    private final Random random = new Random(System.currentTimeMillis());
     private final List<Move> moves = new ArrayList<>(132);
     private final int maxMoves;
 
