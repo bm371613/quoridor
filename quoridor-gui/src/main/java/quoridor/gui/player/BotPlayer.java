@@ -30,9 +30,14 @@ public class BotPlayer extends Player {
         outerThread = new Thread(() -> {
             innerThread = new Thread(thinkingProcess, getName() + " thinking");
             System.gc();
+            long stop = System.currentTimeMillis() + 2000;
             innerThread.start();
             try {
-                Thread.sleep(2000);
+                Thread.sleep(500);  // 0.1 s is hard to follow
+                while (innerThread.isAlive() && System.currentTimeMillis()
+                        < stop) {
+                    Thread.sleep(100);
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
