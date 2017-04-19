@@ -91,12 +91,12 @@ final class MCTSThinkingProcess extends ThinkingProcess {
         List<Node> children = root.getChildren();
 
         while (true) {
-            if (root.getSimulationCount() == 500) {
+            if (root.getSimulationCount() == 1000) {
                 winCount = root.getWinCount()[currentPlayerIx];
                 if (winCount == 0 || winCount == root.getSimulationCount()) {
                     setResult(Utils.straightToGoal(root.getGameState()));
+                    break;
                 }
-                break;
             }
             search(root);
             bestSimulationCount = 0;
