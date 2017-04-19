@@ -10,7 +10,7 @@ import quoridor.ai.bot.MinimaxBot;
 import quoridor.ai.bot.MinimaxTTBot;
 import quoridor.ai.bot.mcts.ChildSelector;
 import quoridor.ai.bot.mcts.MCTSBot;
-import quoridor.ai.bot.mcts.ReducedWallsSimulator;
+import quoridor.ai.bot.mcts.Simulator;
 import quoridor.ai.hash.Zobrista;
 import quoridor.ai.value_function.TopOpponentDistanceComparison;
 
@@ -57,7 +57,7 @@ public final class Experiment {
 
     private void addMcts(int[] expansionThresholds,
                          ChildSelector[] childSelectors,
-                         int[] wallLimits) {
+                         int[] maxMovess) {
         for (int expansionThreshold : expansionThresholds) {
             for (ChildSelector childSelector : childSelectors) {
                 String childSelectorString = "?";
@@ -66,15 +66,15 @@ public final class Experiment {
                 } else if (childSelector == ChildSelector.WITH_SQRT_HOPE) {
                     childSelectorString = "SQRT";
                 }
-                for (int wallLimit : wallLimits) {
+                for (int maxMoves : maxMovess) {
                     String name = "MCTSBot"
                             + " " + expansionThreshold
                             + " " + childSelectorString
-                            + " " + wallLimit;
+                            + " " + maxMoves;
                     add(name, new MCTSBot(
                             expansionThreshold,
                             childSelector,
-                            new ReducedWallsSimulator(wallLimit)
+                            new Simulator(maxMoves)
                     ));
                 }
             }
@@ -90,7 +90,7 @@ public final class Experiment {
                 new ChildSelector[] {
                         ChildSelector.WITH_LOG_HOPE,
                         ChildSelector.WITH_SQRT_HOPE},
-                new int[] {2, 8, 16}
+                new int[] {4, 5, 6}
         );
         return result;
     }

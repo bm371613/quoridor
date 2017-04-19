@@ -8,7 +8,6 @@ import java.util.Random;
 import quoridor.core.GameRules;
 import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
-import quoridor.core.state.PlayerState;
 
 import static quoridor.ai.Utils.closestToGoal;
 
@@ -16,22 +15,10 @@ public class Simulator {
 
     private final Random random = new Random();
     private final List<Move> moves = new ArrayList<>(132);
-    private final Integer maxMoves;
-
-    public Simulator() {
-        this.maxMoves = null;
-    }
+    private final int maxMoves;
 
     public Simulator(int maxMoves) {
         this.maxMoves = maxMoves;
-    }
-
-    protected int maxWallMoves(GameState gameState) {
-        int wallsLeft = 0;
-        for (PlayerState ps : gameState.getPlayerStates()) {
-            wallsLeft += ps.getWallsLeft();
-        }
-        return wallsLeft;
     }
 
     protected Move chooseMove(GameState gameState) {
@@ -46,19 +33,15 @@ public class Simulator {
     public int simulate(Node node) {
         GameState gameState = node.getGameState();
         Move move;
-        int wallsLeft = maxWallMoves(gameState);
 
         for (int i = 0; true; ++i) {
             if (GameRules.isFinal(gameState)) {
                 return GameRules.getWinner(gameState);
             }
-            if (wallsLeft < 1 || this.maxMoves != null && this.maxMoves == i) {
+            if (this.maxMoves == i) {
                 return closestToGoal(gameState);
             }
             move = chooseMove(gameState);
-            if (move.getType() == Move.Type.WALL) {
-                --wallsLeft;
-            }
             gameState = move.apply(gameState);
         }
     }
