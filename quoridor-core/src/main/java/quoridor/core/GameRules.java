@@ -88,6 +88,14 @@ public final class GameRules {
         }
     }
 
+    public static Iterator<Move> getLegalPawnMoves(GameState gs) {
+        if (isFinal(gs)) {
+            return Collections.emptyIterator();
+        }
+
+        return new LegalPawnMovesIterator(gs);
+    }
+
     private static boolean isLegalMove(GameState gs, WallMove move) {
         return WallsState.inBounds(move)
                 && gs.getCurrentPlayersState().getWallsLeft() > 0

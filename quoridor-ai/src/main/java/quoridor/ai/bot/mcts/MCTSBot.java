@@ -2,6 +2,7 @@ package quoridor.ai.bot.mcts;
 
 import java.util.List;
 
+import quoridor.ai.Utils;
 import quoridor.ai.bot.Bot;
 import quoridor.ai.thinking_process.ThinkingProcess;
 import quoridor.core.GameRules;
@@ -90,6 +91,13 @@ final class MCTSThinkingProcess extends ThinkingProcess {
         List<Node> children = root.getChildren();
 
         while (true) {
+            if (root.getSimulationCount() == 500) {
+                winCount = root.getWinCount()[currentPlayerIx];
+                if (winCount == 0 || winCount == root.getSimulationCount()) {
+                    setResult(Utils.straightToGoal(root.getGameState()));
+                }
+                break;
+            }
             search(root);
             bestSimulationCount = 0;
             bestWinCount = 0;

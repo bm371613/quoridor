@@ -1,9 +1,12 @@
 package quoridor.ai;
 
+import java.util.Iterator;
+
 import com.google.common.collect.ImmutableList;
 
 import quoridor.core.DistanceCalculator;
 import quoridor.core.GameRules;
+import quoridor.core.move.Move;
 import quoridor.core.state.GameState;
 import quoridor.core.state.PlayerState;
 
@@ -52,5 +55,23 @@ public final class Utils {
             }
         }
         return best;
+    }
+
+    public static Move straightToGoal(GameState gameState) {
+        Iterator<Move> moveIterator = GameRules.getLegalPawnMoves(gameState);
+        int distance;
+        int minDistance = Integer.MAX_VALUE;
+        Move move;
+        Move result = null;
+        while (moveIterator.hasNext()) {
+            move = moveIterator.next();
+            distance = distance(move.apply(gameState),
+                    gameState.currentPlayerIx());
+            if (distance < minDistance) {
+                minDistance = distance;
+                result = move;
+            }
+        }
+        return result;
     }
 }
