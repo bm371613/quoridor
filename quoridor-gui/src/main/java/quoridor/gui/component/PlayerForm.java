@@ -43,6 +43,9 @@ public class PlayerForm extends JPanel {
                     namedBotPlayerMaker("MCTS-100-Log-ReducedWalls-2", () ->
                             new MCTSBot(100, ChildSelector.WITH_LOG_HOPE,
                                     new ReducedWallsSimulator(2))),
+                    namedBotPlayerMaker("MCTS-100-Log-MaxMoves-5", () ->
+                            new MCTSBot(100, ChildSelector.WITH_LOG_HOPE,
+                                    new Simulator(5))),
                     namedBotPlayerMaker("MCTS-100-Log", () ->
                             new MCTSBot(100, ChildSelector.WITH_LOG_HOPE,
                                     new Simulator())),

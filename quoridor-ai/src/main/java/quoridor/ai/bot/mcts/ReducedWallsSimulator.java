@@ -12,6 +12,11 @@ public final class ReducedWallsSimulator extends Simulator {
         this.wallLimit = wallLimit;
     }
 
+    public ReducedWallsSimulator(int maxMoves, int wallLimit) {
+        super(maxMoves);
+        this.wallLimit = wallLimit;
+    }
+
     @Override
     protected int maxWallMoves(GameState gameState) {
         return Math.min(wallLimit, super.maxWallMoves(gameState));

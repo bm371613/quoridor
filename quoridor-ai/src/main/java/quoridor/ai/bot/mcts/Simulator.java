@@ -16,6 +16,15 @@ public class Simulator {
 
     private final Random random = new Random();
     private final List<Move> moves = new ArrayList<>(132);
+    private final Integer maxMoves;
+
+    public Simulator() {
+        this.maxMoves = null;
+    }
+
+    public Simulator(int maxMoves) {
+        this.maxMoves = maxMoves;
+    }
 
     protected int maxWallMoves(GameState gameState) {
         int wallsLeft = 0;
@@ -39,11 +48,11 @@ public class Simulator {
         Move move;
         int wallsLeft = maxWallMoves(gameState);
 
-        while (true) {
+        for (int i = 0; true; ++i) {
             if (GameRules.isFinal(gameState)) {
                 return GameRules.getWinner(gameState);
             }
-            if (wallsLeft < 1) {
+            if (wallsLeft < 1 || this.maxMoves != null && this.maxMoves == i) {
                 return closestToGoal(gameState);
             }
             move = chooseMove(gameState);
