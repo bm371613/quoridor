@@ -45,6 +45,21 @@ final class MCTSThinkingProcess extends ThinkingProcess {
         this.simulator = simulator;
     }
 
+    private Node straightToGoal(Node source) {
+        int distance;
+        int minDistance = Integer.MAX_VALUE;
+        int playerIx = source.getGameState().currentPlayerIx();
+        Node result = null;
+        for (Node child : source.getChildren()) {
+            distance = Utils.distance(child.getGameState(), playerIx);
+            if (distance < minDistance) {
+                minDistance = distance;
+                result = child;
+            }
+        }
+        return result;
+    }
+
     private int searchChild(Node node) {
         GameState gameState = node.getGameState();
         return GameRules.isFinal(gameState)
@@ -89,15 +104,22 @@ final class MCTSThinkingProcess extends ThinkingProcess {
         int simulationCount;
         int winCount;
         List<Node> children = root.getChildren();
+        Node straightToGoal = straightToGoal(root);
 
         while (true) {
-            if (root.getSimulationCount() == 1000) {
-                winCount = root.getWinCount()[currentPlayerIx];
-                if (winCount == 0 || winCount == root.getSimulationCount()) {
-                    setResult(Utils.straightToGoal(root.getGameState()));
-                    break;
-                }
+            if (straightToGoal.getSimulationCount() == 20
+                    && straightToGoal.getWinCount()[currentPlayerIx]
+                    == straightToGoal.getSimulationCount()) {
+                setResult(straightToGoal.getLastMove());
+                break;
             }
+            if (root.getSimulationCount() == 1000
+                    && root.getWinCount()[currentPlayerIx] == 0) {
+                setResult(straightToGoal.getLastMove());
+                break;
+            }
+
+
             search(root);
             bestSimulationCount = 0;
             bestWinCount = 0;
