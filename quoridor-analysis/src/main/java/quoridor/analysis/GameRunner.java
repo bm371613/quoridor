@@ -49,9 +49,13 @@ public class GameRunner {
         outerThread = new Thread(() -> {
             innerThread = new Thread(thinkingProcess);
             System.gc();
+            long stop = System.currentTimeMillis() + turnTime;
             innerThread.start();
             try {
-                Thread.sleep(turnTime);
+                while (innerThread.isAlive() && System.currentTimeMillis()
+                        < stop) {
+                    Thread.sleep(100);
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
