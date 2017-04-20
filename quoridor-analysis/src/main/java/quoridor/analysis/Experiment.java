@@ -86,11 +86,11 @@ public final class Experiment {
         result.add("Minimax",
                 new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
         result.addMcts(
-                new int[] {50, 100, 200},
+                new int[] {40, 80, 120, 160},
                 new ChildSelector[] {
                         ChildSelector.WITH_LOG_HOPE,
                         ChildSelector.WITH_SQRT_HOPE},
-                new int[] {4, 5, 6}
+                new int[] {3, 5, 7, 9}
         );
         return result;
     }
