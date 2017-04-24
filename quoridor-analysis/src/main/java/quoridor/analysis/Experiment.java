@@ -95,4 +95,21 @@ public final class Experiment {
         return result;
     }
 
+    public static Experiment experiment2() {
+        Experiment result = new Experiment();
+        result.add("Minimax",
+                new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
+        result.addMcts(
+                new int[] {60, 70, 80, 90, 100},
+                new ChildSelector[] {ChildSelector.WITH_LOG_HOPE},
+                new int[] {1, 2, 3, 4}
+        );
+        result.addMcts(
+                new int[] {50},
+                new ChildSelector[] {ChildSelector.WITH_LOG_HOPE},
+                new int[] {1, 2, 3, 4}
+        );
+        return result;
+    }
+
 }

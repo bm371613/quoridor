@@ -5,6 +5,7 @@ public final class Main {
     private static final Experiment[] EXPERIMENTS = {
             new Experiment(),
             Experiment.experiment1(),
+            Experiment.experiment2(),
     };
 
 
