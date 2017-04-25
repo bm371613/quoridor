@@ -105,22 +105,14 @@ final class MCTSThinkingProcess extends ThinkingProcess {
         int winCount;
         List<Node> children = root.getChildren();
         Node straightToGoal = straightToGoal(root);
+        setResult(straightToGoal.getLastMove());
 
         while (true) {
-            if (straightToGoal.getSimulationCount() == 20
-                    && straightToGoal.getWinCount()[currentPlayerIx]
-                    == straightToGoal.getSimulationCount()) {
-                setResult(straightToGoal.getLastMove());
-                break;
-            }
-            if (root.getSimulationCount() == 1000
-                    && root.getWinCount()[currentPlayerIx] == 0) {
-                setResult(straightToGoal.getLastMove());
-                break;
-            }
-
-
             search(root);
+            if (straightToGoal.getWinCount()[currentPlayerIx]
+                    == straightToGoal.getSimulationCount()) {
+                continue;
+            }
             bestSimulationCount = 0;
             bestWinCount = 0;
             for (Node child : children) {
