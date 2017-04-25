@@ -55,8 +55,8 @@ public final class Experiment {
         }
     }
 
-    private void addMcts(int[] expansionThresholds,
-                         ChildSelector[] childSelectors,
+    private void addMcts(ChildSelector[] childSelectors,
+                         int[] expansionThresholds,
                          int[] maxMovess) {
         for (int expansionThreshold : expansionThresholds) {
             for (ChildSelector childSelector : childSelectors) {
@@ -68,8 +68,8 @@ public final class Experiment {
                 }
                 for (int maxMoves : maxMovess) {
                     String name = "MCTSBot"
-                            + " " + expansionThreshold
                             + " " + childSelectorString
+                            + " " + expansionThreshold
                             + " " + maxMoves;
                     add(name, new MCTSBot(
                             expansionThreshold,
@@ -86,11 +86,12 @@ public final class Experiment {
         result.add("Minimax",
                 new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
         result.addMcts(
-                new int[] {40, 80, 120, 160},
                 new ChildSelector[] {
                         ChildSelector.WITH_LOG_HOPE,
-                        ChildSelector.WITH_SQRT_HOPE},
-                new int[] {3, 5, 7, 9}
+                        ChildSelector.WITH_SQRT_HOPE,
+                },
+                new int[] {20, 60, 100, 140},
+                new int[] {2, 4, 6, 8}
         );
         return result;
     }
@@ -100,14 +101,25 @@ public final class Experiment {
         result.add("Minimax",
                 new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
         result.addMcts(
-                new int[] {60, 70, 80, 90, 100},
-                new ChildSelector[] {ChildSelector.WITH_LOG_HOPE},
-                new int[] {1, 2, 3, 4}
+                new ChildSelector[] {
+                        ChildSelector.WITH_LOG_HOPE,
+                },
+                new int[] {20, 40, 60, 80, 100},
+                new int[] {1, 2, 3}
         );
+        return result;
+    }
+
+    public static Experiment experiment3() {
+        Experiment result = new Experiment();
+        result.add("Minimax",
+                new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
         result.addMcts(
-                new int[] {50},
-                new ChildSelector[] {ChildSelector.WITH_LOG_HOPE},
-                new int[] {1, 2, 3, 4}
+                new ChildSelector[] {
+                        ChildSelector.WITH_LOG_HOPE,
+                },
+                new int[] {20, 40, 60, 80, 100, 120, 140, 160, 180, 200},
+                new int[] {1, 2, 3}
         );
         return result;
     }

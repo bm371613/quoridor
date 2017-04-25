@@ -6,6 +6,7 @@ public final class Main {
             new Experiment(),
             Experiment.experiment1(),
             Experiment.experiment2(),
+            Experiment.experiment3(),
     };
 
 
