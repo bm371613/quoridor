@@ -10,21 +10,46 @@ import quoridor.core.state.GameState;
 
 public final class MCTSBot implements Bot {
 
-    private final int expansionThreshold;
-    private final ChildSelector childSelector;
-    private final Simulator simulator;
+    private final int twoPLayerExpansionThreshold;
+    private final ChildSelector twoPlayerChildSelector;
+    private final Simulator twoPlayerSimulator;
+
+    private final int fourPLayerExpansionThreshold;
+    private final ChildSelector fourPlayerChildSelector;
+    private final Simulator fourPlayerSimulator;
 
     public MCTSBot(int expansionThreshold, ChildSelector childSelector,
                    Simulator simulator) {
-        this.expansionThreshold = expansionThreshold;
-        this.childSelector = childSelector;
-        this.simulator = simulator;
+        this(expansionThreshold, childSelector, simulator,
+                expansionThreshold, childSelector, simulator);
+    }
+
+    public MCTSBot(int twoPLayerExpansionThreshold,
+                   ChildSelector twoPlayerChildSelector,
+                   Simulator twoPlayerSimulator,
+                   int fourPLayerExpansionThreshold,
+                   ChildSelector fourPlayerChildSelector,
+                   Simulator fourPlayerSimulator) {
+        this.twoPLayerExpansionThreshold = twoPLayerExpansionThreshold;
+        this.twoPlayerChildSelector = twoPlayerChildSelector;
+        this.twoPlayerSimulator = twoPlayerSimulator;
+
+        this.fourPLayerExpansionThreshold = fourPLayerExpansionThreshold;
+        this.fourPlayerChildSelector = fourPlayerChildSelector;
+        this.fourPlayerSimulator = fourPlayerSimulator;
     }
 
     @Override
     public ThinkingProcess thinkAbout(GameState gameState) {
-        return new MCTSThinkingProcess(gameState, expansionThreshold,
-                childSelector, simulator);
+        if (gameState.getPlayerStates().size() == 2) {
+            return new MCTSThinkingProcess(gameState,
+                    twoPLayerExpansionThreshold, twoPlayerChildSelector,
+                    twoPlayerSimulator);
+        } else {
+            return new MCTSThinkingProcess(gameState,
+                    fourPLayerExpansionThreshold, fourPlayerChildSelector,
+                    fourPlayerSimulator);
+        }
     }
 }
 
