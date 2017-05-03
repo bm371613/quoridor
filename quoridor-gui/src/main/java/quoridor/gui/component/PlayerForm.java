@@ -59,7 +59,7 @@ public class PlayerForm extends JPanel {
                             4 * 1024 * 1024)),
                     namedBotPlayerMaker("Minimax", () -> new MinimaxBot(
                             TopOpponentDistanceComparison.getInstance())),
-                    namedBotPlayerMaker("GreedyBot", () -> new GreedyBot(
+                    namedBotPlayerMaker("Greedy", () -> new GreedyBot(
                             TopOpponentDistanceComparison.getInstance()))
                     );
 

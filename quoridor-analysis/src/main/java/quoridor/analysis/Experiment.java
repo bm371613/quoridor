@@ -3,11 +3,9 @@ package quoridor.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import quoridor.ai.bot.AlphaBetaBot;
 import quoridor.ai.bot.AlphaBetaTTBot;
 import quoridor.ai.bot.Bot;
 import quoridor.ai.bot.MinimaxBot;
-import quoridor.ai.bot.MinimaxTTBot;
 import quoridor.ai.bot.mcts.ChildSelector;
 import quoridor.ai.bot.mcts.MCTSBot;
 import quoridor.ai.bot.mcts.Simulator;
@@ -33,26 +31,6 @@ public final class Experiment {
     private void add(String name, Bot bot) {
         names.add(name);
         bots.add(bot);
-    }
-
-    private void addParameterless() {
-        add("Minimax",
-                new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
-        add("AlphaBeta",
-                new AlphaBetaBot(TopOpponentDistanceComparison.getInstance()));
-    }
-
-    private void addBotsWithTT(int... tableSizes) {
-        for (int tableSize : tableSizes) {
-            add("MinimaxTT " + tableSize, new MinimaxTTBot(
-                    TopOpponentDistanceComparison.getInstance(),
-                    Zobrista.getInstance(),
-                    tableSize));
-            add("AlphaBetaTT " + tableSize, new AlphaBetaTTBot(
-                    TopOpponentDistanceComparison.getInstance(),
-                    Zobrista.getInstance(),
-                    tableSize));
-        }
     }
 
     private void addMcts(ChildSelector[] childSelectors,
@@ -121,6 +99,26 @@ public final class Experiment {
                 new int[] {20, 40, 60, 80, 100, 120, 140, 160, 180, 200},
                 new int[] {1, 2, 3}
         );
+        return result;
+    }
+
+    public static Experiment experiment4() {
+        Experiment result = new Experiment();
+        result.add("Minimax",
+                new MinimaxBot(TopOpponentDistanceComparison.getInstance()));
+        result.add("AlphaBetaTT",
+                new AlphaBetaTTBot(
+                        TopOpponentDistanceComparison.getInstance(),
+                        Zobrista.getInstance(),
+                        4 * 1024 * 1024));
+        result.add("MCTS",
+                new MCTSBot(
+                        60,
+                        ChildSelector.WITH_LOG_HOPE,
+                        new Simulator(1),
+                        180,
+                        ChildSelector.WITH_LOG_HOPE,
+                        new Simulator(2)));
         return result;
     }
 
