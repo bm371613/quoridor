@@ -230,7 +230,6 @@ final class LegalPawnMovesIterator implements Iterator<Move> {
                 if (considered.contains(positionedHash(p))) {
                     continue;
                 }
-                considered.add(positionedHash(p));
 
                 // skip out of bounds
                 if (!GameState.placeInBoardBounds(p)) {
@@ -241,6 +240,8 @@ final class LegalPawnMovesIterator implements Iterator<Move> {
                 if (gameState.getWallsState().isWallBetween(source, p)) {
                     continue;
                 }
+
+                considered.add(positionedHash(p));
 
                 if (gameState.isOccupied(p)) {
                     sources.add(p);

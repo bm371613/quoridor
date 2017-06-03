@@ -99,4 +99,27 @@ public class GameRulesTest {
         }
     }
 
+    @Test
+    public void shouldAllowJumps() {
+        WallsState wallsState = WallsState.builder()
+                .set(2, 4, WallOrientation.HORIZONTAL)
+                .set(3, 3, WallOrientation.HORIZONTAL)
+                .set(2, 3, WallOrientation.VERTICAL)
+                .set(4, 4, WallOrientation.VERTICAL)
+                .build();
+        GameState gs = GameState.builder()
+                .copyFrom(GameRules.makeInitialStateForFour())
+                .setWallsState(wallsState)
+                .setPlayerState(0, PlayerState.of(Direction.UP, 4, 4, 0))
+                .setPlayerState(1, PlayerState.of(Direction.RIGHT, 3, 4, 0))
+                .setPlayerState(2, PlayerState.of(Direction.DOWN, 4, 5, 0))
+                .setPlayerState(3, PlayerState.of(Direction.LEFT, 5, 4, 0))
+                .setTurn(1)
+                .build();
+
+        Assert.assertEquals(Iterators.size(GameRules.getLegalPawnMoves(gs)), 2);
+        Assert.assertTrue(GameRules.isLegalMove(gs, PawnMove.of(4, 6)));
+        Assert.assertTrue(GameRules.isLegalMove(gs, PawnMove.of(3, 5)));
+    }
+
 }
