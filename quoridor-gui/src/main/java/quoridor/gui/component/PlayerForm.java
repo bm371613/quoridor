@@ -39,6 +39,10 @@ public class PlayerForm extends JPanel {
     private static final ImmutableList<Named<PlayerMaker>> PLAYER_TYPES =
             ImmutableList.of(
                     new Named<>("Human", (PlayerMaker) Human::new),
+                    namedBotPlayerMaker("AlphaBetaTT", () -> new AlphaBetaTTBot(
+                            TopOpponentDistanceComparison.getInstance(),
+                            Zobrista.getInstance(),
+                            4 * 1024 * 1024)),
                     namedBotPlayerMaker("MCTS", () ->
                             new MCTSBot(
                                     60,
@@ -47,10 +51,6 @@ public class PlayerForm extends JPanel {
                                     180,
                                     ChildSelector.WITH_LOG_HOPE,
                                     new Simulator(2))),
-                    namedBotPlayerMaker("AlphaBetaTT", () -> new AlphaBetaTTBot(
-                            TopOpponentDistanceComparison.getInstance(),
-                            Zobrista.getInstance(),
-                            4 * 1024 * 1024)),
                     namedBotPlayerMaker("AlphaBeta", () -> new AlphaBetaBot(
                             TopOpponentDistanceComparison.getInstance())),
                     namedBotPlayerMaker("MinimaxTT", () -> new MinimaxTTBot(
