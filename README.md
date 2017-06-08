@@ -10,5 +10,21 @@ The code is divided into three subprojects:
  - `quoridor-core` - game state and game rules
  - `quoridor-ai` - bots
  - `quoridor-gui` - desktop application
+ - `quoridor-analysis` - CLI tool for running matches between bots
 
-This project is under heavy development, not ready for use!
+Quickstart
+===
+
+Run
+
+    ./gradlew quoridor-gui:fatJar
+
+to compile the desktop application. An executable JAR should appear in `quoridor-gui/build/distributions/`.
+
+
+Development
+===
+
+To run checks (tests, linters), use
+
+    ./gradlew check
